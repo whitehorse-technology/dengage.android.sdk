@@ -1,8 +1,6 @@
 package com.dengage.sdk.notification;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.net.DnsResolver;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 
@@ -368,6 +366,7 @@ public class MobileManager {
 
         @Override
         protected String doInBackground(Void... params) {
+            Logger.Debug("Getting advertising ID");
             AdvertisingIdClient.Info idInfo = null;
             String advertisingId = "";
             try {
@@ -381,6 +380,7 @@ public class MobileManager {
                 Logger.Error(e.getMessage());
             }
 
+            Logger.Info("AdvertisingId: "+ advertisingId);
             return advertisingId;
         }
 

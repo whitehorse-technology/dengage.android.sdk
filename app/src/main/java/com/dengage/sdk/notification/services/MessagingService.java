@@ -97,7 +97,7 @@ public class MessagingService extends FirebaseMessagingService {
 
             NotificationCompat.Style style = image == null ?
                     new NotificationCompat.BigTextStyle().bigText(pushMessage.getMessage()) :
-                    new NotificationCompat.BigPictureStyle().bigPicture(image).setSummaryText(pushMessage.getMessage());
+                    new NotificationCompat.BigPictureStyle().bigLargeIcon(image).bigPicture(image).setSummaryText(pushMessage.getMessage());
 
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, notificationChannelId)
                     .setVibrate(new long[]{0, 100, 100, 100, 100, 100})

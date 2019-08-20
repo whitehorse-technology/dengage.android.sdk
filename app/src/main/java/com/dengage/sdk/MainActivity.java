@@ -30,7 +30,19 @@ public class MainActivity extends AppCompatActivity {
         mobileManager = MobileManager.createInstance(appAlias, context);
         mobileManager.register();
 
+        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+            @Override
+            public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                if (!task.isSuccessful()) {
+                    Logger.Error("FirebaseInstanceId Failed: " + task.getException().getMessage());
+                    return;
+                }
 
+                String token = task.getResult().getToken();
+                Logger.Debug("Current Token: " + token);
+
+            }
+        });
     }
 
     @Override
