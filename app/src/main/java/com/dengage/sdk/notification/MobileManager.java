@@ -27,7 +27,7 @@ import com.google.gson.Gson;
 public class MobileManager {
 
     private static MobileManager instance;
-    private Subscription subscription;
+    public Subscription subscription;
     private Context context;
     private String API_HOST = (BuildConfig.DEBUG ? "http://10.200.0.100:5000" : "http://10.200.0.100:5000");
     private final String OPEN_SIGNAL_API_URL = API_HOST + "/api/mobile/open";
@@ -107,35 +107,13 @@ public class MobileManager {
         Logger.Debug("MobileManager.open message: " + message.toJson());
         Logger.Debug("MobileManager.open token: " + this.subscription.getToken());
 
-        if(TextUtils.isEmpty(this.subscription.getToken())) {
-            FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-                @Override
-                public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                    if (!task.isSuccessful()) {
-                        Logger.Error("FirebaseInstanceId Failed: " + task.getException().getMessage());
-                        return;
-                    }
-
-                    String token = task.getResult().getToken();
-                    Logger.Debug("Token retrieved: " + token);
-
-                    setToken(token);
-
-                    if(!TextUtils.isEmpty(token)) {
-                        sendOpen(message);
-                    } else Logger.Error("Token is empty! Please use the other subscribe method.");
-                }
-            });
-
-        } else {
-            sendOpen(message);
-        }
+        sendOpen(message);
     }
 
     private void sendOpen(Message message) {
         Open openSignal = new Open();
         openSignal.setAppAlias(this.subscription.getAppAlias());
-        openSignal.setToken(this.subscription.getToken());
+        //openSignal.setToken(this.subscription.getToken());
         openSignal.setMessageId(message.getMessageId());
         openSignal.setMessageDetails(message.getMessageDetails());
         RequestHelper.getInstance().sendRequestAsync(OPEN_SIGNAL_API_URL, openSignal, Open.class);

@@ -7,14 +7,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.dengage.sdk.notification.MobileManager;
 import com.dengage.sdk.notification.logging.Logger;
 import com.dengage.sdk.notification.models.Message;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
+
+import static java.security.AccessController.getContext;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,19 +35,16 @@ public class MainActivity extends AppCompatActivity {
         mobileManager = MobileManager.createInstance(appAlias, context);
         mobileManager.register();
 
-        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-            @Override
-            public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                if (!task.isSuccessful()) {
-                    Logger.Error("FirebaseInstanceId Failed: " + task.getException().getMessage());
-                    return;
-                }
+        TextView appAliasText = (TextView) findViewById(R.id.appAliasText);
+        appAliasText.setText(appAlias);
 
-                String token = task.getResult().getToken();
-                Logger.Debug("Current Token: " + token);
+        TextView tokenText = (TextView) findViewById(R.id.tokenText);
+        tokenText.setText(MobileManager.getInstance().subscription.getToken());
 
-            }
-        });
+        TextView advertisinIdText = (TextView) findViewById(R.id.advertisingIdText);
+        advertisinIdText.setText(MobileManager.getInstance().subscription.getUdid());
+
+
     }
 
     @Override
