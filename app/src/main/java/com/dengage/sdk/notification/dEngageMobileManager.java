@@ -22,16 +22,16 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.google.gson.Gson;
 
-public class MobileManager {
+public class dEngageMobileManager {
 
-    private static MobileManager instance;
+    private static dEngageMobileManager instance;
     public Subscription subscription;
     private Context context;
     private String API_HOST = (BuildConfig.DEBUG ? "https://pushdev.dengage.com" : "https://push.dengage.com");
     private final String OPEN_SIGNAL_API_URL = API_HOST + "/api/mobile/open";
     private final String SUBS_SIGNAL_API_URL = API_HOST + "/api/mobile/subscription";
 
-    private MobileManager(String appAlias, final Context context) {
+    private dEngageMobileManager(String appAlias, final Context context) {
 
         if(appAlias == null) {
             throw new IllegalArgumentException("Argument null: appAlias");
@@ -55,9 +55,9 @@ public class MobileManager {
      *
      * @param appAlias Application alias that you defined on dEngage platform.
      */
-    public static MobileManager createInstance(String appAlias, Context context) {
+    public static dEngageMobileManager createInstance(String appAlias, Context context) {
         if (instance == null) {
-            instance = new MobileManager(appAlias, context);
+            instance = new dEngageMobileManager(appAlias, context);
         }
         Logger.Debug("createInstance.createInstance appAlias: " + instance.subscription.getAppAlias());
         return instance;
@@ -68,7 +68,7 @@ public class MobileManager {
      * <p>
      * Use to get dEngage MobileManager current instance
      */
-    public static MobileManager getInstance() {
+    public static dEngageMobileManager getInstance() {
         return instance;
     }
 

@@ -11,7 +11,7 @@ import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.dengage.sdk.notification.MobileManager;
+import com.dengage.sdk.notification.dEngageMobileManager;
 import com.dengage.sdk.notification.logging.Logger;
 import com.dengage.sdk.notification.models.Message;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -25,7 +25,7 @@ import static java.security.AccessController.getContext;
 public class MainActivity extends AppCompatActivity {
 
     final String appAlias = "com.dengage.sdk";
-    static MobileManager mobileManager;
+    static dEngageMobileManager mobileManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Context context = getApplicationContext();
-        mobileManager = MobileManager.createInstance(appAlias, context);
+        mobileManager = dEngageMobileManager.createInstance(appAlias, context);
         mobileManager.register();
 
 
@@ -44,6 +44,6 @@ public class MainActivity extends AppCompatActivity {
         super.onNewIntent(intent);
 
         if(intent.getExtras() != null)
-            MobileManager.getInstance().open(new Message(intent.getExtras()));
+            dEngageMobileManager.getInstance().open(new Message(intent.getExtras()));
     }
 }

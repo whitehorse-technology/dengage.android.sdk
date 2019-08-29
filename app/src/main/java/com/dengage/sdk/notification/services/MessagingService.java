@@ -18,7 +18,7 @@ import android.os.Build;
 import androidx.core.app.NotificationCompat;
 import android.text.TextUtils;
 import com.dengage.sdk.notification.Constants;
-import com.dengage.sdk.notification.MobileManager;
+import com.dengage.sdk.notification.dEngageMobileManager;
 import com.dengage.sdk.notification.helpers.ChannelHelper;
 import com.dengage.sdk.notification.helpers.RequestHelper;
 import com.dengage.sdk.notification.helpers.Utils;
@@ -38,7 +38,7 @@ public class MessagingService extends FirebaseMessagingService {
     public void onNewToken(String token) {
         try {
             Logger.Debug("On new token : " + token);
-            MobileManager.getInstance().subscribe(token);
+            dEngageMobileManager.getInstance().subscribe(token);
         } catch (Exception e) {
             Logger.Error("onNewToken: "+ e.getMessage());
         }
