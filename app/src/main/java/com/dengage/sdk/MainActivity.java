@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -23,7 +24,7 @@ import static java.security.AccessController.getContext;
 
 public class MainActivity extends AppCompatActivity {
 
-    final String appAlias = "com.dengage.dengagepushapp";
+    final String appAlias = "com.dengage.sdk";
     static MobileManager mobileManager;
 
     @Override
@@ -34,15 +35,6 @@ public class MainActivity extends AppCompatActivity {
         Context context = getApplicationContext();
         mobileManager = MobileManager.createInstance(appAlias, context);
         mobileManager.register();
-
-        TextView appAliasText = (TextView) findViewById(R.id.appAliasText);
-        appAliasText.setText(appAlias);
-
-        TextView tokenText = (TextView) findViewById(R.id.tokenText);
-        tokenText.setText(MobileManager.getInstance().subscription.getToken());
-
-        TextView advertisinIdText = (TextView) findViewById(R.id.advertisingIdText);
-        advertisinIdText.setText(MobileManager.getInstance().subscription.getUdid());
 
 
     }

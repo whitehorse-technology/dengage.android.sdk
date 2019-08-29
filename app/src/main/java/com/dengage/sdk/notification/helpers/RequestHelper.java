@@ -66,6 +66,7 @@ public final class RequestHelper {
             conn.setDoOutput(true);
             conn.setFixedLengthStreamingMode(message.getBytes().length);
             conn.setRequestProperty("Content-Type", "application/json;charset=utf-8");
+            conn.setRequestProperty("Accept","application/json");
             conn.connect();
             os = new BufferedOutputStream(conn.getOutputStream());
             os.write(message.getBytes());

@@ -3,9 +3,7 @@ package com.dengage.sdk.notification;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.text.TextUtils;
-
 import androidx.annotation.NonNull;
-
 import com.dengage.sdk.BuildConfig;
 import com.dengage.sdk.notification.helpers.RequestHelper;
 import com.dengage.sdk.notification.helpers.Utils;
@@ -29,7 +27,7 @@ public class MobileManager {
     private static MobileManager instance;
     public Subscription subscription;
     private Context context;
-    private String API_HOST = (BuildConfig.DEBUG ? "http://10.200.0.100:5000" : "http://10.200.0.100:5000");
+    private String API_HOST = (BuildConfig.DEBUG ? "https://pushdev.dengage.com" : "https://push.dengage.com");
     private final String OPEN_SIGNAL_API_URL = API_HOST + "/api/mobile/open";
     private final String SUBS_SIGNAL_API_URL = API_HOST + "/api/mobile/subscription";
 
@@ -44,8 +42,10 @@ public class MobileManager {
         }
 
         this.context = context;
-        this.subscription = getSubscription(context);
+        this.subscription  = new Subscription();
         this.subscription.setAppAlias(appAlias);
+        this.subscription = getSubscription(context);
+
     }
 
     /**
@@ -81,16 +81,6 @@ public class MobileManager {
     public void register() {
         Logger.Debug("MobileManager.register appAlias: " + instance.subscription.getAppAlias());
         FirebaseApp.initializeApp(this.context);
-    }
-
-    private void setToken(String token) {
-        this.subscription.setToken(token);
-        this.setSubscription(this.context);
-    }
-
-    private void setUdid(String udid) {
-        this.subscription.setUdid(udid);
-        this.setSubscription(this.context);
     }
 
     /**
@@ -151,29 +141,25 @@ public class MobileManager {
     public void sync() {
         this.subscription = getSubscription(this.context);
 
+        Logger.Debug("MobileManager.sync alias: " + this.subscription.getAppAlias());
         Logger.Debug("MobileManager.sync token: " + this.subscription.getToken());
+        Logger.Debug("MobileManager.sync udid: " + this.subscription.getUdid());
+
         if (!TextUtils.isEmpty(this.subscription.getToken())) {
             RequestHelper.getInstance().sendRequestAsync(SUBS_SIGNAL_API_URL, this.subscription, Subscription.class);
         } else {
             Logger.Error("MobileManager.sync: token is empty.");
-            FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-                @Override
-                public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                    if (!task.isSuccessful()) {
-                        Logger.Error("FirebaseInstanceId Failed: " + task.getException().getMessage());
-                        return;
-                    }
-
-                    String token = task.getResult().getToken();
-                    Logger.Debug("Token retrieved: " + token);
-
-                    setToken(token);
-
-                    if (!TextUtils.isEmpty(token)) sync();
-                    else Logger.Error("Token is empty! Please use the other subscribe method.");
-                }
-            });
         }
+    }
+
+    private void setToken(String token) {
+        this.subscription.setToken(token);
+        this.setSubscription(this.context);
+    }
+
+    private void setUdid(String udid) {
+        this.subscription.setUdid(udid);
+        this.setSubscription(this.context);
     }
 
     /**
@@ -296,8 +282,7 @@ public class MobileManager {
         Utils.savePrefString(this.context, Constants.SUBSCRIPTION_KEY, this.subscription.toJson());
     }
 
-    private Subscription getSubscription(Context context) {
-        Subscription subscription = new Subscription();
+    private Subscription getSubscription(final Context context) {
 
         if (Utils.hasPrefString(context, Constants.SUBSCRIPTION_KEY)) {
             subscription = new Gson().fromJson(Utils.getPrefString(context, Constants.SUBSCRIPTION_KEY), Subscription.class);
@@ -311,13 +296,31 @@ public class MobileManager {
             adIdWorker.execute();
         }
 
+        if(TextUtils.isEmpty(subscription.getToken())) {
+            FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                @Override
+                public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                    if (!task.isSuccessful()) {
+                        Logger.Error("FirebaseInstanceId Failed: " + task.getException().getMessage());
+                        return;
+                    }
+
+                    String token = task.getResult().getToken();
+                    Logger.Debug("Token retrieved: " + token);
+
+                    if(!TextUtils.isEmpty(token)) {
+                        subscribe(token);
+                    }
+                }
+            });
+        }
+
         return subscription;
     }
 
     private void setSubscription(Context context) {
         this.subscription.setCarrierId(Utils.carrier(context));
-        if(TextUtils.isEmpty(this.subscription.getAppVersion()))
-            this.subscription.setAppVersion(Utils.appVersion(context));
+        this.subscription.setAppVersion(Utils.appVersion(context));
         this.subscription.setLocal(Utils.local(context));
         this.subscription.setOs(Utils.osType());
         this.subscription.setOsVersion(Utils.osVersion());
@@ -364,8 +367,7 @@ public class MobileManager {
 
         @Override
         protected void onPostExecute(String udid) {
-            MobileManager.getInstance().subscription.setUdid(udid);
-            MobileManager.getInstance().setSubscription(context);
+            setUdid(udid);
         }
     }
 }
