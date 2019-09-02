@@ -27,9 +27,16 @@ public class dEngageMobileManager {
     private static dEngageMobileManager instance;
     public Subscription subscription;
     private Context context;
-    private String API_HOST = (BuildConfig.DEBUG ? "https://pushdev.dengage.com" : "https://push.dengage.com");
-    private final String OPEN_SIGNAL_API_URL = API_HOST + "/api/mobile/open";
-    private final String SUBS_SIGNAL_API_URL = API_HOST + "/api/mobile/subscription";
+
+    private final String apiHostDev = "https://pushdev.dengage.com";
+    private final String apiHostTest = "https://pushtest.dengage.com";
+    private final String apiHostProd = "https://push.dengage.com";
+    private final String subsApiSuffix = "/api/mobile/subscription";
+    private final String openApiSuffix = "/api/mobile/open";
+
+    private String openApiEndpoint;
+    private String subsApiEndpoint;
+    private String environment;
 
     private dEngageMobileManager(String appAlias, final Context context) {
 
@@ -41,11 +48,28 @@ public class dEngageMobileManager {
             throw new IllegalArgumentException("Argument null: context");
         }
 
+        if(BuildConfig.ENVIRONMENT == "dev") {
+            openApiEndpoint = apiHostDev + openApiSuffix;
+            subsApiEndpoint = apiHostDev + subsApiSuffix;
+        } else if(BuildConfig.ENVIRONMENT == "test") {
+            openApiEndpoint = apiHostTest + openApiSuffix;
+            subsApiEndpoint = apiHostTest + subsApiSuffix;
+        } else if(BuildConfig.ENVIRONMENT == "prod") {
+            openApiEndpoint = apiHostProd + openApiSuffix;
+            subsApiEndpoint = apiHostProd + subsApiSuffix;
+        } else {
+            throw new IllegalArgumentException("Argument null: BuildConfig.ENVIRONMENT");
+        }
+
         this.context = context;
         this.subscription  = new Subscription();
         this.subscription.setAppAlias(appAlias);
         this.subscription = getSubscription(context);
 
+    }
+
+    public String getEnvironment() {
+        return BuildConfig.ENVIRONMENT;
     }
 
     /**
@@ -106,7 +130,7 @@ public class dEngageMobileManager {
         //openSignal.setToken(this.subscription.getToken());
         openSignal.setMessageId(message.getMessageId());
         openSignal.setMessageDetails(message.getMessageDetails());
-        RequestHelper.getInstance().sendRequestAsync(OPEN_SIGNAL_API_URL, openSignal, Open.class);
+        RequestHelper.getInstance().sendRequestAsync(openApiEndpoint, openSignal, Open.class);
     }
     /**
      * Subscribe User
@@ -146,7 +170,7 @@ public class dEngageMobileManager {
         Logger.Debug("MobileManager.sync udid: " + this.subscription.getUdid());
 
         if (!TextUtils.isEmpty(this.subscription.getToken())) {
-            RequestHelper.getInstance().sendRequestAsync(SUBS_SIGNAL_API_URL, this.subscription, Subscription.class);
+            RequestHelper.getInstance().sendRequestAsync(subsApiEndpoint, this.subscription, Subscription.class);
         } else {
             Logger.Error("MobileManager.sync: token is empty.");
         }
@@ -159,6 +183,11 @@ public class dEngageMobileManager {
 
     private void setUdid(String udid) {
         this.subscription.setUdid(udid);
+        this.setSubscription(this.context);
+    }
+
+    public void setAppAlias(String udid) {
+        this.subscription.setAppAlias(udid);
         this.setSubscription(this.context);
     }
 
@@ -319,6 +348,7 @@ public class dEngageMobileManager {
     }
 
     private void setSubscription(Context context) {
+
         this.subscription.setCarrierId(Utils.carrier(context));
         this.subscription.setAppVersion(Utils.appVersion(context));
         this.subscription.setLocal(Utils.local(context));

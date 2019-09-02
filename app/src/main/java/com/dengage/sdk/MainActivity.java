@@ -35,8 +35,6 @@ public class MainActivity extends AppCompatActivity {
         Context context = getApplicationContext();
         mobileManager = dEngageMobileManager.createInstance(appAlias, context);
         mobileManager.register();
-
-
     }
 
     @Override
