@@ -6,6 +6,9 @@ public class Open extends ModelBase {
     @SerializedName("messageId")
     private int messageId;
 
+    @SerializedName("messageDetails")
+    private String messageDetails;
+
     public int getMessageId() {
         return messageId;
     }
@@ -13,9 +16,6 @@ public class Open extends ModelBase {
     public void setMessageId(int messageId) {
         this.messageId = messageId;
     }
-
-    @SerializedName("messageDetails")
-    private String messageDetails;
 
     public String getMessageDetails() {
         return messageDetails;

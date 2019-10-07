@@ -27,8 +27,6 @@ import com.dengage.sdk.notification.models.Message;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-import org.w3c.dom.Text;
-
 import java.util.Map;
 import java.util.Set;
 
@@ -50,6 +48,7 @@ public class MessagingService extends FirebaseMessagingService {
 
         Map<String, String> data = remoteMessage.getData();
         Message pushMessage = new Message(data);
+        
         Logger.Debug("onMessageReceived : " + pushMessage.getMessage());
 
         if (!TextUtils.isEmpty(pushMessage.getMessage())) {
@@ -134,9 +133,7 @@ public class MessagingService extends FirebaseMessagingService {
             mNotificationManager.notify(12, mBuilder.build());
 
         } catch (Exception e) {
-            Logger.Debug("generateNotification: " + e.getMessage());
+            Logger.Error("generateNotification: " + e.getMessage());
         }
     }
-
-
 }
