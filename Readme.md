@@ -16,25 +16,25 @@ Supports Android API level 4.1.x or higher.
 
 1.1 Create a Firebase app.
 
-![](./images/step1.png)
+![](./images/step_1_1.png)
 
 1.2 Download your googles-services.json
 
-![](./images/step1.2.a.png)
+![](./images/step_1_2_a_.png)
 
-![](./images/step1.2.b.png)
+![](./images/step_1_2_b_.png)
 
 1.3 Add the following dependecies to build.gradle  (<project>/build.gradle):
 
-![](./images/step1.3.png)
+![](./images/step_1_3.png)
 
 1.4 Add the following dependecies to build.gradle  (<project>/<application>/build.gradle):
 
-![](./images/step1.4.png)
+![](./images/step_1_4.png)
 
 1.5 Copy the "com.dengage.sdk.jar" file to libs directory and Add as Library.
 
-![](./images/step1.5.png) 
+![](./images/step_1_5.png) 
 
 1.6 Add the following code on your AndroidManifest.xml file. (under the <application> node)
 
