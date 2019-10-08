@@ -36,7 +36,7 @@ Supports Android API level 4.1.x or higher.
 
 ![](./images/copy-sdk-to-libs-dir.png) 
 
-1.6 Add the following code on your AndroidManifest.xml file. (under the <application> node)
+1.6 Add the following code on your AndroidManifest.xml file. (under the application node)
 
 ```xml
     <service
@@ -70,9 +70,9 @@ Supports Android API level 4.1.x or higher.
 
 2.3 Paste Your Server Key, Sender ID on your app settings and set your App Alias.
  
-*** App Alias is a pointer that connects dEngage Push Application and Your Android application each other. It allows you to send push message to your app and report events to dEngage Platform. You can set your applicationId as an App Alias.
+***App Alias is a pointer that connects dEngage Push Application and Your Android application each other. It allows you to send push message to your app and report events to dEngage Platform. You can set your applicationId as an App Alias.***
 
-![](./images/step_2_3.png)
+![](./images/app-alias-definition.png)
 
 
 ## 3. Implementing the SDK
@@ -100,7 +100,7 @@ private static dEngageMobileManager mobileManager; // Instance for the dEngageMo
     }
 ```
 
-![](./images/step_3_1.png)
+![](./images/implement-the-code.png)
 
 
 3.4 You will be able to send a push notification message to your app. dEngageMobileManager will handle the message with the default app configuration.
