@@ -85,6 +85,10 @@ public class dEngageMobileManager {
         return Constants.SDK_VERSION;
     }
 
+    public String getAppVersion() {
+        return Utils.appVersion(context);
+    }
+
     /**
      * Initiator method
      * <p>

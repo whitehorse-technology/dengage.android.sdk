@@ -1249,6 +1249,8 @@ id textView3
 id textView6
 id textView7
 id textView8
+id textViewAppVersion
+id textViewSdkVersion
 id text_input_password_toggle
 id textinput_counter
 id textinput_error
@@ -1268,8 +1270,10 @@ id transition_scene_layoutid_cache
 id transition_transform
 id txtAdvertisingId
 id txtAlias
+id txtAppVersion
 id txtContactKey
 id txtEnvironment
+id txtSdkVersion
 id txtToken
 id uniform
 id unlabeled

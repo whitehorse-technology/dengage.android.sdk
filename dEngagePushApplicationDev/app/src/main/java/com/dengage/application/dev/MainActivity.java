@@ -55,12 +55,16 @@ public class MainActivity extends AppCompatActivity {
         TextView txtAdvertisingId = (TextView)findViewById(R.id.txtAdvertisingId);
         TextView txtToken = (TextView)findViewById(R.id.txtToken);
         TextView txtContactKey = (TextView)findViewById(R.id.txtContactKey);
+        TextView txtSdkVersion = (TextView)findViewById(R.id.txtSdkVersion);
+        TextView txtAppVersion = (TextView)findViewById(R.id.txtAppVersion);
 
         txtEnvironment.setText(mobileManager.getEnvironment());
         txtAlias.setText(mobileManager.subscription.getAppAlias());
         txtAdvertisingId.setText(mobileManager.subscription.getUdid());
         txtToken.setText(mobileManager.subscription.getToken());
         txtContactKey.setText(mobileManager.subscription.getContactKey());
+        txtSdkVersion.setText(mobileManager.getSdkVersion());
+        txtAppVersion.setText(BuildConfig.VERSION_NAME);
 
         Button btnContactKey = (Button) findViewById(R.id.btnContactKey);
         btnContactKey.setOnClickListener(new View.OnClickListener() {
