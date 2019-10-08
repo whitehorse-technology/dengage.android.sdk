@@ -120,7 +120,7 @@ protected void onNewIntent(Intent intent) {
 ```
 
 
-4.2 to send subscription event, you need to call subscription() method. Please note that dEngageMobileManager already calls subscribe() method when onNewToken fired. But some cases, you will need to call the method to notify dEngage Platform for the user information.
+4.2 to send subscription event, you need to call subscription() method. Please note that dEngageMobileManager already calls subscribe() method when onNewToken event is fired. But some cases, you will need to call the method to notify dEngage Platform for the user information.
 
 ```java
 mobileManager.subscribe();
