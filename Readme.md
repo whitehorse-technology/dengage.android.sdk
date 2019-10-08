@@ -56,6 +56,7 @@ Supports Android API level 4.1.x or higher.
 
 1.7 Run your app and verify your configuration.
 
+![](./images/step_1_7.png) 
 
 ## 2. Creating dEngage Push Application
 
