@@ -1,7 +1,6 @@
 package com.dengage.sdk;
 
 import com.dengage.sdk.notification.Constants;
-import com.dengage.sdk.notification.MobileManager;
 import com.dengage.sdk.notification.logging.Logger;
 import com.dengage.sdk.notification.models.Message;
 import com.dengage.sdk.notification.models.Open;

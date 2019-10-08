@@ -8,5 +8,6 @@ public class Constants {
     public static final String CHANNEL_NAME = "DEN Message Channel";
     public static final String CHANNEL_DESCRIPTION = "Channel for dEngage notifications";
     public static final String SDK_VERSION = BuildConfig.VERSION_NAME;
+    public static final String ENVIRONMENT = BuildConfig.ENVIRONMENT;
     public static final String SUBSCRIPTION_KEY = "dengage_subscription";
 }

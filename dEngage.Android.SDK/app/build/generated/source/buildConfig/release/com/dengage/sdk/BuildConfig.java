@@ -11,5 +11,5 @@ public final class BuildConfig {
   public static final int VERSION_CODE = 1;
   public static final String VERSION_NAME = "1.0";
   // Fields from build type: release
-  public static final String ENVIRONMENT = "prod";
+  public static final String ENVIRONMENT = "test";
 }

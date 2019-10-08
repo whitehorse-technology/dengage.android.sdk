@@ -1099,6 +1099,9 @@ id barrier
 id beginning
 id blocking
 id bottom
+id btnAdvertisingId
+id btnContactKey
+id btnToken
 id buttonPanel
 id center
 id center_horizontal
@@ -1242,6 +1245,7 @@ id text2
 id textSpacerNoButtons
 id textSpacerNoTitle
 id textStart
+id textView3
 id textView6
 id textView7
 id textView8
@@ -1264,6 +1268,7 @@ id transition_scene_layoutid_cache
 id transition_transform
 id txtAdvertisingId
 id txtAlias
+id txtContactKey
 id txtEnvironment
 id txtToken
 id uniform

@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         TextView txtToken = (TextView)findViewById(R.id.txtToken);
         TextView txtContactKey = (TextView)findViewById(R.id.txtContactKey);
 
-        txtEnvironment.setText("DEV");
+        txtEnvironment.setText(mobileManager.getEnvironment());
         txtAlias.setText(mobileManager.subscription.getAppAlias());
         txtAdvertisingId.setText(mobileManager.subscription.getUdid());
         txtToken.setText(mobileManager.subscription.getToken());

@@ -77,6 +77,14 @@ public class dEngageMobileManager {
         }
     }
 
+    public String getEnvironment() {
+        return Constants.ENVIRONMENT;
+    }
+
+    public String getSdkVersion() {
+        return Constants.SDK_VERSION;
+    }
+
     /**
      * Initiator method
      * <p>

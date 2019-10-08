@@ -8,6 +8,93 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:717170420678:android:aa2e6a7f1911737c",
+        "android_client_info": {
+          "package_name": "com.dengage.application.dev"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "717170420678-n3rongdqjt0uj9hmtqliocf9pmghnecm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAvf5jVogxrnD32NvM4mqmQvs8CwRtCz-A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "717170420678-n3rongdqjt0uj9hmtqliocf9pmghnecm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:717170420678:android:9dbd9ba1cccc88bb",
+        "android_client_info": {
+          "package_name": "com.dengage.application.prod"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "717170420678-n3rongdqjt0uj9hmtqliocf9pmghnecm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAvf5jVogxrnD32NvM4mqmQvs8CwRtCz-A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "717170420678-n3rongdqjt0uj9hmtqliocf9pmghnecm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:717170420678:android:d5f03abbac5e4d88",
+        "android_client_info": {
+          "package_name": "com.dengage.application.test"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "717170420678-n3rongdqjt0uj9hmtqliocf9pmghnecm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAvf5jVogxrnD32NvM4mqmQvs8CwRtCz-A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "717170420678-n3rongdqjt0uj9hmtqliocf9pmghnecm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:717170420678:android:bb5ae9f334e564ff",
         "android_client_info": {
           "package_name": "com.dengage.dengagepushapp"
