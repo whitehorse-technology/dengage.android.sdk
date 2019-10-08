@@ -10,7 +10,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="57553f0d-e896-45b7-b6b6-ab8cb7019e09" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../Readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/../Readme.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationDev/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationDev/.idea/workspace.xml" afterDir="false" />
     </list>
@@ -63,7 +62,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="1">
+  <component name="ProjectFrameBounds">
     <option name="x" value="-7" />
     <option name="width" value="1934" />
     <option name="height" value="1047" />
@@ -264,7 +263,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="0" width="1934" height="1047" extended-state="1" />
+    <frame x="-7" y="0" width="1934" height="1047" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Captures" order="0" side_tool="true" weight="0.25" />

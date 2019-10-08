@@ -105,5 +105,37 @@ private static dEngageMobileManager mobileManager; // Instance for the dEngageMo
 
 3.4 You will be able to send a push notification message to your app. dEngageMobileManager will handle the message with the default app configuration.
 
+## 4 Using the SDK.
+
+4.1 to send open report, you need to call open() method with the Message object. The following code explains how to send open report to dEngage Platform with the SDK.
+
+```java
+@Override
+protected void onNewIntent(Intent intent) {
+    super.onNewIntent(intent);
+
+    if(intent.getExtras() != null)
+        mobileManager.getInstance().open(new Message(intent.getExtras()));
+}
+```
 
 
+4.2 to send subscription event, you need to call subscription() method. Please note that dEngageMobileManager already calls subscribe() method when onNewToken fired. But some cases, you will need to call the method to notify dEngage Platform for the user information.
+
+```java
+mobileManager.subscribe();
+```
+
+to send subscribe event manually, please use subscription() method with the token parameter. 
+
+```java
+mobileManager.subscribe(String token);
+```
+
+
+4.2 to set user contact key, please use the following methods. This action requires sync() function call to notify dEngage Platform.
+
+```java
+mobileManager.setContactKey("dengage");
+mobileManager.sync();
+```
