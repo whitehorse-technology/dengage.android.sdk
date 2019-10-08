@@ -20,7 +20,7 @@ Supports Android API level 4.1.x or higher.
 
 1.2 Download your configuration file (googles-services.json)
 
-![](./images/download-your-configuration_.png)
+![](./images/download-your-configuration.png)
 
 ![](./images/download-your-configuration-2.png)
 
