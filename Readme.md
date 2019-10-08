@@ -26,15 +26,15 @@ Supports Android API level 4.1.x or higher.
 
 1.3 Add the following dependecies to build.gradle  ({project}/build.gradle):
 
-![](./images/step_1_3.png)
+![](./images/add-dependicies-1.png)
 
 1.4 Add the following dependecies to build.gradle  ({project}/{application}/build.gradle):
 
-![](./images/step_1_4.png)
+![](./images/add-dependicies-2.png)
 
 1.5 Copy the "com.dengage.sdk.jar" file to libs directory and Add as Library.
 
-![](./images/step_1_5.png) 
+![](./images/copy-sdk-to-libs-dir.png) 
 
 1.6 Add the following code on your AndroidManifest.xml file. (under the <application> node)
 
@@ -56,17 +56,17 @@ Supports Android API level 4.1.x or higher.
 
 1.7 Run your app and verify your configuration.
 
-![](./images/step_1_7.png) 
+![](./images/run-app-and-verify.png) 
 
 ## 2. Creating dEngage Push Application
 
 2.1 Login your dEngage Panel. Navigate "Push Applications" page (https://app.dengage.com/#/pushApplications) and click the "Add > Android Application" button.
 
-![](./images/step_2_1.png)
+![](./images/login-and-set-app.png)
 
 2.2 Visit your project settings page on Firebase console and navigate to Cloud Messaging page. And then copy your Server key and Sender ID.
 
-![](./images/step_2_2.png)
+![](./images/copy-server-key-and-id.png)
 
 2.3 Paste Your Server Key, Sender ID on your app settings and set your App Alias.
  
