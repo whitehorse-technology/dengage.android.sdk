@@ -16,13 +16,13 @@ Supports Android API level 4.1.x or higher.
 
 1.1 Create a Firebase android app. https://console.firebase.google.com/u/1/project/dengagetest/overview
 
-![](./images/step_1_1.png)
+![](./images/create-firebase-app.png)
 
 1.2 Download your configuration file (googles-services.json)
 
-![](./images/step_1_2_a_.png)
+![](./images/download-your-configuration_.png)
 
-![](./images/step_1_2_b_.png)
+![](./images/download-your-configuration-2.png)
 
 1.3 Add the following dependecies to build.gradle  ({project}/build.gradle):
 
@@ -82,7 +82,7 @@ Supports Android API level 4.1.x or higher.
 ```java
 
 private final String appAlias = "{YourAppAlias}"; // This is your App Alias which you set on dEngage Push Application settings page.
-private static dEngageMobileManager mobileManager; // Instance for the dEnage Mobile Manager. So you can access the variable globally.
+private static dEngageMobileManager mobileManager; // Instance for the dEngageMobileManager class. So you can access the variable globally.
 
 ```
 
