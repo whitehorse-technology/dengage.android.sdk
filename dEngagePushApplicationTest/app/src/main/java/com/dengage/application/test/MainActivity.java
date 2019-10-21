@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.os.Bundle;
 
 import com.dengage.sdk.notification.dEngageMobileManager;
@@ -58,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         txtToken.setText(mobileManager.subscription.getToken());
         txtContactKey.setText(mobileManager.subscription.getContactKey());
         txtSdkVersion.setText(mobileManager.getSdkVersion());
-        txtAppVersion.setText(BuildConfig.VERSION_NAME);
+        txtAppVersion.setText(mobileManager.getAppVersion());
 
         Button btnContactKey = (Button) findViewById(R.id.btnContactKey);
         btnContactKey.setOnClickListener(new View.OnClickListener() {

@@ -46,12 +46,15 @@ public class MessagingService extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
+        Logger.Debug("onMessageReceived is called");
+
         Map<String, String> data = remoteMessage.getData();
         Message pushMessage = new Message(data);
         
         Logger.Debug("onMessageReceived : " + pushMessage.getMessage());
 
         if (!TextUtils.isEmpty(pushMessage.getMessage())) {
+            Logger.Verbose("Generating notification");
             generateNotification(pushMessage, data, RequestHelper.getInstance().getBitmap(pushMessage.getMediaUrl()));
         } else {
             Logger.Error("onMessageReceived: Message is empty!");
@@ -59,12 +62,15 @@ public class MessagingService extends FirebaseMessagingService {
     }
 
     private void generateNotification(Message pushMessage, Map<String, String> data, Bitmap image) {
+        Logger.Verbose("generateNotification method is called.");
         try {
             String notificationChannelId = Constants.CHANNEL_ID;
 
             if(pushMessage.getSound() != null){
                 notificationChannelId += pushMessage.getSound();
             }
+
+            Logger.Debug("Channel Id: "+ notificationChannelId);
 
             NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
 

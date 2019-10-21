@@ -1,8 +1,11 @@
 package com.dengage.sdk.notification;
 
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.os.AsyncTask;
 import android.text.TextUtils;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import com.dengage.sdk.BuildConfig;
 import com.dengage.sdk.notification.helpers.RequestHelper;
@@ -55,14 +58,23 @@ public class dEngageMobileManager {
                 openApiEndpoint = apiHostDev + openApiSuffix;
                 subsApiEndpoint = apiHostDev + subsApiSuffix;
                 transactionalOpenApiEndpoint = apiHostDev + transactionalOpenApiSuffix;
+                Logger.Verbose("Open API Endpoint: "+ openApiEndpoint);
+                Logger.Verbose("Subscription API Endpoint: "+ subsApiEndpoint);
+                Logger.Verbose("Transactional API Endpoint: "+ transactionalOpenApiEndpoint);
             } else if(BuildConfig.ENVIRONMENT == "test") {
                 openApiEndpoint = apiHostTest + openApiSuffix;
                 subsApiEndpoint = apiHostTest + subsApiSuffix;
                 transactionalOpenApiEndpoint = apiHostTest + transactionalOpenApiSuffix;
+                Logger.Verbose("Open API Endpoint: "+ openApiEndpoint);
+                Logger.Verbose("Subscription API Endpoint: "+ subsApiEndpoint);
+                Logger.Verbose("Transactional API Endpoint: "+ transactionalOpenApiEndpoint);
             } else if(BuildConfig.ENVIRONMENT == "prod") {
                 openApiEndpoint = apiHostProd + openApiSuffix;
                 subsApiEndpoint = apiHostProd + subsApiSuffix;
                 transactionalOpenApiEndpoint = apiHostProd + transactionalOpenApiSuffix;
+                Logger.Verbose("Open API Endpoint: "+ openApiEndpoint);
+                Logger.Verbose("Subscription API Endpoint: "+ subsApiEndpoint);
+                Logger.Verbose("Transactional API Endpoint: "+ transactionalOpenApiEndpoint);
             } else {
                 throw new IllegalArgumentException("Argument null: BuildConfig.ENVIRONMENT, expected: dev,test or prod.");
             }
@@ -75,18 +87,28 @@ public class dEngageMobileManager {
         } catch (Exception e) {
             Logger.Error("dEngageMobileManager: "+ e.getMessage());
         }
+
+        Logger.Verbose("Created dEnaggeMobileManager.");
     }
 
+
     public String getEnvironment() {
+        Logger.Verbose("getEnvironment method is called.");
+        Logger.Debug("getEnvironment: "+ Constants.ENVIRONMENT);
         return Constants.ENVIRONMENT;
     }
 
     public String getSdkVersion() {
+        Logger.Verbose("getSdkVersion method is called.");
+        Logger.Debug("getSdkVersion: "+ Constants.SDK_VERSION);
         return Constants.SDK_VERSION;
     }
 
     public String getAppVersion() {
-        return Utils.appVersion(context);
+        Logger.Verbose("getAppVersion method is called.");
+        String appVersion = Utils.appVersion(context);
+        Logger.Debug("getAppVersion: "+ appVersion);
+        return appVersion;
     }
 
     /**
@@ -99,8 +121,9 @@ public class dEngageMobileManager {
     public static dEngageMobileManager createInstance(String appAlias, Context context) {
         if (instance == null) {
             instance = new dEngageMobileManager(appAlias, context);
+            Logger logger = new Logger(context);
         }
-        Logger.Debug("createInstance.createInstance appAlias: " + instance.subscription.getAppAlias());
+        Logger.Debug("createInstance appAlias: " + instance.subscription.getAppAlias());
         return instance;
     }
 
@@ -111,6 +134,7 @@ public class dEngageMobileManager {
      * </p>
      */
     public static dEngageMobileManager getInstance() {
+        Logger.Verbose("getInstance method is called");
         return instance;
     }
 
@@ -121,9 +145,9 @@ public class dEngageMobileManager {
      * </p>
      */
     public void register() {
+        Logger.Verbose("register method is called");
         try {
             Logger.Debug("MobileManager.register appAlias: " + instance.subscription.getAppAlias());
-
             FirebaseApp.initializeApp(this.context);
         } catch (Exception e) {
             Logger.Error("register: "+ e.getMessage());
@@ -138,7 +162,7 @@ public class dEngageMobileManager {
      * @param message The message object.
      */
     public void open(final Message message) {
-
+        Logger.Verbose("open method is called");
         try {
             this.subscription = getSubscription(this.context);
 
@@ -166,10 +190,9 @@ public class dEngageMobileManager {
      * </p>
      */
     public void subscribe() {
+        Logger.Verbose("subscribe method is called");
         try {
-
             Logger.Debug("MobileManager.subscribe token: " + this.subscription.getToken());
-
             sync();
         } catch (Exception e) {
             Logger.Error("subscribe: "+ e.getMessage());
@@ -184,11 +207,10 @@ public class dEngageMobileManager {
      * @param token  GCM Token
      */
     public void subscribe(String token) {
+        Logger.Verbose("subscribe(token) method is called");
         try {
             setToken(token);
-
             Logger.Debug("MobileManager.subscribe token: " + token);
-
             sync();
         } catch (Exception e) {
             Logger.Error("subscribe(token): "+ e.getMessage());
@@ -202,6 +224,7 @@ public class dEngageMobileManager {
      * </p>
      */
     public void sync() {
+        Logger.Verbose("sync method is called");
         try {
             this.subscription = getSubscription(this.context);
 
@@ -228,8 +251,10 @@ public class dEngageMobileManager {
      * @param appVersion Application version
      */
     public void setAppVersion(String appVersion) {
+        Logger.Verbose("setAppVersion method is called");
         try {
             this.subscription.setAppVersion(appVersion);
+            Logger.Debug("appVersion: "+ appVersion);
             Utils.savePrefString(this.context, Constants.SUBSCRIPTION_KEY, this.subscription.toJson());
         } catch (Exception e) {
             Logger.Error("setAppVersion: "+ e.getMessage());
@@ -244,8 +269,10 @@ public class dEngageMobileManager {
      * @param permission True/False
      */
     public void setPermission(Boolean permission) {
+        Logger.Verbose("setPermission method is called");
         try {
             this.subscription.setPermission(permission);
+            Logger.Debug("permission: "+ permission);
             Utils.savePrefString(this.context, Constants.SUBSCRIPTION_KEY, this.subscription.toJson());
         } catch (Exception e) {
             Logger.Error("setPermission: "+ e.getMessage());
@@ -260,8 +287,10 @@ public class dEngageMobileManager {
      * @param twitterId Twitter Id
      */
     public void setTwitterId(String twitterId) {
+        Logger.Verbose("setTwitterId method is called");
         try {
             this.subscription.setTwitterId(twitterId);
+            Logger.Debug("twitterId: "+ twitterId);
             Utils.savePrefString(this.context, Constants.SUBSCRIPTION_KEY, this.subscription.toJson());
         } catch (Exception e) {
             Logger.Error("setTwitterId: "+ e.getMessage());
@@ -276,8 +305,10 @@ public class dEngageMobileManager {
      * @param email Email of a user
      */
     public void setEmail(String email) {
+        Logger.Verbose("setEmail method is called");
         try {
             this.subscription.setEmail(email);
+            Logger.Debug("email: "+ email);
             Utils.savePrefString(this.context, Constants.SUBSCRIPTION_KEY, this.subscription.toJson());
         } catch (Exception e) {
             Logger.Error("setEmail: "+ e.getMessage());
@@ -292,8 +323,10 @@ public class dEngageMobileManager {
      * @param facebookId Facebook Id
      */
     public void setFacebookId(String facebookId) {
+        Logger.Verbose("setFacebookId method is called");
         try {
             this.subscription.setFacebookId(facebookId);
+            Logger.Debug("facebookId: "+ facebookId);
             Utils.savePrefString(this.context, Constants.SUBSCRIPTION_KEY, this.subscription.toJson());
         } catch (Exception e) {
             Logger.Error("setFacebookId: "+ e.getMessage());
@@ -309,8 +342,10 @@ public class dEngageMobileManager {
      * @param longitude Longitude
      */
     public void setLocation(double latitude, double longitude) {
+        Logger.Verbose("setLocation method is called");
         try {
             this.subscription.setLocation(new Location(latitude, longitude));
+            Logger.Debug("lat: "+ latitude + ", long: "+ longitude);
             Utils.savePrefString(this.context, Constants.SUBSCRIPTION_KEY, this.subscription.toJson());
         } catch (Exception e) {
             Logger.Error("setLocation: "+ e.getMessage());
@@ -325,8 +360,10 @@ public class dEngageMobileManager {
      * @param contactKey user key
      */
     public void setContactKey(String contactKey) {
+        Logger.Verbose("setContactKey method is called");
         try {
             this.subscription.setContactKey(contactKey);
+            Logger.Debug("contactKey: "+ contactKey);
             Utils.savePrefString(this.context, Constants.SUBSCRIPTION_KEY, this.subscription.toJson());
         } catch (Exception e) {
             Logger.Error("setContactKey: "+ e.getMessage());
@@ -341,8 +378,10 @@ public class dEngageMobileManager {
      * @param msisdn phone number
      */
     public void setGsm(String msisdn) {
+        Logger.Verbose("setGsm method is called");
         try {
             this.subscription.setGsm(msisdn);
+            Logger.Debug("msisdn: "+ msisdn);
             Utils.savePrefString(this.context, Constants.SUBSCRIPTION_KEY, this.subscription.toJson());
         } catch (Exception e) {
             Logger.Error("setGsm: "+ e.getMessage());
@@ -358,8 +397,10 @@ public class dEngageMobileManager {
      * @param value value for the property
      */
     public void setContactProperty(String key, String value) {
+        Logger.Verbose("setContactProperty method is called");
         try {
             setSubscriptionProperty(key, value);
+            Logger.Debug("key, value: "+ key +", "+ value+"");
             Utils.savePrefString(this.context, Constants.SUBSCRIPTION_KEY, this.subscription.toJson());
         } catch (Exception e) {
             Logger.Error("setContactProperty: "+ e.getMessage());
@@ -373,6 +414,7 @@ public class dEngageMobileManager {
      * </p>
      */
     public void removeContactProperties() {
+        Logger.Verbose("removeContactProperties method is called");
         try {
             this.subscription.removeAll();
             Utils.savePrefString(this.context, Constants.SUBSCRIPTION_KEY, this.subscription.toJson());
@@ -383,6 +425,7 @@ public class dEngageMobileManager {
 
 
     private void setToken(String token) {
+        Logger.Verbose("setToken method is called");
         try {
             this.subscription.setToken(token);
             this.setSubscription(this.context);
@@ -392,6 +435,7 @@ public class dEngageMobileManager {
     }
 
     private void setUdid(String udid) {
+        Logger.Verbose("setUdid method is called");
         try {
             this.subscription.setUdid(udid);
             this.setSubscription(this.context);
@@ -401,7 +445,7 @@ public class dEngageMobileManager {
     }
 
     private Subscription getSubscription(final Context context) {
-
+        Logger.Verbose("getSubscription method is called");
         if (Utils.hasPrefString(context, Constants.SUBSCRIPTION_KEY)) {
             subscription = new Gson().fromJson(Utils.getPrefString(context, Constants.SUBSCRIPTION_KEY), Subscription.class);
             subscription.setFirstTime(0);
@@ -437,7 +481,7 @@ public class dEngageMobileManager {
     }
 
     private void setSubscription(Context context) {
-
+        Logger.Verbose("setSubscription method is called");
         try {
 
             this.subscription.setCarrierId(Utils.carrier(context));

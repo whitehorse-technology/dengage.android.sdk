@@ -1,3 +1,4 @@
+//apply plugin: 'com.android.application'
 apply plugin: 'com.android.library'
 
 android {
@@ -7,17 +8,23 @@ android {
         minSdkVersion 16
         targetSdkVersion 29
         versionCode 1
-        versionName "1.0"
+        versionName "1.1"
+        //applicationId "com.dengage.android.sdk"
     }
     buildTypes {
+
+
+        debug {
+            debuggable true
+            buildConfigField "String", "ENVIRONMENT", "\"dev\""
+
+        }
+
         release {
+            debuggable false
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField "String", "ENVIRONMENT", "\"test\""
-        }
-
-        debug {
-            buildConfigField "String", "ENVIRONMENT", "\"dev\""
         }
 
     }
