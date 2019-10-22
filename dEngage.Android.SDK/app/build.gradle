@@ -8,7 +8,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 29
         versionCode 1
-        versionName "1.1"
+        versionName "1.2"
         //applicationId "com.dengage.android.sdk"
     }
     buildTypes {
@@ -24,7 +24,7 @@ android {
             debuggable false
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "ENVIRONMENT", "\"test\""
+            buildConfigField "String", "ENVIRONMENT", "\"prod\""
         }
 
     }

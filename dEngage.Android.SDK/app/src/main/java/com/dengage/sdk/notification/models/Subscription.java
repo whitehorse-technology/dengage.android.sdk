@@ -35,6 +35,9 @@ public class Subscription extends ModelBase {
     @SerializedName("udid")
     private String udid = "";
 
+    @SerializedName("adid")
+    private String adid = "";
+
     @SerializedName("twitterId")
     private String twitterId = "";
 
@@ -84,6 +87,14 @@ public class Subscription extends ModelBase {
 
     public void setUdid(String udid) {
         this.udid = udid;
+    }
+
+    public String getAdid() {
+        return this.adid;
+    }
+
+    public void setAdid(String adid) {
+        this.adid = adid;
     }
 
     public String getContactKey() {

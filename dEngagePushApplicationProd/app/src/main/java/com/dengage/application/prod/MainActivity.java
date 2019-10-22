@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
         TextView txtEnvironment = (TextView)findViewById(R.id.txtEnvironment);
         TextView txtAlias = (TextView)findViewById(R.id.txtAlias);
-        TextView txtAdvertisingId = (TextView)findViewById(R.id.txtAdvertisingId);
+        TextView txtDeviceId = (TextView)findViewById(R.id.txtDeviceId);
         TextView txtToken = (TextView)findViewById(R.id.txtToken);
         TextView txtContactKey = (TextView)findViewById(R.id.txtContactKey);
         TextView txtSdkVersion = (TextView)findViewById(R.id.txtSdkVersion);
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
         txtEnvironment.setText(mobileManager.getEnvironment());
         txtAlias.setText(mobileManager.subscription.getAppAlias());
-        txtAdvertisingId.setText(mobileManager.subscription.getUdid());
+        txtDeviceId.setText(mobileManager.subscription.getUdid());
         txtToken.setText(mobileManager.subscription.getToken());
         txtContactKey.setText(mobileManager.subscription.getContactKey());
         txtSdkVersion.setText(mobileManager.getSdkVersion());
@@ -74,12 +74,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button btnAdvertisingId = (Button) findViewById(R.id.btnAdvertisingId);
-        btnAdvertisingId.setOnClickListener(new View.OnClickListener() {
+        Button btnDeviceId = (Button) findViewById(R.id.btnDeviceId);
+        btnDeviceId.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Logger.Debug("Retrieving udid...");
-                TextView txtAdvertisingId = (TextView)findViewById(R.id.txtAdvertisingId);
+                TextView txtAdvertisingId = (TextView)findViewById(R.id.txtDeviceId);
                 txtAdvertisingId.setText("Retrieving...");
                 String udid = mobileManager.subscription.getUdid();
                 if(udid != "") {

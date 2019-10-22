@@ -28,8 +28,24 @@ public final class Utils {
     }
 
     private static String sID = null;
-
     private static final String INSTALLATION = "INSTALLATION";
+    private static String uniqueID = null;
+    private static final String DEN_DEVICE_UNIQUE_ID = "___DEN_DEVICE_UNIQUE_ID___";
+
+
+    public synchronized static String udid(Context context) {
+        if (uniqueID == null) {
+            SharedPreferences sharedPrefs = context.getSharedPreferences(DEN_DEVICE_UNIQUE_ID, Context.MODE_PRIVATE);
+                uniqueID = sharedPrefs.getString(DEN_DEVICE_UNIQUE_ID, null);
+                if (uniqueID == null) {
+                    uniqueID = UUID.randomUUID().toString();
+                    SharedPreferences.Editor editor = sharedPrefs.edit();
+                    editor.putString(DEN_DEVICE_UNIQUE_ID, uniqueID);
+                    editor.commit();
+                }
+        }
+        return uniqueID;
+    }
 
     public synchronized static String id(Context context) {
         if (sID == null) {

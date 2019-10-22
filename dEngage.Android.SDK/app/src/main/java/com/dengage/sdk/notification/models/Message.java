@@ -7,25 +7,54 @@ import androidx.annotation.NonNull;
 
 import com.dengage.sdk.notification.logging.Logger;
 import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class Message {
 
+    @SerializedName("messageId")
     private int messageId = 0;
+
+    @SerializedName("transactionId")
     private String transactionId = "";
+
+    @SerializedName("messageDetails")
     private String messageDetails = "";
+
+    @SerializedName("mediaUrl")
     private String mediaUrl = "";
+
+    @SerializedName("targetUrl")
     private String targetUrl = "";
+
+    @SerializedName("title")
     private String title = "";
+
+    @SerializedName("subTitle")
     private String subTitle = "";
+
+    @SerializedName("message")
     private String message = "";
+
+    @SerializedName("badge")
     private Boolean badge = false;
+
+    @SerializedName("badgeCount")
     private int badgeCount = 0;
+
+    @SerializedName("sound")
     private String sound = "";
+
+    @SerializedName("customParams")
     private CustomParam[] customParams = null;
+
+    @SerializedName("medias")
     private Media[] medias = null;
-    private Gson gson = new Gson();
+
+
+    private transient Gson gson = new Gson();
 
     public Message(@NonNull Map<String,String> bundle) {
         setProperties(bundle);

@@ -1,6 +1,7 @@
 package com.dengage.sdk;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
@@ -13,12 +14,21 @@ import android.widget.TextView;
 
 import com.dengage.sdk.notification.dEngageMobileManager;
 import com.dengage.sdk.notification.logging.Logger;
+import com.dengage.sdk.notification.models.CustomParam;
+import com.dengage.sdk.notification.models.Event;
 import com.dengage.sdk.notification.models.Message;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static java.security.AccessController.getContext;
 
@@ -35,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
         Context context = getApplicationContext();
         mobileManager = dEngageMobileManager.createInstance(appAlias, context);
         mobileManager.register();
+
+        Log.d("DenPush", mobileManager.getSubscriptionJson());
     }
 
     @Override

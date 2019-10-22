@@ -87,8 +87,18 @@ public final class RequestHelper {
                 conn.disconnect();
             }
         }
-        Logger.Debug("Request for : " + model.getClass().getName() + " Server response : " + responseCode);
-        Logger.Verbose("Response Text : " + responseMessage);
+
+        try {
+
+            if(responseCode <= 199 || responseCode >= 300)
+                throw new Exception("The remote server returned an error with the status code: "+ responseCode);
+        } catch(Exception e) {
+            Logger.Error(e.getMessage());
+        }
+
+        Logger.Debug("Request: " + model.getClass().getName());
+        Logger.Debug("Server Response Code : "+ responseCode);
+        Logger.Debug("Response Response Text : " + responseMessage);
 
         return responseCode > 199 && responseCode < 300;
     }

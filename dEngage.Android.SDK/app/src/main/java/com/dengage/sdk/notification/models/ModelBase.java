@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 public abstract class ModelBase {
     @SerializedName("token")
-    private String token;
+    private String token = "";
 
     public String getToken() {
         return this.token;
@@ -15,7 +15,7 @@ public abstract class ModelBase {
     }
 
     @SerializedName("appAlias")
-    private String appAlias;
+    private String appAlias = "";
 
     public String getAppAlias() {
         return this.appAlias;

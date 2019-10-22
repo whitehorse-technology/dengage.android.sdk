@@ -139,3 +139,34 @@ mobileManager.subscribe(String token);
 mobileManager.setContactKey("dengage");
 mobileManager.sync();
 ```
+
+4.3 to send custom event, please use the following sample code. 
+
+```java
+Map<String, Object> details = new HashMap<>();
+details.put("your_column_name", "column_value");
+
+Event event = new Event(
+        "your_account_id",
+        "event_name",
+        "table_name",
+        details);
+
+mobileManager.sendEvent(event);
+```
+
+
+4.4 to see logs, please set debugable variable in the build.gradle file for your release.
+
+```gradle
+ buildTypes {
+ 
+        debug {
+            debuggable true 
+        }
+
+        release {
+            debuggable true 
+        }
+ }
+```

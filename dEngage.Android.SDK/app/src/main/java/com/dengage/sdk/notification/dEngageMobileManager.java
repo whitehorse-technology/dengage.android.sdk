@@ -11,6 +11,7 @@ import com.dengage.sdk.BuildConfig;
 import com.dengage.sdk.notification.helpers.RequestHelper;
 import com.dengage.sdk.notification.helpers.Utils;
 import com.dengage.sdk.notification.logging.Logger;
+import com.dengage.sdk.notification.models.Event;
 import com.dengage.sdk.notification.models.Location;
 import com.dengage.sdk.notification.models.Message;
 import com.dengage.sdk.notification.models.Open;
@@ -18,7 +19,9 @@ import com.dengage.sdk.notification.models.Subscription;
 import com.google.android.gms.ads.identifier.AdvertisingIdClient;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -31,16 +34,24 @@ public class dEngageMobileManager {
     public Subscription subscription;
     private Context context;
 
-    private final String apiHostDev                     = "https://pushdev.dengage.com";
-    private final String apiHostTest                    = "https://pushtest.dengage.com";
-    private final String apiHostProd                    = "https://push.dengage.com";
-    private final String subsApiSuffix                  = "/api/mobile/subscription";
-    private final String openApiSuffix                  = "/api/mobile/open";
-    private final String transactionalOpenApiSuffix     = "/api/transactional/mobile/open";
+    private final String apiHostDev                             = "https://pushdev.dengage.com";
+    private final String apiHostTest                            = "https://pushtest.dengage.com";
+    private final String apiHostProd                            = "https://push.dengage.com";
+    private final String subsApiSuffix                          = "/api/mobile/subscription";
+    private final String openApiSuffix                          = "/api/mobile/open";
+    private final String transactionalOpenApiSuffix             = "/api/transactional/mobile/open";
+
+    private final String eventApiHostDev                        = "https://eventdev.dengage.com";
+    private final String eventApiHostTest                       = "https://eventtest.dengage.com";
+    private final String eventApiHostProd                       = "https://event.dengage.com";
+    private final String eventApiSuffix                         = "/api/Event";
 
     private String openApiEndpoint;
     private String subsApiEndpoint;
     private String transactionalOpenApiEndpoint;
+    private String eventApiEndpoint;
+
+    private Boolean isRegisterCalled = false;
 
     private dEngageMobileManager(String appAlias, final Context context) {
 
@@ -55,26 +66,32 @@ public class dEngageMobileManager {
         try {
 
             if(BuildConfig.ENVIRONMENT == "dev") {
-                openApiEndpoint = apiHostDev + openApiSuffix;
-                subsApiEndpoint = apiHostDev + subsApiSuffix;
-                transactionalOpenApiEndpoint = apiHostDev + transactionalOpenApiSuffix;
-                Logger.Verbose("Open API Endpoint: "+ openApiEndpoint);
-                Logger.Verbose("Subscription API Endpoint: "+ subsApiEndpoint);
+                openApiEndpoint                     = apiHostDev + openApiSuffix;
+                subsApiEndpoint                     = apiHostDev + subsApiSuffix;
+                transactionalOpenApiEndpoint        = apiHostDev + transactionalOpenApiSuffix;
+                eventApiEndpoint                    = eventApiHostDev + eventApiSuffix;
+                Logger.Verbose("Open API Endpoint:          "+ openApiEndpoint);
+                Logger.Verbose("Subscription API Endpoint:  "+ subsApiEndpoint);
                 Logger.Verbose("Transactional API Endpoint: "+ transactionalOpenApiEndpoint);
+                Logger.Verbose("Event API Endpoint:         "+ eventApiEndpoint);
             } else if(BuildConfig.ENVIRONMENT == "test") {
-                openApiEndpoint = apiHostTest + openApiSuffix;
-                subsApiEndpoint = apiHostTest + subsApiSuffix;
-                transactionalOpenApiEndpoint = apiHostTest + transactionalOpenApiSuffix;
-                Logger.Verbose("Open API Endpoint: "+ openApiEndpoint);
-                Logger.Verbose("Subscription API Endpoint: "+ subsApiEndpoint);
+                openApiEndpoint                     = apiHostTest + openApiSuffix;
+                subsApiEndpoint                     = apiHostTest + subsApiSuffix;
+                transactionalOpenApiEndpoint        = apiHostTest + transactionalOpenApiSuffix;
+                eventApiEndpoint                    = eventApiHostTest + eventApiSuffix;
+                Logger.Verbose("Open API Endpoint:          "+ openApiEndpoint);
+                Logger.Verbose("Subscription API Endpoint:  "+ subsApiEndpoint);
                 Logger.Verbose("Transactional API Endpoint: "+ transactionalOpenApiEndpoint);
+                Logger.Verbose("Event API Endpoint:         "+ eventApiEndpoint);
             } else if(BuildConfig.ENVIRONMENT == "prod") {
-                openApiEndpoint = apiHostProd + openApiSuffix;
-                subsApiEndpoint = apiHostProd + subsApiSuffix;
-                transactionalOpenApiEndpoint = apiHostProd + transactionalOpenApiSuffix;
-                Logger.Verbose("Open API Endpoint: "+ openApiEndpoint);
-                Logger.Verbose("Subscription API Endpoint: "+ subsApiEndpoint);
+                openApiEndpoint                     = apiHostProd + openApiSuffix;
+                subsApiEndpoint                     = apiHostProd + subsApiSuffix;
+                transactionalOpenApiEndpoint        = apiHostProd + transactionalOpenApiSuffix;
+                eventApiEndpoint                    = eventApiHostProd + eventApiSuffix;
+                Logger.Verbose("Open API Endpoint:          "+ openApiEndpoint);
+                Logger.Verbose("Subscription API Endpoint:  "+ subsApiEndpoint);
                 Logger.Verbose("Transactional API Endpoint: "+ transactionalOpenApiEndpoint);
+                Logger.Verbose("Event API Endpoint:         "+ eventApiEndpoint);
             } else {
                 throw new IllegalArgumentException("Argument null: BuildConfig.ENVIRONMENT, expected: dev,test or prod.");
             }
@@ -91,24 +108,44 @@ public class dEngageMobileManager {
         Logger.Verbose("Created dEnaggeMobileManager.");
     }
 
-
+    /**
+     * Gets current SDK environment.
+     * @return String
+     */
     public String getEnvironment() {
         Logger.Verbose("getEnvironment method is called.");
         Logger.Debug("getEnvironment: "+ Constants.ENVIRONMENT);
         return Constants.ENVIRONMENT;
     }
 
+    /**
+     * Gets dEngage Android SDK version you use.
+     * @return String
+     */
     public String getSdkVersion() {
         Logger.Verbose("getSdkVersion method is called.");
         Logger.Debug("getSdkVersion: "+ Constants.SDK_VERSION);
         return Constants.SDK_VERSION;
     }
 
+    /**
+     * Gets your application version.
+     * @return String
+     */
     public String getAppVersion() {
         Logger.Verbose("getAppVersion method is called.");
         String appVersion = Utils.appVersion(context);
         Logger.Debug("getAppVersion: "+ appVersion);
         return appVersion;
+    }
+
+
+    /**
+     *
+     * @return
+     */
+    public String getSubscriptionJson() {
+        return this.subscription.toJson();
     }
 
     /**
@@ -119,11 +156,10 @@ public class dEngageMobileManager {
      * @param appAlias Application alias that you defined on dEngage platform.
      */
     public static dEngageMobileManager createInstance(String appAlias, Context context) {
+        Logger logger = new Logger(context);
         if (instance == null) {
             instance = new dEngageMobileManager(appAlias, context);
-            Logger logger = new Logger(context);
         }
-        Logger.Debug("createInstance appAlias: " + instance.subscription.getAppAlias());
         return instance;
     }
 
@@ -145,6 +181,7 @@ public class dEngageMobileManager {
      * </p>
      */
     public void register() {
+        isRegisterCalled = true;
         Logger.Verbose("register method is called");
         try {
             Logger.Debug("MobileManager.register appAlias: " + instance.subscription.getAppAlias());
@@ -242,6 +279,24 @@ public class dEngageMobileManager {
         }
     }
 
+    /**
+     * Retention service
+     * <p>
+     * Use to hit an event report.
+     * </p>
+     * @param event The event object.
+     */
+    public void sendEvent(final Event event) {
+        Logger.Verbose("sendEvent method is called");
+        try {
+            this.subscription = getSubscription(this.context);
+            //event.setToken(this.subscription.getToken());
+            // event.setAppAlias(this.subscription.getAppAlias());
+            RequestHelper.getInstance().sendRequestAsync(eventApiEndpoint, event, Event.class);
+        } catch (Exception e) {
+            Logger.Error("sendEvent: "+ e.getMessage());
+        }
+    }
 
     /**
      * Set Application Version
@@ -434,10 +489,22 @@ public class dEngageMobileManager {
         }
     }
 
-    private void setUdid(String udid) {
-        Logger.Verbose("setUdid method is called");
+    private void setUdId(String udid) {
+        Logger.Verbose("setUdId method is called");
         try {
+            Logger.Debug("DeviceId: "+ udid);
             this.subscription.setUdid(udid);
+            this.setSubscription(this.context);
+        } catch (Exception e) {
+            Logger.Error("setUdId: "+ e.getMessage());
+        }
+    }
+
+    private void setAdId(String adid) {
+        Logger.Verbose("setAdId method is called");
+        try {
+            Logger.Debug("AdvertisingId: "+ adid);
+            this.subscription.setAdid(adid);
             this.setSubscription(this.context);
         } catch (Exception e) {
             Logger.Error("setUdid: "+ e.getMessage());
@@ -447,21 +514,40 @@ public class dEngageMobileManager {
     private Subscription getSubscription(final Context context) {
         Logger.Verbose("getSubscription method is called");
         if (Utils.hasPrefString(context, Constants.SUBSCRIPTION_KEY)) {
+            Logger.Verbose(Constants.SUBSCRIPTION_KEY +" key is not empty. Subscription model is getting from json file.");
             subscription = new Gson().fromJson(Utils.getPrefString(context, Constants.SUBSCRIPTION_KEY), Subscription.class);
             subscription.setFirstTime(0);
         } else {
             subscription.setFirstTime(1);
         }
 
-        if( TextUtils.isEmpty( subscription.getUdid() )) {
-            AdvertisingIdWorker adIdWorker = new AdvertisingIdWorker(context);
-            adIdWorker.execute();
-        }
+        setUdId(Utils.udid(this.context));
 
-        if(TextUtils.isEmpty(subscription.getToken())) {
-            FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+        // if( TextUtils.isEmpty( subscription.getUdid() )) {
+        //     AdvertisingIdWorker adIdWorker = new AdvertisingIdWorker(context);
+        //     adIdWorker.execute();
+        //}
+
+        if( TextUtils.isEmpty(subscription.getToken())) {
+            Logger.Verbose("Token is empty. The token is getting from Firebase.");
+            FirebaseInstanceId.getInstance().getInstanceId()
+            .addOnCanceledListener(new OnCanceledListener() {
+                @Override
+                public void onCanceled() {
+                    Logger.Verbose("Token onCanceled");
+                }
+            })
+            .addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Logger.Verbose("Token onFailure");
+                    Logger.Error("Token retrieved: " + e.getMessage());
+                }
+            })
+            .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
                 @Override
                 public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                    Logger.Verbose("Token onComplete");
                     if (!task.isSuccessful()) {
                         Logger.Error("FirebaseInstanceId Failed: " + task.getException().getMessage());
                         return;
@@ -525,14 +611,12 @@ public class dEngageMobileManager {
             } catch (Exception e) {
                 Logger.Error("Exception: "+e.getMessage());
             }
-
-            Logger.Info("AdvertisingId: "+ advertisingId);
             return advertisingId;
         }
 
         @Override
-        protected void onPostExecute(String udid) {
-            setUdid(udid);
+        protected void onPostExecute(String adid) {
+            setAdId(adid);
         }
     }
 }

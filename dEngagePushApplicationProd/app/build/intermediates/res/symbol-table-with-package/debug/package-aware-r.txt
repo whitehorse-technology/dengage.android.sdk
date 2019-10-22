@@ -1099,8 +1099,8 @@ id barrier
 id beginning
 id blocking
 id bottom
-id btnAdvertisingId
 id btnContactKey
+id btnDeviceId
 id btnToken
 id buttonPanel
 id center
@@ -1268,10 +1268,10 @@ id transition_layout_save
 id transition_position
 id transition_scene_layoutid_cache
 id transition_transform
-id txtAdvertisingId
 id txtAlias
 id txtAppVersion
 id txtContactKey
+id txtDeviceId
 id txtEnvironment
 id txtSdkVersion
 id txtToken
