@@ -147,8 +147,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/build.gradle">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="442">
-              <caret line="26" column="61" selection-start-line="26" selection-start-column="61" selection-end-line="26" selection-end-column="61" />
+            <state relative-caret-position="340">
+              <caret line="20" column="9" selection-start-line="20" selection-start-column="9" selection-end-line="20" selection-end-column="9" />
             </state>
           </provider>
         </entry>
@@ -268,50 +268,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="dEngage.Android.SDK" type="58d84e3e:PackageViewProjectNode" />
-              <item name="app" type="616d4139:PackageViewModuleNode" />
-            </path>
-            <path>
-              <item name="dEngage.Android.SDK" type="58d84e3e:PackageViewProjectNode" />
-              <item name="app" type="616d4139:PackageViewModuleNode" />
-              <item name="com.dengage.sdk" type="1f31426a:PackageElementNode" />
-            </path>
-            <path>
-              <item name="dEngage.Android.SDK" type="58d84e3e:PackageViewProjectNode" />
-              <item name="app" type="616d4139:PackageViewModuleNode" />
-              <item name="com.dengage.sdk" type="1f31426a:PackageElementNode" />
-              <item name="notification" type="1f31426a:PackageElementNode" />
-            </path>
-            <path>
-              <item name="dEngage.Android.SDK" type="58d84e3e:PackageViewProjectNode" />
-              <item name="app" type="616d4139:PackageViewModuleNode" />
-              <item name="com.dengage.sdk" type="1f31426a:PackageElementNode" />
-              <item name="test" type="1f31426a:PackageElementNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="dEngage.Android.SDK" type="b2602c69:ProjectViewProjectNode" />
-              <item name="dEngage.Android.SDK" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-            </path>
-            <path>
-              <item name="dEngage.Android.SDK" type="b2602c69:ProjectViewProjectNode" />
-              <item name="dEngage.Android.SDK" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="app" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
       <pane id="Scope">
         <subPane subId="Scope 'Project Non-Source Files'; set:Project Non-Source Files; class com.jetbrains.cidr.lang.search.scopes.ProjectSourcesScopeProvider$NonSourceFilesScope">
           <expand>
@@ -351,6 +307,22 @@
           <select />
         </subPane>
       </pane>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="dEngage.Android.SDK" type="b2602c69:ProjectViewProjectNode" />
+              <item name="dEngage.Android.SDK" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+            </path>
+            <path>
+              <item name="dEngage.Android.SDK" type="b2602c69:ProjectViewProjectNode" />
+              <item name="dEngage.Android.SDK" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="app" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
       <pane id="AndroidView">
         <subPane>
           <expand>
@@ -361,28 +333,50 @@
             <path>
               <item name="dEngage.Android.SDK" type="1abcf292:AndroidViewProjectNode" />
               <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+              <item name="manifests" type="f94875db:AndroidManifestsGroupNode" />
             </path>
             <path>
               <item name="dEngage.Android.SDK" type="1abcf292:AndroidViewProjectNode" />
               <item name="app" type="feadf853:AndroidModuleNode" />
               <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="sdk" type="cbb59c9e:AndroidPsiDirectoryNode" />
             </path>
             <path>
               <item name="dEngage.Android.SDK" type="1abcf292:AndroidViewProjectNode" />
               <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="java (generated)" type="edd41e36:AndroidSourceTypeNode" />
-            </path>
-            <path>
-              <item name="dEngage.Android.SDK" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="java (generated)" type="edd41e36:AndroidSourceTypeNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
               <item name="sdk" type="cbb59c9e:AndroidPsiDirectoryNode" />
             </path>
             <path>
               <item name="dEngage.Android.SDK" type="1abcf292:AndroidViewProjectNode" />
               <item name="Gradle Scripts" type="ae0cef3a:AndroidBuildScriptsGroupNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="PackagesPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="dEngage.Android.SDK" type="58d84e3e:PackageViewProjectNode" />
+              <item name="app" type="616d4139:PackageViewModuleNode" />
+            </path>
+            <path>
+              <item name="dEngage.Android.SDK" type="58d84e3e:PackageViewProjectNode" />
+              <item name="app" type="616d4139:PackageViewModuleNode" />
+              <item name="com.dengage.sdk" type="1f31426a:PackageElementNode" />
+            </path>
+            <path>
+              <item name="dEngage.Android.SDK" type="58d84e3e:PackageViewProjectNode" />
+              <item name="app" type="616d4139:PackageViewModuleNode" />
+              <item name="com.dengage.sdk" type="1f31426a:PackageElementNode" />
+              <item name="notification" type="1f31426a:PackageElementNode" />
+            </path>
+            <path>
+              <item name="dEngage.Android.SDK" type="58d84e3e:PackageViewProjectNode" />
+              <item name="app" type="616d4139:PackageViewModuleNode" />
+              <item name="com.dengage.sdk" type="1f31426a:PackageElementNode" />
+              <item name="test" type="1f31426a:PackageElementNode" />
             </path>
           </expand>
           <select />
@@ -652,7 +646,7 @@
     <frame x="11" y="1" width="1934" height="1047" extended-state="0" />
     <layout>
       <window_info id="Captures" order="0" sideWeight="0.50384617" side_tool="true" weight="0.25987193" />
-      <window_info content_ui="combo" id="Project" order="1" sideWeight="0.49615383" visible="true" weight="0.25987193" />
+      <window_info active="true" content_ui="combo" id="Project" order="1" sideWeight="0.49615383" visible="true" weight="0.25987193" />
       <window_info id="Structure" order="2" side_tool="true" />
       <window_info id="Favorites" order="3" side_tool="true" />
       <window_info id="Build Variants" order="4" sideWeight="0.5024233" side_tool="true" weight="0.32995737" />
@@ -665,11 +659,11 @@
       <window_info anchor="bottom" id="TODO" order="2" sideWeight="0.49466383" weight="0.32932165" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.45891142" weight="0.32932165" />
       <window_info anchor="bottom" id="Terminal" order="4" sideWeight="0.4978678" weight="0.32936078" />
-      <window_info anchor="bottom" id="Event Log" order="5" sideWeight="0.5421558" side_tool="true" visible="true" weight="0.33260393" />
+      <window_info anchor="bottom" id="Event Log" order="5" sideWeight="0.47278547" side_tool="true" visible="true" weight="0.32932165" />
       <window_info anchor="bottom" id="Version Control" order="6" weight="0.32936078" />
-      <window_info anchor="bottom" id="Build" order="7" sideWeight="0.5277481" weight="0.32932165" />
+      <window_info anchor="bottom" id="Build" order="7" sideWeight="0.5272145" visible="true" weight="0.32932165" />
       <window_info anchor="bottom" id="Find" order="8" sideWeight="0.49946696" weight="0.32936078" />
-      <window_info anchor="bottom" id="Android Profiler" order="9" sideWeight="0.49839914" weight="0.32932165" />
+      <window_info anchor="bottom" id="Android Profiler" order="9" show_stripe_button="false" sideWeight="0.49839914" weight="0.32932165" />
       <window_info anchor="right" id="Device File Explorer" order="0" side_tool="true" />
       <window_info anchor="right" id="Capture Analysis" order="1" />
       <window_info anchor="right" id="Gradle" order="2" visible="true" weight="0.20597652" />
@@ -908,12 +902,12 @@
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/dengage/sdk/notification/services/AdvertisingIdWorker.java" />
     <entry file="file://$PROJECT_DIR$/app/build/generated/source/buildConfig/androidTest/debug/com/dengage/sdk/test/BuildConfig.java" />
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml">
-      <provider editor-type-id="android-designer2" />
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="170">
           <caret line="10" column="49" selection-start-line="10" selection-start-column="49" selection-end-line="10" selection-end-column="49" />
         </state>
       </provider>
+      <provider editor-type-id="android-designer2" />
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml">
       <provider selected="true" editor-type-id="text-editor">
@@ -1180,8 +1174,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="442">
-          <caret line="26" column="61" selection-start-line="26" selection-start-column="61" selection-end-line="26" selection-end-column="61" />
+        <state relative-caret-position="340">
+          <caret line="20" column="9" selection-start-line="20" selection-start-column="9" selection-end-line="20" selection-end-column="9" />
         </state>
       </provider>
     </entry>
