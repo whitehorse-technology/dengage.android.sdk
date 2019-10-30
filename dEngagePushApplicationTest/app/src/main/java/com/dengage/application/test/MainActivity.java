@@ -30,7 +30,7 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
-    final String integrationKey = "FhMqzJTVYutqWOYN85x7kRrwmisyqU4ItaamWEhF6sV4fUOFYK4UOAy7xqbBun6CsshOgcqXE0pK_p_l_uFQH9VcQIk9_s_l_fIla8YofsLuOnAFoEyqGz1k0rdQzfCB7DJ8zIsm";
+    final String integrationKey = "HSs0yi1l7PdIbZtTc_p_l_qtFZf1Ns3RsNKGDNbwWdaUCENbWAniC7buupCrNSYWR6pTkv_s_l_SKeVBZimH_p_l_ekztI2gLihssu_p_l_NKZYBISBzkaBRW6P_p_l_9MsuUGoZNKzVYletCULk";
     private static dEngageMobileManager mobileManager;
 
     @Override
