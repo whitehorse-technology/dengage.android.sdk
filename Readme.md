@@ -81,7 +81,7 @@ Supports Android API level 4.1.x or higher.
 
 ```java
 
-private final String appAlias = "{YourAppAlias}"; // This is your App Alias which you set on dEngage Push Application settings page.
+private final String integrationKey = "{YourIntegrationKey}"; // This is your Integration Key which you got on dEngage Push Application settings page.
 private static dEngageMobileManager mobileManager; // Instance for the dEngageMobileManager class. So you can access the variable globally.
 
 ```
@@ -95,7 +95,7 @@ private static dEngageMobileManager mobileManager; // Instance for the dEngageMo
         setContentView(R.layout.activity_main);
 
         Context context = getApplicationContext();
-        mobileManager = dEnageMobileManager.createInstance(appAlias, context);
+        mobileManager = dEnageMobileManager.createInstance(integrationKey, context);
         mobileManager.register(); // register to GCM.
     }
 ```
