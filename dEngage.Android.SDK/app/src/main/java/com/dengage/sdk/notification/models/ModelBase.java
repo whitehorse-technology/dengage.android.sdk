@@ -14,15 +14,15 @@ public abstract class ModelBase {
         this.token = token;
     }
 
-    @SerializedName("appAlias")
-    private String appAlias = "";
+    @SerializedName("integrationKey")
+    private String integrationKey = "";
 
-    public String getAppAlias() {
-        return this.appAlias;
+    public String getIntegrationKey() {
+        return this.integrationKey;
     }
 
-    public void setAppAlias(String appAlias) {
-        this.appAlias = appAlias;
+    public void setIntegrationKey(String integrationKey) {
+        this.integrationKey = integrationKey;
     }
 
     @SerializedName("transactionId")

@@ -53,10 +53,10 @@ public class dEngageMobileManager {
 
     private Boolean isRegisterCalled = false;
 
-    private dEngageMobileManager(String appAlias, final Context context) {
+    private dEngageMobileManager(String integrationKey, final Context context) {
 
-        if(appAlias == null) {
-            throw new IllegalArgumentException("Argument null: appAlias");
+        if(integrationKey == null) {
+            throw new IllegalArgumentException("Argument null: integrationKey");
         }
 
         if(context == null) {
@@ -98,7 +98,7 @@ public class dEngageMobileManager {
 
             this.context = context;
             this.subscription  = new Subscription();
-            this.subscription.setAppAlias(appAlias);
+            this.subscription.setIntegrationKey(integrationKey);
             this.subscription = getSubscription(context);
 
         } catch (Exception e) {
@@ -153,12 +153,12 @@ public class dEngageMobileManager {
      * <p>
      * Use to initiate dEngage MobileManager with the application alias.
      * </p>
-     * @param appAlias Application alias that you defined on dEngage platform.
+     * @param integrationKey Application key which you got from dEngage platform.
      */
-    public static dEngageMobileManager createInstance(String appAlias, Context context) {
+    public static dEngageMobileManager createInstance(String integrationKey, Context context) {
         Logger logger = new Logger(context);
         if (instance == null) {
-            instance = new dEngageMobileManager(appAlias, context);
+            instance = new dEngageMobileManager(integrationKey, context);
         }
         return instance;
     }
@@ -184,7 +184,7 @@ public class dEngageMobileManager {
         isRegisterCalled = true;
         Logger.Verbose("register method is called");
         try {
-            Logger.Debug("MobileManager.register appAlias: " + instance.subscription.getAppAlias());
+            Logger.Debug("MobileManager.register integrationKey: " + instance.subscription.getIntegrationKey());
             FirebaseApp.initializeApp(this.context);
         } catch (Exception e) {
             Logger.Error("register: "+ e.getMessage());
@@ -207,7 +207,7 @@ public class dEngageMobileManager {
             Logger.Debug("MobileManager.open token: " + this.subscription.getToken());
 
             Open openSignal = new Open();
-            openSignal.setAppAlias(this.subscription.getAppAlias());
+            openSignal.setIntegrationKey(this.subscription.getIntegrationKey());
             openSignal.setMessageId(message.getMessageId());
             openSignal.setMessageDetails(message.getMessageDetails());
             openSignal.setTransactionId(message.getTransactionId());
@@ -265,7 +265,7 @@ public class dEngageMobileManager {
         try {
             this.subscription = getSubscription(this.context);
 
-            Logger.Debug("MobileManager.sync alias: " + this.subscription.getAppAlias());
+            Logger.Debug("MobileManager.sync alias: " + this.subscription.getIntegrationKey());
             Logger.Debug("MobileManager.sync token: " + this.subscription.getToken());
             Logger.Debug("MobileManager.sync udid: " + this.subscription.getUdid());
 
@@ -290,8 +290,6 @@ public class dEngageMobileManager {
         Logger.Verbose("sendEvent method is called");
         try {
             this.subscription = getSubscription(this.context);
-            //event.setToken(this.subscription.getToken());
-            // event.setAppAlias(this.subscription.getAppAlias());
             RequestHelper.getInstance().sendRequestAsync(eventApiEndpoint, event, Event.class);
         } catch (Exception e) {
             Logger.Error("sendEvent: "+ e.getMessage());
@@ -444,6 +442,60 @@ public class dEngageMobileManager {
     }
 
     /**
+     * Set User Device ID
+     * <p>
+     * Use to set device id to a user.
+     * </p>
+     * @param udid Device ID
+     */
+    public void setUdId(String udid) {
+        Logger.Verbose("setUdId method is called");
+        try {
+            Logger.Debug("DeviceId: "+ udid);
+            this.subscription.setUdid(udid);
+            this.setSubscription(this.context);
+        } catch (Exception e) {
+            Logger.Error("setUdId: "+ e.getMessage());
+        }
+    }
+
+    /**
+     * Set User Advertising ID
+     * <p>
+     * Use to set advertising id to a user.
+     * </p>
+     * @param adid Advertising ID
+     */
+    public void setAdId(String adid) {
+        Logger.Verbose("setAdid method is called");
+        try {
+            Logger.Debug("AdvertisingId: "+ adid);
+            this.subscription.setAdid(adid);
+            this.setSubscription(this.context);
+        } catch (Exception e) {
+            Logger.Error("setAdid: "+ e.getMessage());
+        }
+    }
+
+    /**
+     * Set App Integration Key
+     * <p>
+     * Use to set integration key at runtime.
+     * </p>
+     * @param key dEngage Integration Key
+     */
+    public void setIntegrationKey(String key) {
+        Logger.Verbose("setIntegrationKey method is called");
+        try {
+            Logger.Debug("setIntegrationKey: "+ key);
+            this.subscription.setIntegrationKey(key);
+            this.setSubscription(this.context);
+        } catch (Exception e) {
+            Logger.Error("setIntegrationKey: "+ e.getMessage());
+        }
+    }
+
+    /**
      * Set User Property
      * <p>
      * Use to set a custom property to a user.
@@ -461,6 +513,7 @@ public class dEngageMobileManager {
             Logger.Error("setContactProperty: "+ e.getMessage());
         }
     }
+
 
     /**
      * Remove Contact Properties
@@ -489,27 +542,6 @@ public class dEngageMobileManager {
         }
     }
 
-    private void setUdId(String udid) {
-        Logger.Verbose("setUdId method is called");
-        try {
-            Logger.Debug("DeviceId: "+ udid);
-            this.subscription.setUdid(udid);
-            this.setSubscription(this.context);
-        } catch (Exception e) {
-            Logger.Error("setUdId: "+ e.getMessage());
-        }
-    }
-
-    private void setAdId(String adid) {
-        Logger.Verbose("setAdId method is called");
-        try {
-            Logger.Debug("AdvertisingId: "+ adid);
-            this.subscription.setAdid(adid);
-            this.setSubscription(this.context);
-        } catch (Exception e) {
-            Logger.Error("setUdid: "+ e.getMessage());
-        }
-    }
 
     private Subscription getSubscription(final Context context) {
         Logger.Verbose("getSubscription method is called");
@@ -523,10 +555,10 @@ public class dEngageMobileManager {
 
         setUdId(Utils.udid(this.context));
 
-        // if( TextUtils.isEmpty( subscription.getUdid() )) {
-        //     AdvertisingIdWorker adIdWorker = new AdvertisingIdWorker(context);
-        //     adIdWorker.execute();
-        //}
+         if( TextUtils.isEmpty( subscription.getAdid() )) {
+             AdvertisingIdWorker adIdWorker = new AdvertisingIdWorker(context);
+             adIdWorker.execute();
+        }
 
         if( TextUtils.isEmpty(subscription.getToken())) {
             Logger.Verbose("Token is empty. The token is getting from Firebase.");

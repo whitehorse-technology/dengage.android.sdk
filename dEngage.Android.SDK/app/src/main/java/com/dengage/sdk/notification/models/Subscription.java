@@ -35,7 +35,7 @@ public class Subscription extends ModelBase {
     @SerializedName("udid")
     private String udid = "";
 
-    @SerializedName("adid")
+    @SerializedName("advertisingId")
     private String adid = "";
 
     @SerializedName("twitterId")
@@ -78,7 +78,7 @@ public class Subscription extends ModelBase {
     }
 
     public boolean isValid() {
-        return !TextUtils.isEmpty(getToken()) & !TextUtils.isEmpty(getAppAlias()) & !TextUtils.isEmpty(getUdid());
+        return !TextUtils.isEmpty(getToken()) & !TextUtils.isEmpty(getIntegrationKey()) & !TextUtils.isEmpty(getUdid());
     }
 
     public String getUdid() {

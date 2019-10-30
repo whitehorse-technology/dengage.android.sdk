@@ -1099,6 +1099,7 @@ id barrier
 id beginning
 id blocking
 id bottom
+id btnAdvertisingId
 id btnContactKey
 id btnDeviceId
 id btnToken
@@ -1249,7 +1250,6 @@ id textView3
 id textView6
 id textView7
 id textView8
-id textViewAppVersion
 id textViewSdkVersion
 id text_input_password_toggle
 id textinput_counter
@@ -1268,13 +1268,14 @@ id transition_layout_save
 id transition_position
 id transition_scene_layoutid_cache
 id transition_transform
-id txtAlias
-id txtAppVersion
+id txtAdvertisingId
 id txtContactKey
 id txtDeviceId
 id txtEnvironment
+id txtIntegrationKey
 id txtSdkVersion
 id txtToken
+id txtViewAdvertisingId
 id uniform
 id unlabeled
 id up

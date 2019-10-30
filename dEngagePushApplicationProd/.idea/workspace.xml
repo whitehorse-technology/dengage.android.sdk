@@ -11,7 +11,79 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="No Filters" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="57553f0d-e896-45b7-b6b6-ab8cb7019e09" name="Default Changelist" comment="" />
+    <list default="true" id="57553f0d-e896-45b7-b6b6-ab8cb7019e09" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/.idea/caches/build_file_checksums.ser" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/.idea/caches/gradle_models.ser" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/.idea/caches/gradle_models.ser" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/generated/source/buildConfig/androidTest/debug/com/dengage/sdk/test/BuildConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/generated/source/buildConfig/androidTest/debug/com/dengage/sdk/test/BuildConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/generated/source/buildConfig/debug/com/dengage/sdk/BuildConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/generated/source/buildConfig/debug/com/dengage/sdk/BuildConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/generated/source/buildConfig/release/com/dengage/sdk/BuildConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/generated/source/buildConfig/release/com/dengage/sdk/BuildConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/output.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/output.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/aapt_friendly_merged_manifests/release/aapt/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/aapt_friendly_merged_manifests/release/aapt/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/aapt_friendly_merged_manifests/release/aapt/output.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/aapt_friendly_merged_manifests/release/aapt/output.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/dengage/sdk/BuildConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/dengage/sdk/BuildConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/dengage/sdk/MainActivity.class" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/dengage/sdk/MainActivity.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/dengage/sdk/notification/Constants.class" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/dengage/sdk/notification/Constants.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/dengage/sdk/notification/dEngageMobileManager$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/dengage/sdk/notification/dEngageMobileManager$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/dengage/sdk/notification/dEngageMobileManager$AdvertisingIdWorker.class" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/dengage/sdk/notification/dEngageMobileManager$AdvertisingIdWorker.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/dengage/sdk/notification/dEngageMobileManager.class" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/dengage/sdk/notification/dEngageMobileManager.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/dengage/sdk/notification/models/Subscription.class" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/dengage/sdk/notification/models/Subscription.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/release/compileReleaseJavaWithJavac/classes/com/dengage/sdk/BuildConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/release/compileReleaseJavaWithJavac/classes/com/dengage/sdk/BuildConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/release/compileReleaseJavaWithJavac/classes/com/dengage/sdk/MainActivity.class" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/release/compileReleaseJavaWithJavac/classes/com/dengage/sdk/MainActivity.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/release/compileReleaseJavaWithJavac/classes/com/dengage/sdk/notification/Constants.class" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/release/compileReleaseJavaWithJavac/classes/com/dengage/sdk/notification/Constants.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/release/compileReleaseJavaWithJavac/classes/com/dengage/sdk/notification/dEngageMobileManager$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/release/compileReleaseJavaWithJavac/classes/com/dengage/sdk/notification/dEngageMobileManager$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/release/compileReleaseJavaWithJavac/classes/com/dengage/sdk/notification/dEngageMobileManager$AdvertisingIdWorker.class" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/release/compileReleaseJavaWithJavac/classes/com/dengage/sdk/notification/dEngageMobileManager$AdvertisingIdWorker.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/release/compileReleaseJavaWithJavac/classes/com/dengage/sdk/notification/dEngageMobileManager.class" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/release/compileReleaseJavaWithJavac/classes/com/dengage/sdk/notification/dEngageMobileManager.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/release/compileReleaseJavaWithJavac/classes/com/dengage/sdk/notification/models/ModelBase.class" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/release/compileReleaseJavaWithJavac/classes/com/dengage/sdk/notification/models/ModelBase.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/release/compileReleaseJavaWithJavac/classes/com/dengage/sdk/notification/models/Subscription.class" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/release/compileReleaseJavaWithJavac/classes/com/dengage/sdk/notification/models/Subscription.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/library_manifest/debug/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/library_manifest/debug/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/library_manifest/release/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/library_manifest/release/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/merged_manifests/debug/output.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/merged_manifests/debug/output.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/merged_manifests/debugAndroidTest/output.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/merged_manifests/debugAndroidTest/output.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/merged_manifests/release/output.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/merged_manifests/release/output.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/runtime_library_classes/debug/classes.jar" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/runtime_library_classes/debug/classes.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/runtime_library_classes/release/classes.jar" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/runtime_library_classes/release/classes.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/src/main/java/com/dengage/sdk/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/src/main/java/com/dengage/sdk/MainActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/src/main/java/com/dengage/sdk/notification/dEngageMobileManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/src/main/java/com/dengage/sdk/notification/dEngageMobileManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/src/main/java/com/dengage/sdk/notification/models/ModelBase.java" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/src/main/java/com/dengage/sdk/notification/models/ModelBase.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/src/main/java/com/dengage/sdk/notification/models/Subscription.java" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/src/main/java/com/dengage/sdk/notification/models/Subscription.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationDev/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationDev/.idea/caches/build_file_checksums.ser" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationDev/.idea/caches/gradle_models.ser" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationDev/.idea/caches/gradle_models.ser" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationDev/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationDev/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationDev/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationDev/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationDev/app/build/intermediates/merged_manifests/debug/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationDev/app/build/intermediates/merged_manifests/debug/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationDev/app/build/intermediates/merged_manifests/debug/output.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationDev/app/build/intermediates/merged_manifests/debug/output.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationDev/app/build/intermediates/metadata_feature_manifest/debug/processDebugManifest/metadata-feature/output.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationDev/app/build/intermediates/metadata_feature_manifest/debug/processDebugManifest/metadata-feature/output.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationDev/app/build/intermediates/processed_res/debug/processDebugResources/out/output.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationDev/app/build/intermediates/processed_res/debug/processDebugResources/out/output.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationDev/app/build/intermediates/processed_res/debug/processDebugResources/out/resources-debug.ap_" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationDev/app/build/intermediates/processed_res/debug/processDebugResources/out/resources-debug.ap_" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationDev/app/build/outputs/apk/debug/output.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationDev/app/build/outputs/apk/debug/output.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationDev/app/libs/com.dengage.sdk.jar" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationDev/app/libs/com.dengage.sdk.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationDev/app/src/main/java/com/dengage/application/dev/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationDev/app/src/main/java/com/dengage/application/dev/MainActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationDev/app/src/main/res/layout/content_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationDev/app/src/main/res/layout/content_main.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/caches/gradle_models.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/gradle_models.ser" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build/generated/source/buildConfig/debug/com/dengage/application/prod/BuildConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/build/generated/source/buildConfig/debug/com/dengage/application/prod/BuildConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build/intermediates/apk_list/debug/mainApkListPersistenceDebug/apk-list.gson" beforeDir="false" afterPath="$PROJECT_DIR$/app/build/intermediates/apk_list/debug/mainApkListPersistenceDebug/apk-list.gson" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build/intermediates/blame/res/debug/multi-v2/debug.json" beforeDir="false" afterPath="$PROJECT_DIR$/app/build/intermediates/blame/res/debug/multi-v2/debug.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build/intermediates/merged_manifests/debug/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/build/intermediates/merged_manifests/debug/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build/intermediates/merged_manifests/debug/output.json" beforeDir="false" afterPath="$PROJECT_DIR$/app/build/intermediates/merged_manifests/debug/output.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build/intermediates/metadata_feature_manifest/debug/processDebugManifest/metadata-feature/output.json" beforeDir="false" afterPath="$PROJECT_DIR$/app/build/intermediates/metadata_feature_manifest/debug/processDebugManifest/metadata-feature/output.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build/intermediates/processed_res/debug/processDebugResources/out/output.json" beforeDir="false" afterPath="$PROJECT_DIR$/app/build/intermediates/processed_res/debug/processDebugResources/out/output.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build/intermediates/processed_res/debug/processDebugResources/out/resources-debug.ap_" beforeDir="false" afterPath="$PROJECT_DIR$/app/build/intermediates/processed_res/debug/processDebugResources/out/resources-debug.ap_" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build/intermediates/res/merged/debug/layout_content_main.xml.flat" beforeDir="false" afterPath="$PROJECT_DIR$/app/build/intermediates/res/merged/debug/layout_content_main.xml.flat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build/intermediates/res/symbol-table-with-package/debug/package-aware-r.txt" beforeDir="false" afterPath="$PROJECT_DIR$/app/build/intermediates/res/symbol-table-with-package/debug/package-aware-r.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/libs/com.dengage.sdk.jar" beforeDir="false" afterPath="$PROJECT_DIR$/app/libs/com.dengage.sdk.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/dengage/application/prod/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/dengage/application/prod/MainActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/content_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/content_main.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationTest/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationTest/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationTest/app/libs/com.dengage.sdk.jar" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationTest/app/libs/com.dengage.sdk.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationTest/app/src/main/java/com/dengage/application/test/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationTest/app/src/main/java/com/dengage/application/test/MainActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationTest/app/src/main/res/layout/content_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationTest/app/src/main/res/layout/content_main.xml" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,7 +93,7 @@
   <component name="DefaultGradleProjectSettings">
     <option name="isMigrated" value="true" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="Pixel_2_API_27" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="Pixel_2_API_28" />
   <component name="ExternalProjectsManager">
     <system id="GRADLE">
       <state>
@@ -30,7 +102,17 @@
     </system>
   </component>
   <component name="FileEditorManager">
-    <leaf />
+    <leaf>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/build.gradle">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="187">
+              <caret line="11" column="24" selection-start-line="11" selection-start-column="24" selection-end-line="11" selection-end-column="24" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
@@ -41,9 +123,9 @@
         <option value="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
         <option value="$PROJECT_DIR$/app/google-services.json" />
         <option value="$PROJECT_DIR$/build.gradle" />
-        <option value="$PROJECT_DIR$/app/build.gradle" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/content_main.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/dengage/application/prod/MainActivity.java" />
+        <option value="$PROJECT_DIR$/app/build.gradle" />
       </list>
     </option>
   </component>
@@ -58,10 +140,47 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
+      <pane id="PackagesPane" />
       <pane id="AndroidView">
         <subPane>
           <expand>
+            <path>
+              <item name="dEngagePushApplicationProd" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+            </path>
+            <path>
+              <item name="dEngagePushApplicationProd" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+            </path>
+            <path>
+              <item name="dEngagePushApplicationProd" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+              <item name="prod" type="cbb59c9e:AndroidPsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="dEngagePushApplicationProd" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+              <item name="java (generated)" type="edd41e36:AndroidSourceTypeNode" />
+            </path>
+            <path>
+              <item name="dEngagePushApplicationProd" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+              <item name="java (generated)" type="edd41e36:AndroidSourceTypeNode" />
+              <item name="prod" type="cbb59c9e:AndroidPsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="dEngagePushApplicationProd" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+              <item name="res" type="d4f16f75:AndroidResFolderNode" />
+            </path>
+            <path>
+              <item name="dEngagePushApplicationProd" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+              <item name="res" type="d4f16f75:AndroidResFolderNode" />
+              <item name="layout" type="ddeffd01:AndroidResFolderTypeNode" />
+            </path>
             <path>
               <item name="dEngagePushApplicationProd" type="1abcf292:AndroidViewProjectNode" />
               <item name="Gradle Scripts" type="ae0cef3a:AndroidBuildScriptsGroupNode" />
@@ -70,7 +189,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -83,16 +201,11 @@
               <item name="dEngagePushApplicationProd" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="app" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
             </path>
-            <path>
-              <item name="dEngagePushApplicationProd" type="b2602c69:ProjectViewProjectNode" />
-              <item name="dEngagePushApplicationProd" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="app" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="libs" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -219,7 +332,7 @@
     <editor active="true" />
     <layout>
       <window_info id="Captures" order="0" side_tool="true" weight="0.25" />
-      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.3340448" />
+      <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.3340448" />
       <window_info id="Structure" order="2" side_tool="true" />
       <window_info id="Favorites" order="3" side_tool="true" />
       <window_info id="Build Variants" order="4" side_tool="true" />
@@ -231,9 +344,9 @@
       <window_info anchor="bottom" id="Logcat" order="1" sideWeight="0.79402345" weight="0.32932165" />
       <window_info anchor="bottom" id="TODO" order="2" sideWeight="0.4967983" weight="0.32932165" />
       <window_info anchor="bottom" id="Terminal" order="3" sideWeight="0.49839914" weight="0.32932165" />
-      <window_info active="true" anchor="bottom" id="Event Log" order="4" sideWeight="0.28708646" side_tool="true" visible="true" weight="0.33260393" />
-      <window_info anchor="bottom" id="Build" order="5" sideWeight="0.7129136" visible="true" weight="0.33260393" />
-      <window_info anchor="bottom" id="Android Profiler" order="6" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Event Log" order="4" sideWeight="0.28762007" side_tool="true" visible="true" weight="0.33260393" />
+      <window_info anchor="bottom" id="Build" order="5" sideWeight="0.71237993" visible="true" weight="0.33260393" />
+      <window_info anchor="bottom" id="Android Profiler" order="6" />
       <window_info anchor="bottom" id="Run" order="7" sideWeight="0.49893278" weight="0.32932165" />
       <window_info anchor="bottom" id="Debug" order="8" sideWeight="0.4967983" weight="0.32932165" />
       <window_info anchor="bottom" id="Find" order="9" sideWeight="0.4994664" weight="0.32932165" />
@@ -333,20 +446,6 @@
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="jar://$PROJECT_DIR$/app/libs/com.dengage.sdk.jar!/com/dengage/sdk/notification/dEngageMobileManager.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="84" selection-start-line="84" selection-end-line="84" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/app/libs/com.dengage.sdk.jar!/com/dengage/sdk/BuildConfig.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="11" column="43" lean-forward="true" selection-start-line="11" selection-start-column="43" selection-end-line="11" selection-end-column="43" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$PROJECT_DIR$/app/libs/com.dengage.sdk.jar!/com/dengage/sdk/MainActivity.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
@@ -368,29 +467,39 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/dengage/application/prod/MainActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="100" column="46" selection-start-line="100" selection-start-column="46" selection-end-line="100" selection-end-column="46" />
-          <folding>
-            <element signature="e#2689#3257#0" expanded="true" />
-            <element signature="e#3256#3257#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/content_main.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="506">
-          <caret line="100" column="53" selection-start-line="100" selection-start-column="53" selection-end-line="100" selection-end-column="53" />
+        <state relative-caret-position="503">
+          <caret line="244" column="53" selection-start-line="244" selection-start-column="53" selection-end-line="244" selection-end-column="53" />
         </state>
       </provider>
       <provider editor-type-id="android-designer2" />
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/dengage/application/prod/MainActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-340">
+          <caret line="47" column="31" selection-start-line="47" selection-start-column="31" selection-end-line="47" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/app/libs/com.dengage.sdk.jar!/com/dengage/sdk/BuildConfig.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="11" column="43" lean-forward="true" selection-start-line="11" selection-start-column="43" selection-end-line="11" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/app/libs/com.dengage.sdk.jar!/com/dengage/sdk/notification/dEngageMobileManager.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-85">
+          <caret line="84" selection-start-line="84" selection-end-line="84" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="13" column="5" lean-forward="true" selection-start-line="13" selection-start-column="5" selection-end-line="13" selection-end-column="5" />
+        <state relative-caret-position="187">
+          <caret line="11" column="24" selection-start-line="11" selection-start-column="24" selection-end-line="11" selection-end-column="24" />
         </state>
       </provider>
     </entry>

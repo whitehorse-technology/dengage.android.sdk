@@ -39,7 +39,7 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-    final String appAlias = "com.dengage.application.dev";
+    final String integrationKey = "usQ6tTllZBjjdJRh8i39IgTQ53tm4VYZOg2_p_l_NzZOl1sGWxuCKDyjkIoJVpsAhq0y3wfgulO7_s_l_LZEqL2GgIC92FqZxqXVFE6T3CVYQNBh5tk9496AzyLGq_p_l_9PgSuPyht0";
     private static dEngageMobileManager mobileManager;
 
     @Override
@@ -49,26 +49,28 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
         final Context context = getApplicationContext();
-        mobileManager = dEngageMobileManager.createInstance(appAlias, context);
+        mobileManager = dEngageMobileManager.createInstance(integrationKey, context);
         mobileManager.register();
 
+
         TextView txtEnvironment = (TextView)findViewById(R.id.txtEnvironment);
-        TextView txtAlias = (TextView)findViewById(R.id.txtAlias);
+        TextView txtIntegrationKey = (TextView)findViewById(R.id.txtIntegrationKey);
         TextView txtDeviceId = (TextView)findViewById(R.id.txtDeviceId);
+        TextView txtAdvertisingId = (TextView)findViewById(R.id.txtAdvertisingId);
         TextView txtToken = (TextView)findViewById(R.id.txtToken);
         TextView txtContactKey = (TextView)findViewById(R.id.txtContactKey);
         TextView txtSdkVersion = (TextView)findViewById(R.id.txtSdkVersion);
-        TextView txtAppVersion = (TextView)findViewById(R.id.txtAppVersion);
+        //TextView txtAppVersion = (TextView)findViewById(R.id.txtAppVersion);
 
         txtEnvironment.setText(mobileManager.getEnvironment());
-        txtAlias.setText(mobileManager.subscription.getAppAlias());
+        txtIntegrationKey.setText(mobileManager.subscription.getIntegrationKey());
         txtDeviceId.setText(mobileManager.subscription.getUdid());
+        txtAdvertisingId.setText(mobileManager.subscription.getAdid());
         txtToken.setText(mobileManager.subscription.getToken());
         txtContactKey.setText(mobileManager.subscription.getContactKey());
         txtSdkVersion.setText(mobileManager.getSdkVersion());
-        txtAppVersion.setText(mobileManager.getAppVersion());
+        //txtAppVersion.setText(mobileManager.getAppVersion());
 
         Button btnContactKey = (Button) findViewById(R.id.btnContactKey);
         btnContactKey.setOnClickListener(new View.OnClickListener() {
@@ -89,13 +91,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Logger.Debug("Retrieving udid...");
-                TextView txtAdvertisingId = (TextView)findViewById(R.id.txtDeviceId);
-                txtAdvertisingId.setText("Retrieving...");
+                TextView txtDeviceId = (TextView)findViewById(R.id.txtDeviceId);
+                txtDeviceId.setText("Retrieving...");
                 String udid = mobileManager.subscription.getUdid();
                 if(udid != "") {
-                    txtAdvertisingId.setText(udid);
+                    txtDeviceId.setText(udid);
                 } else {
-                    txtAdvertisingId.setText("Not available yet. try again later.");
+                    txtDeviceId.setText("Not available yet. try again later.");
                 }
                 Logger.Debug("Retrieved udid: "+ udid);
             }
@@ -115,6 +117,23 @@ public class MainActivity extends AppCompatActivity {
                     txtToken.setText("Not available yet. try again later.");
                 }
                 Logger.Debug("Retrieved token: "+ token);
+            }
+        });
+
+        Button btnAdvertisingId = (Button) findViewById(R.id.btnAdvertisingId);
+        btnAdvertisingId.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Logger.Debug("Retrieving adid...");
+                TextView txtAdvertisingId = (TextView)findViewById(R.id.txtAdvertisingId);
+                txtAdvertisingId.setText("Retrieving...");
+                String adid = mobileManager.subscription.getAdid();
+                if(adid != "") {
+                    txtAdvertisingId.setText(adid);
+                } else {
+                    txtAdvertisingId.setText("Not available yet. try again later.");
+                }
+                Logger.Debug("Retrieved adid: "+ adid);
             }
         });
     }
