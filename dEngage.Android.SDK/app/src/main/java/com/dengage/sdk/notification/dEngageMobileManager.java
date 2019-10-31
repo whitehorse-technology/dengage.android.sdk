@@ -51,8 +51,6 @@ public class dEngageMobileManager {
     private String transactionalOpenApiEndpoint;
     private String eventApiEndpoint;
 
-    private Boolean isRegisterCalled = false;
-
     private dEngageMobileManager(String integrationKey, final Context context) {
 
         if(integrationKey == null) {
@@ -181,7 +179,6 @@ public class dEngageMobileManager {
      * </p>
      */
     public void register() {
-        isRegisterCalled = true;
         Logger.Verbose("register method is called");
         try {
             Logger.Debug("MobileManager.register integrationKey: " + instance.subscription.getIntegrationKey());
@@ -265,7 +262,7 @@ public class dEngageMobileManager {
         try {
             this.subscription = getSubscription(this.context);
 
-            Logger.Debug("MobileManager.sync alias: " + this.subscription.getIntegrationKey());
+            Logger.Debug("MobileManager.sync key: " + this.subscription.getIntegrationKey());
             Logger.Debug("MobileManager.sync token: " + this.subscription.getToken());
             Logger.Debug("MobileManager.sync udid: " + this.subscription.getUdid());
 

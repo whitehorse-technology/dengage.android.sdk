@@ -53,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
         mobileManager = dEngageMobileManager.createInstance(integrationKey, context);
         mobileManager.register();
 
-
         TextView txtEnvironment = (TextView)findViewById(R.id.txtEnvironment);
         TextView txtIntegrationKey = (TextView)findViewById(R.id.txtIntegrationKey);
         TextView txtDeviceId = (TextView)findViewById(R.id.txtDeviceId);

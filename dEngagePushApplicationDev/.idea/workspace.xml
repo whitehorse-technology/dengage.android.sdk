@@ -11,7 +11,13 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="No Filters" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bc297796-cf79-47a5-9b63-92e54989647f" name="Default Changelist" comment="" />
+    <list default="true" id="bc297796-cf79-47a5-9b63-92e54989647f" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/src/main/java/com/dengage/sdk/notification/dEngageMobileManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/src/main/java/com/dengage/sdk/notification/dEngageMobileManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/dengage/application/dev/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/dengage/application/dev/MainActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationTest/app/src/main/java/com/dengage/application/test/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationTest/app/src/main/java/com/dengage/application/test/MainActivity.java" afterDir="false" />
+    </list>
     <ignored path="$PROJECT_DIR$/build/classes/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -22,7 +28,7 @@
   <component name="DefaultGradleProjectSettings">
     <option name="isMigrated" value="true" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="Pixel_2_API_28" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="Pixel_3_API_29" />
   <component name="ExternalProjectsManager">
     <system id="GRADLE">
       <state>
@@ -44,7 +50,20 @@
     </system>
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
+    <leaf>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/dengage/application/dev/MainActivity.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="137">
+              <caret line="103" lean-forward="true" selection-start-line="103" selection-end-line="103" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
@@ -53,6 +72,8 @@
       <find>adver</find>
       <find>app</find>
       <find>txtAppVersion</find>
+      <find>usQ6tTllZBjjdJRh8i39IgTQ53tm4VYZOg2_p_l_NzZOl1sGWxuCKDyjkIoJVpsAhq0y3wfgulO7_s_l_LZEqL2GgIC92FqZxqXVFE6T3CVYQNBh5tk9496AzyLGq_p_l_9PgSuPyht0</find>
+      <find>VFE</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -63,8 +84,8 @@
       <list>
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/content_main.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/dengage/application/dev/MainActivity.java" />
         <option value="$PROJECT_DIR$/app/build.gradle" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/dengage/application/dev/MainActivity.java" />
       </list>
     </option>
   </component>
@@ -75,50 +96,10 @@
     <option name="height" value="1047" />
   </component>
   <component name="ProjectView">
-    <navigator proportions="" version="1">
+    <navigator currentView="ProjectPane" proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
-      <pane id="AndroidView">
-        <subPane>
-          <expand>
-            <path>
-              <item name="dEngagePushApplicationDev" type="1abcf292:AndroidViewProjectNode" />
-              <item name="Gradle Scripts" type="ae0cef3a:AndroidBuildScriptsGroupNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-      <pane id="Scope">
-        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
-          <expand>
-            <path>
-              <item name="dEngagePushApplicationDev" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="C:\Repos\dEngage.Android.SDK\dEngagePushApplicationDev" type="442cc68d:ScopeViewTreeModel$RootNode" />
-            </path>
-            <path>
-              <item name="dEngagePushApplicationDev" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="C:\Repos\dEngage.Android.SDK\dEngagePushApplicationDev" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="app" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-            <path>
-              <item name="dEngagePushApplicationDev" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="C:\Repos\dEngage.Android.SDK\dEngagePushApplicationDev" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="app" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="libs" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-            <path>
-              <item name="dEngagePushApplicationDev" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="C:\Repos\dEngage.Android.SDK\dEngagePushApplicationDev" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="app" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="src" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -142,6 +123,40 @@
               <item name="dEngagePushApplicationDev" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="app" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="libs" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="dEngagePushApplicationDev" type="b2602c69:ProjectViewProjectNode" />
+              <item name="dEngagePushApplicationDev" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="app" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="libs" type="462c0819:PsiDirectoryNode" />
+              <item name="com.dengage.sdk.jar" type="ab9368bb:PsiFileNode" />
+            </path>
+            <path>
+              <item name="dEngagePushApplicationDev" type="b2602c69:ProjectViewProjectNode" />
+              <item name="dEngagePushApplicationDev" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="app" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="libs" type="462c0819:PsiDirectoryNode" />
+              <item name="com.dengage.sdk.jar" type="ab9368bb:PsiFileNode" />
+              <item name="sdk" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="dEngagePushApplicationDev" type="b2602c69:ProjectViewProjectNode" />
+              <item name="dEngagePushApplicationDev" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="app" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="libs" type="462c0819:PsiDirectoryNode" />
+              <item name="com.dengage.sdk.jar" type="ab9368bb:PsiFileNode" />
+              <item name="sdk" type="462c0819:PsiDirectoryNode" />
+              <item name="notification" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="dEngagePushApplicationDev" type="b2602c69:ProjectViewProjectNode" />
+              <item name="dEngagePushApplicationDev" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="app" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="libs" type="462c0819:PsiDirectoryNode" />
+              <item name="com.dengage.sdk.jar" type="ab9368bb:PsiFileNode" />
+              <item name="sdk" type="462c0819:PsiDirectoryNode" />
+              <item name="notification" type="462c0819:PsiDirectoryNode" />
+              <item name="services" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="dEngagePushApplicationDev" type="b2602c69:ProjectViewProjectNode" />
@@ -194,11 +209,41 @@
           <select />
         </subPane>
       </pane>
+      <pane id="AndroidView" />
+      <pane id="Scope">
+        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
+          <expand>
+            <path>
+              <item name="dEngagePushApplicationDev" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="C:\Repos\dEngage.Android.SDK\dEngagePushApplicationDev" type="442cc68d:ScopeViewTreeModel$RootNode" />
+            </path>
+            <path>
+              <item name="dEngagePushApplicationDev" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="C:\Repos\dEngage.Android.SDK\dEngagePushApplicationDev" type="442cc68d:ScopeViewTreeModel$RootNode" />
+              <item name="app" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+            <path>
+              <item name="dEngagePushApplicationDev" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="C:\Repos\dEngage.Android.SDK\dEngagePushApplicationDev" type="442cc68d:ScopeViewTreeModel$RootNode" />
+              <item name="app" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="libs" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+            <path>
+              <item name="dEngagePushApplicationDev" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="C:\Repos\dEngage.Android.SDK\dEngagePushApplicationDev" type="442cc68d:ScopeViewTreeModel$RootNode" />
+              <item name="app" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="src" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="DeviceAndSnapshotComboBoxAction.selectedDevice" value="Pixel_2_API_27" />
-    <property name="DeviceAndSnapshotComboBoxAction.selectionTime" value="2019-10-22T13:19:39.645Z" />
+    <property name="DeviceAndSnapshotComboBoxAction.selectedDevice" value="Pixel_XL_API_29_2" />
+    <property name="DeviceAndSnapshotComboBoxAction.selectionTime" value="2019-10-31T12:00:34.102Z" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../dEngagePushApplicationTest" />
   </component>
@@ -307,8 +352,8 @@
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <layout>
       <window_info id="Captures" order="0" side_tool="true" weight="0.25" />
-      <window_info active="true" content_ui="combo" id="Project" order="1" sideWeight="0.49919224" visible="true" weight="0.32995737" />
-      <window_info id="Structure" order="2" sideWeight="0.50080776" side_tool="true" visible="true" weight="0.32995737" />
+      <window_info content_ui="combo" id="Project" order="1" sideWeight="0.49833888" visible="true" weight="0.32995737" />
+      <window_info id="Structure" order="2" sideWeight="0.5016611" side_tool="true" visible="true" weight="0.32995737" />
       <window_info id="Favorites" order="3" side_tool="true" />
       <window_info id="Build Variants" order="4" side_tool="true" />
       <window_info id="Image Layers" order="5" />
@@ -316,11 +361,11 @@
       <window_info id="Resources Explorer" order="7" />
       <window_info id="Capture Tool" order="8" />
       <window_info anchor="bottom" id="Version Control" order="0" weight="0.32936078" />
-      <window_info anchor="bottom" id="Logcat" order="1" sideWeight="0.49946696" weight="0.34777898" />
+      <window_info active="true" anchor="bottom" id="Logcat" order="1" sideWeight="0.49946696" visible="true" weight="0.34777898" />
       <window_info anchor="bottom" id="TODO" order="2" weight="0.32936078" />
       <window_info anchor="bottom" id="Terminal" order="3" weight="0.32936078" />
       <window_info anchor="bottom" id="Event Log" order="4" sideWeight="0.50053304" side_tool="true" weight="0.32936078" />
-      <window_info anchor="bottom" id="Build" order="5" visible="true" weight="0.32936078" />
+      <window_info anchor="bottom" id="Build" order="5" weight="0.32936078" />
       <window_info anchor="bottom" id="Android Profiler" order="6" />
       <window_info anchor="bottom" id="Run" order="7" weight="0.32936078" />
       <window_info anchor="bottom" id="Debug" order="8" />
@@ -365,35 +410,21 @@
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml">
-      <provider selected="true" editor-type-id="text-editor" />
       <provider editor-type-id="android-manifest" />
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml">
+      <provider editor-type-id="android-designer2" />
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="323">
           <caret line="19" selection-start-line="19" selection-end-line="19" />
         </state>
       </provider>
-      <provider editor-type-id="android-designer2" />
     </entry>
     <entry file="jar://$PROJECT_DIR$/app/libs/com.dengage.sdk.jar!/com/dengage/sdk/notification/helpers/ChannelHelper.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="238">
           <caret line="24" column="37" selection-start-line="24" selection-start-column="37" selection-end-line="24" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/app/libs/com.dengage.sdk.jar!/com/dengage/sdk/notification/services/MessagingService.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="49" column="30" selection-start-line="49" selection-start-column="30" selection-end-line="49" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/app/libs/com.dengage.sdk.jar!/com/dengage/sdk/notification/dEngageMobileManager.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-204">
-          <caret line="29" column="13" selection-start-line="29" selection-start-column="13" selection-end-line="29" selection-end-column="13" />
         </state>
       </provider>
     </entry>
@@ -408,20 +439,10 @@
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/content_main.xml">
+      <provider editor-type-id="android-designer2" />
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="153">
           <caret line="9" column="3" selection-start-line="9" selection-start-column="3" selection-end-line="244" />
-        </state>
-      </provider>
-      <provider editor-type-id="android-designer2" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/dengage/application/dev/MainActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="299">
-          <caret line="44" column="13" lean-forward="true" selection-start-line="44" selection-start-column="13" selection-end-line="44" selection-end-column="13" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -429,6 +450,37 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="187">
           <caret line="11" column="24" selection-start-line="11" selection-start-column="24" selection-end-line="11" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/app/libs/com.dengage.sdk.jar!/com/dengage/sdk/notification/dEngageMobileManager.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="92" column="58" lean-forward="true" selection-start-line="92" selection-start-column="58" selection-end-line="92" selection-end-column="58" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/app/libs/com.dengage.sdk.jar!/com/dengage/sdk/notification/services/MessagingService.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="49" column="33" lean-forward="true" selection-start-line="49" selection-start-column="33" selection-end-line="49" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/app/libs/com.dengage.sdk.jar!/com/dengage/sdk/MainActivity.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="23" column="42" selection-start-line="23" selection-start-column="42" selection-end-line="23" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/dengage/application/dev/MainActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="137">
+          <caret line="103" lean-forward="true" selection-start-line="103" selection-end-line="103" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

@@ -40,11 +40,9 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
         final Context context = getApplicationContext();
         mobileManager = dEngageMobileManager.createInstance(integrationKey, context);
         mobileManager.register();
-
 
         TextView txtEnvironment = (TextView)findViewById(R.id.txtEnvironment);
         TextView txtIntegrationKey = (TextView)findViewById(R.id.txtIntegrationKey);
