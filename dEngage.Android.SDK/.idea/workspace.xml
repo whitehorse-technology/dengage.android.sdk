@@ -100,7 +100,7 @@
   <component name="DefaultGradleProjectSettings">
     <option name="isMigrated" value="true" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="Pixel_3_API_29" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="Pixel_2_API_29" />
   <component name="ExternalProjectsManager">
     <system id="GRADLE">
       <state>
@@ -143,18 +143,44 @@
     </system>
   </component>
   <component name="FileEditorManager">
-    <leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/dengage/sdk/notification/dEngageMobileManager.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="175">
-              <caret line="37" column="76" lean-forward="true" selection-start-line="37" selection-start-column="76" selection-end-line="37" selection-end-column="76" />
+            <state relative-caret-position="2216">
+              <caret line="264" column="11" selection-start-line="264" selection-start-column="11" selection-end-line="264" selection-end-column="11" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#5722#5998#0" />
-                <element signature="e#6004#6289#0" />
-                <element signature="e#6295#6602#0" />
+                <element signature="e#5675#5951#0" />
+                <element signature="e#5957#6242#0" />
+                <element signature="e#6248#6555#0" />
+                <element signature="e#6692#7193#0" />
+                <element signature="e#7199#7465#0" />
+                <element signature="e#7941#9220#0" />
+                <element signature="e#11268#11779#0" />
+                <element signature="e#11785#12381#0" />
+                <element signature="e#12387#12976#0" />
+                <element signature="e#12982#13557#0" />
+                <element signature="e#13563#14097#0" />
+                <element signature="e#14103#14690#0" />
+                <element signature="e#14696#15364#0" />
+                <element signature="e#15370#15963#0" />
+                <element signature="e#15969#16504#0" />
+                <element signature="e#16991#17486#0" />
+                <element signature="e#17492#18038#0" />
+                <element signature="e#18044#18704#0" />
+                <element signature="e#18711#19317#0" />
+                <element signature="e#22845#23986#0" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/build.gradle">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="323">
+              <caret line="19" selection-start-line="19" selection-end-line="19" />
             </state>
           </provider>
         </entry>
@@ -170,9 +196,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>initializeApp3</find>
-      <find>initializeApp</find>
-      <find>register</find>
       <find>getSubsc</find>
       <find>dengage_subscription</find>
       <find>denDeviceId</find>
@@ -183,7 +206,6 @@
       <find>createInstance appAlias</find>
       <find>Created</find>
       <find>setSubscription method is called</find>
-      <find>getSubscription</find>
       <find>Token is empty. The token is getting from Firebase</find>
       <find>create</find>
       <find>The remote server returned an error with the status code</find>
@@ -197,9 +219,13 @@
       <find>appAlias</find>
       <find>setCon</find>
       <find>isRegisterCalled</find>
-      <find>setIntegrationKey</find>
-      <find>setSubscription</find>
       <find>MobileManager.sync alias</find>
+      <find>setContactKey</find>
+      <find>setIntegrationKey</find>
+      <find>token is empty.</find>
+      <find>getSubscription</find>
+      <find>setSubscription</find>
+      <find>setToken</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -256,15 +282,14 @@
         <option value="$PROJECT_DIR$/app/src/main/java/com/dengage/sdk/notification/models/Message.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/dengage/sdk/notification/models/ModelBase.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/dengage/sdk/notification/models/Subscription.java" />
-        <option value="$PROJECT_DIR$/app/build.gradle" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/dengage/sdk/MainActivity.java" />
+        <option value="$PROJECT_DIR$/app/build.gradle" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/dengage/sdk/notification/dEngageMobileManager.java" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds">
-    <option name="x" value="9" />
-    <option name="y" value="16" />
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="-7" />
     <option name="width" value="1934" />
     <option name="height" value="1047" />
   </component>
@@ -297,6 +322,48 @@
               <item name="app" type="616d4139:PackageViewModuleNode" />
               <item name="com.dengage.sdk" type="1f31426a:PackageElementNode" />
               <item name="test" type="1f31426a:PackageElementNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="dEngage.Android.SDK" type="b2602c69:ProjectViewProjectNode" />
+              <item name="dEngage.Android.SDK" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+            </path>
+            <path>
+              <item name="dEngage.Android.SDK" type="b2602c69:ProjectViewProjectNode" />
+              <item name="dEngage.Android.SDK" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="app" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="AndroidView">
+        <subPane>
+          <expand>
+            <path>
+              <item name="dEngage.Android.SDK" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+            </path>
+            <path>
+              <item name="dEngage.Android.SDK" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+            </path>
+            <path>
+              <item name="dEngage.Android.SDK" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+              <item name="sdk" type="cbb59c9e:AndroidPsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="dEngage.Android.SDK" type="1abcf292:AndroidViewProjectNode" />
+              <item name="Gradle Scripts" type="ae0cef3a:AndroidBuildScriptsGroupNode" />
             </path>
           </expand>
           <select />
@@ -336,55 +403,6 @@
               <item name="dEngage.Android.SDK" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
               <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
               <item name="app" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-      <pane id="AndroidView">
-        <subPane>
-          <expand>
-            <path>
-              <item name="dEngage.Android.SDK" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-            </path>
-            <path>
-              <item name="dEngage.Android.SDK" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-            </path>
-            <path>
-              <item name="dEngage.Android.SDK" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="sdk" type="cbb59c9e:AndroidPsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dEngage.Android.SDK" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="sdk" type="cbb59c9e:AndroidPsiDirectoryNode" />
-              <item name="notification" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dEngage.Android.SDK" type="1abcf292:AndroidViewProjectNode" />
-              <item name="Gradle Scripts" type="ae0cef3a:AndroidBuildScriptsGroupNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="dEngage.Android.SDK" type="b2602c69:ProjectViewProjectNode" />
-              <item name="dEngage.Android.SDK" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-            </path>
-            <path>
-              <item name="dEngage.Android.SDK" type="b2602c69:ProjectViewProjectNode" />
-              <item name="dEngage.Android.SDK" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="app" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -651,11 +669,10 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="9" y="16" width="1934" height="1047" extended-state="0" />
-    <editor active="true" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <layout>
       <window_info id="Captures" order="0" sideWeight="0.50384617" side_tool="true" weight="0.25987193" />
-      <window_info active="true" content_ui="combo" id="Project" order="1" sideWeight="0.49615383" visible="true" weight="0.25987193" />
+      <window_info active="true" content_ui="combo" id="Project" order="1" sideWeight="0.49615383" visible="true" weight="0.2595949" />
       <window_info id="Structure" order="2" side_tool="true" />
       <window_info id="Favorites" order="3" side_tool="true" />
       <window_info id="Build Variants" order="4" sideWeight="0.5024233" side_tool="true" weight="0.32995737" />
@@ -663,19 +680,19 @@
       <window_info id="Designer" order="6" />
       <window_info id="Resources Explorer" order="7" weight="0.32995737" />
       <window_info id="Capture Tool" order="8" />
-      <window_info anchor="bottom" id="Run" order="0" sideWeight="0.45464247" weight="0.33260393" />
-      <window_info anchor="bottom" id="Logcat" order="1" sideWeight="0.5987193" weight="0.3785558" />
+      <window_info anchor="bottom" id="Run" order="0" sideWeight="0.45309168" visible="true" weight="0.33152762" />
+      <window_info anchor="bottom" id="Logcat" order="1" sideWeight="0.59808105" weight="0.37811485" />
       <window_info anchor="bottom" id="Debug" order="2" sideWeight="0.45891142" weight="0.32932165" />
-      <window_info anchor="bottom" id="Terminal" order="3" sideWeight="0.4967983" visible="true" weight="0.32932165" />
-      <window_info anchor="bottom" id="Event Log" order="4" sideWeight="0.5032017" side_tool="true" visible="true" weight="0.32932165" />
+      <window_info anchor="bottom" id="Terminal" order="3" sideWeight="0.49626467" weight="0.32932165" />
+      <window_info anchor="bottom" id="Event Log" order="4" sideWeight="0.5469083" side_tool="true" visible="true" weight="0.33152762" />
       <window_info anchor="bottom" id="TODO" order="5" sideWeight="0.49359658" weight="0.32932165" />
       <window_info anchor="bottom" id="Version Control" order="6" weight="0.32936078" />
-      <window_info anchor="bottom" id="Build" order="7" sideWeight="0.5229456" weight="0.32932165" />
+      <window_info anchor="bottom" id="Build" order="7" sideWeight="0.5207889" weight="0.3261105" />
       <window_info anchor="bottom" id="Find" order="8" sideWeight="0.49946696" weight="0.32936078" />
       <window_info anchor="bottom" id="Android Profiler" order="9" show_stripe_button="false" sideWeight="0.49839914" weight="0.32932165" />
       <window_info anchor="right" id="Device File Explorer" order="0" side_tool="true" />
       <window_info anchor="right" id="Capture Analysis" order="1" />
-      <window_info anchor="right" id="Gradle" order="2" visible="true" weight="0.20597652" />
+      <window_info anchor="right" id="Gradle" order="2" visible="true" weight="0.20575693" />
       <window_info anchor="right" id="Theme Preview" order="3" />
       <window_info anchor="right" id="Preview" order="4" weight="0.32977587" />
       <window_info anchor="right" id="Palette&#9;" order="5" />
@@ -1125,12 +1142,12 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml">
-      <provider editor-type-id="android-designer2" />
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="170">
           <caret line="10" column="40" lean-forward="true" selection-start-line="10" selection-start-column="40" selection-end-line="10" selection-end-column="40" />
         </state>
       </provider>
+      <provider editor-type-id="android-designer2" />
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/dengage/sdk/notification/models/Subscription.java">
       <provider selected="true" editor-type-id="text-editor">
@@ -1163,8 +1180,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/dengage/sdk/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="438">
-          <caret line="44" column="50" lean-forward="true" selection-start-line="44" selection-start-column="8" selection-end-line="44" selection-end-column="50" />
+        <state relative-caret-position="153">
+          <caret line="36" column="31" selection-start-line="36" selection-start-column="17" selection-end-line="36" selection-end-column="31" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -1173,20 +1190,37 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="442">
-          <caret line="26" column="61" selection-start-line="26" selection-start-column="61" selection-end-line="26" selection-end-column="61" />
+        <state relative-caret-position="323">
+          <caret line="19" selection-start-line="19" selection-end-line="19" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/dengage/sdk/notification/dEngageMobileManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="175">
-          <caret line="37" column="76" lean-forward="true" selection-start-line="37" selection-start-column="76" selection-end-line="37" selection-end-column="76" />
+        <state relative-caret-position="2216">
+          <caret line="264" column="11" selection-start-line="264" selection-start-column="11" selection-end-line="264" selection-end-column="11" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#5722#5998#0" />
-            <element signature="e#6004#6289#0" />
-            <element signature="e#6295#6602#0" />
+            <element signature="e#5675#5951#0" />
+            <element signature="e#5957#6242#0" />
+            <element signature="e#6248#6555#0" />
+            <element signature="e#6692#7193#0" />
+            <element signature="e#7199#7465#0" />
+            <element signature="e#7941#9220#0" />
+            <element signature="e#11268#11779#0" />
+            <element signature="e#11785#12381#0" />
+            <element signature="e#12387#12976#0" />
+            <element signature="e#12982#13557#0" />
+            <element signature="e#13563#14097#0" />
+            <element signature="e#14103#14690#0" />
+            <element signature="e#14696#15364#0" />
+            <element signature="e#15370#15963#0" />
+            <element signature="e#15969#16504#0" />
+            <element signature="e#16991#17486#0" />
+            <element signature="e#17492#18038#0" />
+            <element signature="e#18044#18704#0" />
+            <element signature="e#18711#19317#0" />
+            <element signature="e#22845#23986#0" />
           </folding>
         </state>
       </provider>

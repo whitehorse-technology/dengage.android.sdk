@@ -99,6 +99,8 @@ public class dEngageMobileManager {
             this.subscription.setIntegrationKey(integrationKey);
             this.subscription = getSubscription(context);
 
+            sync();
+
         } catch (Exception e) {
             Logger.Error("dEngageMobileManager: "+ e.getMessage());
         }
@@ -265,12 +267,13 @@ public class dEngageMobileManager {
             Logger.Debug("MobileManager.sync key: " + this.subscription.getIntegrationKey());
             Logger.Debug("MobileManager.sync token: " + this.subscription.getToken());
             Logger.Debug("MobileManager.sync udid: " + this.subscription.getUdid());
+            Logger.Debug("MobileManager.sync adid: " + this.subscription.getAdid());
 
-            if (!TextUtils.isEmpty(this.subscription.getToken())) {
-                RequestHelper.getInstance().sendRequestAsync(subsApiEndpoint, this.subscription, Subscription.class);
-            } else {
-                Logger.Error("MobileManager.sync: token is empty.");
-            }
+            // if (!TextUtils.isEmpty(this.subscription.getToken())) {
+            RequestHelper.getInstance().sendRequestAsync(subsApiEndpoint, this.subscription, Subscription.class);
+            // } else {
+            //     Logger.Error("MobileManager.sync: token is empty.");
+            //}
         } catch (Exception e) {
             Logger.Error("sync: "+ e.getMessage());
         }
@@ -511,7 +514,6 @@ public class dEngageMobileManager {
         }
     }
 
-
     /**
      * Remove Contact Properties
      * <p>
@@ -528,7 +530,6 @@ public class dEngageMobileManager {
         }
     }
 
-
     private void setToken(String token) {
         Logger.Verbose("setToken method is called");
         try {
@@ -538,7 +539,6 @@ public class dEngageMobileManager {
             Logger.Error("setToken: "+ e.getMessage());
         }
     }
-
 
     private Subscription getSubscription(final Context context) {
         Logger.Verbose("getSubscription method is called");
