@@ -16,28 +16,114 @@
       <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/.idea/caches/gradle_models.ser" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/.idea/caches/gradle_models.ser" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/generated/source/buildConfig/androidTest/debug/com/dengage/sdk/test/BuildConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/generated/source/buildConfig/androidTest/debug/com/dengage/sdk/test/BuildConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/generated/source/buildConfig/debug/com/dengage/sdk/BuildConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/generated/source/buildConfig/debug/com/dengage/sdk/BuildConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/generated/source/buildConfig/release/com/dengage/sdk/BuildConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/generated/source/buildConfig/release/com/dengage/sdk/BuildConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/dengage/sdk/notification/dEngageMobileManager$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/dengage/sdk/notification/dEngageMobileManager$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/output.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/output.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/aapt_friendly_merged_manifests/release/aapt/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/aapt_friendly_merged_manifests/release/aapt/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/aapt_friendly_merged_manifests/release/aapt/output.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/aapt_friendly_merged_manifests/release/aapt/output.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/incremental/packageDebugResources/merger.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/incremental/packageDebugResources/merger.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/incremental/packageReleaseResources/compile-file-map.properties" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/incremental/packageReleaseResources/compile-file-map.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/incremental/packageReleaseResources/merged.dir/values/values.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/incremental/packageReleaseResources/merged.dir/values/values.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/incremental/packageReleaseResources/merger.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/incremental/packageReleaseResources/merger.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/dengage/sdk/BuildConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/dengage/sdk/BuildConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/dengage/sdk/notification/Constants.class" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/dengage/sdk/notification/Constants.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/dengage/sdk/notification/dEngageMobileManager$AdvertisingIdWorker.class" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/dengage/sdk/notification/dEngageMobileManager$AdvertisingIdWorker.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/dengage/sdk/notification/dEngageMobileManager.class" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/dengage/sdk/notification/dEngageMobileManager.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/release/compileReleaseJavaWithJavac/classes/com/dengage/sdk/BuildConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/release/compileReleaseJavaWithJavac/classes/com/dengage/sdk/BuildConfig.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/release/compileReleaseJavaWithJavac/classes/com/dengage/sdk/notification/Constants.class" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/release/compileReleaseJavaWithJavac/classes/com/dengage/sdk/notification/Constants.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/release/compileReleaseJavaWithJavac/classes/com/dengage/sdk/notification/dEngageMobileManager$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/release/compileReleaseJavaWithJavac/classes/com/dengage/sdk/notification/dEngageMobileManager$1.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/release/compileReleaseJavaWithJavac/classes/com/dengage/sdk/notification/dEngageMobileManager$AdvertisingIdWorker.class" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/release/compileReleaseJavaWithJavac/classes/com/dengage/sdk/notification/dEngageMobileManager$AdvertisingIdWorker.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/release/compileReleaseJavaWithJavac/classes/com/dengage/sdk/notification/dEngageMobileManager.class" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/javac/release/compileReleaseJavaWithJavac/classes/com/dengage/sdk/notification/dEngageMobileManager.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/library_manifest/debug/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/library_manifest/debug/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/library_manifest/release/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/library_manifest/release/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/merged_manifests/debug/output.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/merged_manifests/debug/output.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/merged_manifests/debugAndroidTest/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/merged_manifests/debugAndroidTest/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/merged_manifests/debugAndroidTest/output.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/merged_manifests/debugAndroidTest/output.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/merged_manifests/release/output.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/merged_manifests/release/output.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/packaged_res/debug/values/values.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/packaged_res/debug/values/values.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/packaged_res/release/values/values.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/packaged_res/release/values/values.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/res/symbol-table-with-package/debug/package-aware-r.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/res/symbol-table-with-package/debug/package-aware-r.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/res/symbol-table-with-package/release/package-aware-r.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/res/symbol-table-with-package/release/package-aware-r.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/runtime_library_classes/debug/classes.jar" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/runtime_library_classes/debug/classes.jar" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/runtime_library_classes/release/classes.jar" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/runtime_library_classes/release/classes.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/symbols/debug/R.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/symbols/debug/R.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/symbols/release/R.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/intermediates/symbols/release/R.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/outputs/logs/manifest-merger-debug-report.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/outputs/logs/manifest-merger-debug-report.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/outputs/logs/manifest-merger-release-report.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/build/outputs/logs/manifest-merger-release-report.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../dEngage.Android.SDK/app/src/main/java/com/dengage/sdk/notification/dEngageMobileManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngage.Android.SDK/app/src/main/java/com/dengage/sdk/notification/dEngageMobileManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/caches/gradle_models.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/gradle_models.ser" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/build/intermediates/merged_manifests/debug/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/build/intermediates/merged_manifests/debug/AndroidManifest.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/build/intermediates/processed_res/debug/processDebugResources/out/resources-debug.ap_" beforeDir="false" afterPath="$PROJECT_DIR$/app/build/intermediates/processed_res/debug/processDebugResources/out/resources-debug.ap_" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build/outputs/logs/manifest-merger-debug-report.txt" beforeDir="false" afterPath="$PROJECT_DIR$/app/build/outputs/logs/manifest-merger-debug-report.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/libs/com.dengage.sdk.jar" beforeDir="false" afterPath="$PROJECT_DIR$/app/libs/com.dengage.sdk.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/.idea/caches/build_file_checksums.ser" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/.idea/caches/gradle_models.ser" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/.idea/caches/gradle_models.ser" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../jar/dev/1.4/com.dengage.sdk.jar" beforeDir="false" afterPath="$PROJECT_DIR$/../jar/dev/1.4/com.dengage.sdk.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../jar/prod/1.4/com.dengage.sdk.jar" beforeDir="false" afterPath="$PROJECT_DIR$/../jar/prod/1.4/com.dengage.sdk.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../jar/test/1.4/com.dengage.sdk.jar" beforeDir="false" afterPath="$PROJECT_DIR$/../jar/test/1.4/com.dengage.sdk.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/generated/res/google-services/debug/values/values.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/generated/res/google-services/debug/values/values.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/generated/source/buildConfig/debug/com/dengage/application/prod/BuildConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/generated/source/buildConfig/debug/com/dengage/application/prod/BuildConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/debug.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/debug.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-af.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-af.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-am.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-am.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-ar.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-ar.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-as.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-as.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-az.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-az.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-be.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-be.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-bg.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-bg.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-bn.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-bn.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-bs.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-bs.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-ca.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-ca.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-cs.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-cs.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-da.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-da.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-de.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-de.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-el.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-el.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-en-rAU.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-en-rAU.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-en-rCA.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-en-rCA.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-en-rGB.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-en-rGB.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-en-rIN.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-en-rIN.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-en-rXC.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-en-rXC.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-es-rUS.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-es-rUS.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-es.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-es.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-lv.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-lv.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-mk.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-mk.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-ml.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-ml.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-mn.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-mn.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-mr.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-mr.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-ms.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-ms.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-my.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-my.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-nb.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-nb.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-ne.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-ne.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-night-v8.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-night-v8.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-nl.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-nl.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-or.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-or.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-pa.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-pa.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-pl.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-pl.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-port.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-port.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-pt-rBR.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-pt-rBR.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-tr.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-tr.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-uk.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-uk.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-ur.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-ur.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-uz.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-uz.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-v16.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-v16.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-v17.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-v17.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-v18.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-v18.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-v21.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-v21.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-v22.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-v22.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-v23.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-v23.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-v24.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-v24.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-v25.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-v25.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-v26.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-v26.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-v28.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-v28.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-vi.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-vi.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-watch-v20.json" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/blame/res/debug/multi-v2/values-watch-v20.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/incremental/mergeDebugResources/merger.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/incremental/mergeDebugResources/merger.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/incremental/mergeDebugShaders/merger.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/incremental/mergeDebugShaders/merger.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/merged_manifests/debug/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/merged_manifests/debug/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/res/symbol-table-with-package/debug/package-aware-r.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/build/intermediates/res/symbol-table-with-package/debug/package-aware-r.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/libs/com.dengage.sdk.jar" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationProd/app/libs/com.dengage.sdk.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dEngagePushApplicationTest/app/libs/com.dengage.sdk.jar" beforeDir="false" afterPath="$PROJECT_DIR$/../dEngagePushApplicationTest/app/libs/com.dengage.sdk.jar" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/build/classes/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -49,7 +135,7 @@
   <component name="DefaultGradleProjectSettings">
     <option name="isMigrated" value="true" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="Pixel_3a_XL_API_29" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="Pixel_2_API_29" />
   <component name="ExternalProjectsManager">
     <system id="GRADLE">
       <state>
@@ -75,8 +161,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/dengage/application/dev/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-917">
-              <caret line="44" column="13" lean-forward="true" selection-start-line="44" selection-start-column="13" selection-end-line="44" selection-end-column="13" />
+            <state relative-caret-position="255">
+              <caret line="58" column="47" lean-forward="true" selection-start-line="58" selection-start-column="47" selection-end-line="58" selection-end-column="47" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -152,6 +238,8 @@
           <select />
         </subPane>
       </pane>
+      <pane id="AndroidView" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -174,70 +262,12 @@
               <item name="dEngagePushApplicationDev" type="b2602c69:ProjectViewProjectNode" />
               <item name="dEngagePushApplicationDev" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="app" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="libs" type="462c0819:PsiDirectoryNode" />
-              <item name="com.dengage.sdk.jar" type="ab9368bb:PsiFileNode" />
-            </path>
-            <path>
-              <item name="dEngagePushApplicationDev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="dEngagePushApplicationDev" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="app" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="libs" type="462c0819:PsiDirectoryNode" />
-              <item name="com.dengage.sdk.jar" type="ab9368bb:PsiFileNode" />
-              <item name="sdk" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dEngagePushApplicationDev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="dEngagePushApplicationDev" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="app" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dEngagePushApplicationDev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="dEngagePushApplicationDev" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="app" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dEngagePushApplicationDev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="dEngagePushApplicationDev" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="app" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dEngagePushApplicationDev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="dEngagePushApplicationDev" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="app" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="dev" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dEngagePushApplicationDev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="dEngagePushApplicationDev" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="app" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="res" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dEngagePushApplicationDev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="dEngagePushApplicationDev" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="app" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="res" type="462c0819:PsiDirectoryNode" />
-              <item name="layout" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
-      <pane id="AndroidView" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -349,10 +379,11 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="Captures" order="0" side_tool="true" weight="0.25" />
-      <window_info content_ui="combo" id="Project" order="1" sideWeight="0.4950166" visible="true" weight="0.32995737" />
-      <window_info id="Structure" order="2" sideWeight="0.50498337" side_tool="true" visible="true" weight="0.32995737" />
+      <window_info active="true" content_ui="combo" id="Project" order="1" sideWeight="0.49335548" visible="true" weight="0.32995737" />
+      <window_info id="Structure" order="2" sideWeight="0.50664455" side_tool="true" visible="true" weight="0.32995737" />
       <window_info id="Favorites" order="3" side_tool="true" />
       <window_info id="Build Variants" order="4" side_tool="true" />
       <window_info id="Image Layers" order="5" />
@@ -360,7 +391,7 @@
       <window_info id="Resources Explorer" order="7" />
       <window_info id="Capture Tool" order="8" />
       <window_info anchor="bottom" id="Version Control" order="0" weight="0.32936078" />
-      <window_info active="true" anchor="bottom" id="Logcat" order="1" sideWeight="0.49946696" visible="true" weight="0.34777898" />
+      <window_info anchor="bottom" id="Logcat" order="1" sideWeight="0.49946696" visible="true" weight="0.34777898" />
       <window_info anchor="bottom" id="TODO" order="2" weight="0.32936078" />
       <window_info anchor="bottom" id="Terminal" order="3" weight="0.32936078" />
       <window_info anchor="bottom" id="Event Log" order="4" sideWeight="0.50053304" side_tool="true" weight="0.32936078" />
@@ -415,8 +446,8 @@
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml">
-      <provider editor-type-id="android-manifest" />
       <provider selected="true" editor-type-id="text-editor" />
+      <provider editor-type-id="android-manifest" />
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml">
       <provider selected="true" editor-type-id="text-editor">
@@ -481,8 +512,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/dengage/application/dev/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-917">
-          <caret line="44" column="13" lean-forward="true" selection-start-line="44" selection-start-column="13" selection-end-line="44" selection-end-column="13" />
+        <state relative-caret-position="255">
+          <caret line="58" column="47" lean-forward="true" selection-start-line="58" selection-start-column="47" selection-end-line="58" selection-end-column="47" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

@@ -553,10 +553,10 @@ public class dEngageMobileManager {
 
         setUdId(Utils.udid(this.context));
 
-         if( TextUtils.isEmpty( subscription.getAdid() )) {
-             AdvertisingIdWorker adIdWorker = new AdvertisingIdWorker(context);
-             adIdWorker.execute();
-        }
+        // if( TextUtils.isEmpty( subscription.getAdid() )) {
+        AdvertisingIdWorker adIdWorker = new AdvertisingIdWorker(context);
+        adIdWorker.execute();
+        //}
 
         if( TextUtils.isEmpty(subscription.getToken())) {
             Logger.Verbose("Token is empty. The token is getting from Firebase.");
@@ -629,11 +629,12 @@ public class dEngageMobileManager {
         @Override
         protected String doInBackground(Void... params) {
             Logger.Debug("Getting advertising ID");
-            AdvertisingIdClient.Info idInfo = null;
+            AdvertisingIdClient.Info adInfo = null;
             String advertisingId = "";
             try {
-                idInfo = AdvertisingIdClient.getAdvertisingIdInfo(context);
-                advertisingId = idInfo.getId();
+                adInfo = AdvertisingIdClient.getAdvertisingIdInfo(context);
+                if (!adInfo.isLimitAdTrackingEnabled())
+                    advertisingId = adInfo.getId();
             } catch (GooglePlayServicesNotAvailableException e) {
                 Logger.Error("GooglePlayServicesNotAvailableException: "+ e.getMessage());
             } catch (GooglePlayServicesRepairableException e) {
