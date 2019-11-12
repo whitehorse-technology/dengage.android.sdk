@@ -37,8 +37,9 @@ public class dEngageMobileManager {
     private final String apiHostDev                             = "https://pushdev.dengage.com";
     private final String apiHostTest                            = "https://pushtest.dengage.com";
     private final String apiHostProd                            = "https://push.dengage.com";
-    private final String subsApiSuffix                          = "/api/mobile/subscription";
-    private final String openApiSuffix                          = "/api/mobile/open";
+    private final String subsApiSuffix                          = "/api/device/subscription";
+    private final String openApiSuffix
+            = "/api/mobile/open";
     private final String transactionalOpenApiSuffix             = "/api/transactional/mobile/open";
 
     private final String eventApiHostDev                        = "https://eventdev.dengage.com";
