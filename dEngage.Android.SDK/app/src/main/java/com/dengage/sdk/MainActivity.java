@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -13,6 +14,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.dengage.sdk.notification.dEngageMobileManager;
+import com.dengage.sdk.notification.helpers.Utils;
 import com.dengage.sdk.notification.logging.Logger;
 import com.dengage.sdk.notification.models.CustomParam;
 import com.dengage.sdk.notification.models.Event;
@@ -47,6 +49,29 @@ public class MainActivity extends AppCompatActivity {
         mobileManager.register();
 
         Log.d("DenPush", mobileManager.getSubscriptionJson());
+
+        Logger.Debug("App Label: "+ Utils.getAppLabel(context, "an android application"));
+        Logger.Debug("App Version: "+ Utils.appVersion(context));
+
+
+        String reqString =
+
+                Build.MANUFACTURER + " " +
+                Build.MODEL + " " +
+                Build.VERSION.RELEASE + " " +
+                Build.VERSION_CODES.class.getFields()[android.os.Build.VERSION.SDK_INT].getName() + " " +
+                Build.ID + " " +
+                Build.HARDWARE + " " +
+                Build.PRODUCT + " " +
+                Build.CPU_ABI  + " " +
+                Build.DISPLAY  + " " +
+                Build.BOOTLOADER  + " " +
+                Build.BRAND  + " " +
+                Build.BOARD;
+
+        Logger.Debug(Build.MANUFACTURER);
+        Logger.Debug("reqString: "+ Utils.deviceType(context));
+
     }
 
     @Override

@@ -14,6 +14,8 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.telephony.TelephonyManager;
+import android.webkit.WebView;
+
 import androidx.core.content.PermissionChecker;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -181,16 +183,6 @@ public final class Utils {
         return "Android";
     }
 
-    public static String deviceName() {
-        String manufacturer = Build.MANUFACTURER;
-        String model = Build.MODEL;
-        if (model.startsWith(manufacturer)) {
-            return model;
-        } else {
-            return manufacturer + " " + model;
-        }
-    }
-
     public static String carrier(Context context) {
         TelephonyManager manager = (TelephonyManager) context
                 .getSystemService(Context.TELEPHONY_SERVICE);
@@ -226,7 +218,21 @@ public final class Utils {
         return null;
     }
 
-    public static String deviceType() {
+    public static String deviceName() {
+        String manufacturer = Build.MANUFACTURER;
+        String model = Build.MODEL;
+        if (model.startsWith(manufacturer)) {
+            return model;
+        } else {
+            return manufacturer + " " + model;
+        }
+    }
+
+    public static String getUserAgent(Context context) {
+        //return Utils.getAppLabel(context, "An Android App") + "/"+ Utils.appVersion(context) + " "+ Build.MANUFACTURER +"/"+ Build.MODEL +" "+ System.getProperty("http.agent");
+        return new WebView(context).getSettings().getUserAgentString();
+    }
+    public static String deviceType(Context context) {
         return android.os.Build.MANUFACTURER + " : " + android.os.Build.MODEL;
     }
 

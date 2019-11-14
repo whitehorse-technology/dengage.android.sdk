@@ -607,7 +607,8 @@ public class dEngageMobileManager {
             this.subscription.setOsVersion(Utils.osVersion());
             this.subscription.setSdkVersion(Constants.SDK_VERSION);
             this.subscription.setDeviceName(Utils.deviceName());
-            this.subscription.setDeviceType(Utils.deviceType());
+            this.subscription.setDeviceType(Utils.deviceType(context));
+            this.subscription.setUserAgent(Utils.getUserAgent(context));
 
             Utils.savePrefString(context, Constants.SUBSCRIPTION_KEY, this.subscription.toJson());
         } catch (Exception e) {

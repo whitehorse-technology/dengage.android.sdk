@@ -35,4 +35,16 @@ public abstract class ModelBase {
     public void setTransactionId(String transactionId) {
         this.transactionId = transactionId;
     }
+
+    @SerializedName("userAgent")
+    private String userAgent;
+
+    public String getUserAgent() {
+        return userAgent;
+    }
+
+    public void setUserAgent(String agent) {
+        this.userAgent = agent;
+    }
+
 }

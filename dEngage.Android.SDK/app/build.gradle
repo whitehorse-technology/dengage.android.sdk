@@ -23,7 +23,7 @@ android {
             debuggable false
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "ENVIRONMENT", "\"test\""
+            buildConfigField "String", "ENVIRONMENT", "\"prod\""
         }
 
     }
