@@ -47,31 +47,6 @@ public class MainActivity extends AppCompatActivity {
         Context context = getApplicationContext();
         mobileManager = dEngageMobileManager.createInstance(integrationKey, context);
         mobileManager.register();
-
-        Log.d("DenPush", mobileManager.getSubscriptionJson());
-
-        Logger.Debug("App Label: "+ Utils.getAppLabel(context, "an android application"));
-        Logger.Debug("App Version: "+ Utils.appVersion(context));
-
-
-        String reqString =
-
-                Build.MANUFACTURER + " " +
-                Build.MODEL + " " +
-                Build.VERSION.RELEASE + " " +
-                Build.VERSION_CODES.class.getFields()[android.os.Build.VERSION.SDK_INT].getName() + " " +
-                Build.ID + " " +
-                Build.HARDWARE + " " +
-                Build.PRODUCT + " " +
-                Build.CPU_ABI  + " " +
-                Build.DISPLAY  + " " +
-                Build.BOOTLOADER  + " " +
-                Build.BRAND  + " " +
-                Build.BOARD;
-
-        Logger.Debug(Build.MANUFACTURER);
-        Logger.Debug("reqString: "+ Utils.deviceType(context));
-
     }
 
     @Override

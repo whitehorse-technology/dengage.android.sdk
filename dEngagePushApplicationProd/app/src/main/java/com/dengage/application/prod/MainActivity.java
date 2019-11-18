@@ -29,8 +29,10 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
-    final String integrationKey = "230KMVJ1aWZvK0YdtD5KnYSGfVoM1E7t9x2eA7UXINLh9u9MZUtP8IYGnmEu2wXD_p_l_7Nuj0RtRvnfv_p_l_S4wArXgRdFSa43KpA_p_l_CudLiATtPueo4IoQ_p_l_CRbSyoR3DVjM7RT";
     private static dEngageMobileManager mobileManager;
+    //final String integrationKey = "SSiv15iaBRzARtaihANeNdsVIE96doc7w8vkB_s_l_DyOc8RKcwnEn3Nv326tU1ehRQYEr3xa3tvuMk_p_l_lTbbeKeoQYpMAcRnDgVesMxVRSLdCUwdn1OUunkuBHaEPNGkv6gc";
+
+    final String integrationKey = "SSiv15iaBRzARtaihANeNdsVIE96doc7w8vkB_s_l_DyOc8RKcwnEn3Nv326tU1ehRQYEr3xa3tvuMk_p_l_lTbbeKeoQYpMAcRnDgVesMxVRSLdCUwdn1OUunkuBHaEPNGkv6gc";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

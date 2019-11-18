@@ -71,17 +71,6 @@ public final class RequestHelper {
             conn.setFixedLengthStreamingMode(message.getBytes().length);
             conn.setRequestProperty("Content-Type", "application/json;charset=utf-8");
             conn.setRequestProperty("Accept","application/json");
-            if(!TextUtils.isEmpty(model.getUserAgent())) {
-                if(TextUtils.isEmpty(conn.getRequestProperty("User-Agent"))) {
-                    Logger.Verbose("Adding User-Agent");
-                    conn.addRequestProperty("User-Agent", model.getUserAgent());
-                }
-                else {
-                    Logger.Verbose("Setting User-Agent");
-                    conn.setRequestProperty("User-Agent", model.getUserAgent());
-                }
-            }
-            Logger.Debug("User-Agent: "+ model.getUserAgent());
             conn.connect();
             os = new BufferedOutputStream(conn.getOutputStream());
             os.write(message.getBytes());
