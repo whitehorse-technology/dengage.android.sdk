@@ -38,8 +38,7 @@ public class dEngageMobileManager {
     private final String apiHostTest                            = "https://pushtest.dengage.com";
     private final String apiHostProd                            = "https://push.dengage.com";
     private final String subsApiSuffix                          = "/api/device/subscription";
-    private final String openApiSuffix
-            = "/api/mobile/open";
+    private final String openApiSuffix                          = "/api/mobile/open";
     private final String transactionalOpenApiSuffix             = "/api/transactional/mobile/open";
 
     private final String eventApiHostDev                        = "https://eventdev.dengage.com";
@@ -96,57 +95,15 @@ public class dEngageMobileManager {
             }
 
             this.context = context;
-            this.subscription  = new Subscription();
-            this.subscription.setIntegrationKey(integrationKey);
-            this.subscription = getSubscription(context);
+            this.subscription  = getSubscription(context);
 
-            sync();
+            setIntegrationKey(integrationKey);
 
         } catch (Exception e) {
             Logger.Error("dEngageMobileManager: "+ e.getMessage());
         }
 
         Logger.Verbose("Created dEnaggeMobileManager.");
-    }
-
-    /**
-     * Gets current SDK environment.
-     * @return String
-     */
-    public String getEnvironment() {
-        Logger.Verbose("getEnvironment method is called.");
-        Logger.Debug("getEnvironment: "+ Constants.ENVIRONMENT);
-        return Constants.ENVIRONMENT;
-    }
-
-    /**
-     * Gets dEngage Android SDK version you use.
-     * @return String
-     */
-    public String getSdkVersion() {
-        Logger.Verbose("getSdkVersion method is called.");
-        Logger.Debug("getSdkVersion: "+ Constants.SDK_VERSION);
-        return Constants.SDK_VERSION;
-    }
-
-    /**
-     * Gets your application version.
-     * @return String
-     */
-    public String getAppVersion() {
-        Logger.Verbose("getAppVersion method is called.");
-        String appVersion = Utils.appVersion(context);
-        Logger.Debug("getAppVersion: "+ appVersion);
-        return appVersion;
-    }
-
-
-    /**
-     *
-     * @return
-     */
-    public String getSubscriptionJson() {
-        return this.subscription.toJson();
     }
 
     /**
@@ -186,9 +143,54 @@ public class dEngageMobileManager {
         try {
             Logger.Debug("MobileManager.register integrationKey: " + instance.subscription.getIntegrationKey());
             FirebaseApp.initializeApp(this.context);
+            sync();
         } catch (Exception e) {
             Logger.Error("register: "+ e.getMessage());
         }
+    }
+
+    /**
+     * Gets current SDK environment.
+     * @return String
+     */
+    public String getEnvironment() {
+        Logger.Verbose("getEnvironment method is called.");
+        Logger.Debug("getEnvironment: "+ Constants.ENVIRONMENT);
+        return Constants.ENVIRONMENT;
+    }
+
+    /**
+     * Gets dEngage Android SDK version you use.
+     * @return String
+     */
+    public String getSdkVersion() {
+        Logger.Verbose("getSdkVersion method is called.");
+        Logger.Debug("getSdkVersion: "+ Constants.SDK_VERSION);
+        return Constants.SDK_VERSION;
+    }
+
+    /**
+     * Gets your application version.
+     * @return String
+     */
+    public String getAppVersion() {
+        Logger.Verbose("getAppVersion method is called.");
+        String appVersion = "";
+        try {
+            appVersion = Utils.appVersion(context);
+            Logger.Debug("getAppVersion: " + appVersion);
+        }  catch (Exception ex) {
+            Logger.Error("Exception on getAppVersion: "+ ex.getMessage());
+        }
+        return appVersion;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public String getSubscriptionJson() {
+        return this.subscription.toJson();
     }
 
     /**
@@ -211,10 +213,12 @@ public class dEngageMobileManager {
             openSignal.setMessageId(message.getMessageId());
             openSignal.setMessageDetails(message.getMessageDetails());
             openSignal.setTransactionId(message.getTransactionId());
+
             if (!TextUtils.isEmpty(message.getTransactionId()))
                 RequestHelper.getInstance().sendRequestAsync(transactionalOpenApiEndpoint, openSignal, Open.class);
             else
                 RequestHelper.getInstance().sendRequestAsync(openApiEndpoint, openSignal, Open.class);
+
         } catch (Exception e) {
             Logger.Error("open: "+ e.getMessage());
         }
@@ -263,18 +267,17 @@ public class dEngageMobileManager {
     public void sync() {
         Logger.Verbose("sync method is called");
         try {
+
             this.subscription = getSubscription(this.context);
 
-            Logger.Debug("MobileManager.sync key: " + this.subscription.getIntegrationKey());
-            Logger.Debug("MobileManager.sync token: " + this.subscription.getToken());
-            Logger.Debug("MobileManager.sync udid: " + this.subscription.getUdid());
-            Logger.Debug("MobileManager.sync adid: " + this.subscription.getAdid());
+            refreshUdid();
+            refreshToken();
+            refreshAdId();
 
-            // if (!TextUtils.isEmpty(this.subscription.getToken())) {
+            Logger.Debug("MobileManager.sync json: " + this.subscription.toJson());
+
             RequestHelper.getInstance().sendRequestAsync(subsApiEndpoint, this.subscription, Subscription.class);
-            // } else {
-            //     Logger.Error("MobileManager.sync: token is empty.");
-            //}
+
         } catch (Exception e) {
             Logger.Error("sync: "+ e.getMessage());
         }
@@ -291,6 +294,7 @@ public class dEngageMobileManager {
         Logger.Verbose("sendEvent method is called");
         try {
             this.subscription = getSubscription(this.context);
+            Logger.Debug("MobileManager.sendEvent event : " + event.toJson());
             RequestHelper.getInstance().sendRequestAsync(eventApiEndpoint, event, Event.class);
         } catch (Exception e) {
             Logger.Error("sendEvent: "+ e.getMessage());
@@ -309,7 +313,7 @@ public class dEngageMobileManager {
         try {
             this.subscription.setAppVersion(appVersion);
             Logger.Debug("appVersion: "+ appVersion);
-            Utils.savePrefString(this.context, Constants.SUBSCRIPTION_KEY, this.subscription.toJson());
+            setSubscription(this.context);
         } catch (Exception e) {
             Logger.Error("setAppVersion: "+ e.getMessage());
         }
@@ -327,7 +331,7 @@ public class dEngageMobileManager {
         try {
             this.subscription.setPermission(permission);
             Logger.Debug("permission: "+ permission);
-            Utils.savePrefString(this.context, Constants.SUBSCRIPTION_KEY, this.subscription.toJson());
+            setSubscription(this.context);
         } catch (Exception e) {
             Logger.Error("setPermission: "+ e.getMessage());
         }
@@ -345,7 +349,7 @@ public class dEngageMobileManager {
         try {
             this.subscription.setTwitterId(twitterId);
             Logger.Debug("twitterId: "+ twitterId);
-            Utils.savePrefString(this.context, Constants.SUBSCRIPTION_KEY, this.subscription.toJson());
+            setSubscription(this.context);
         } catch (Exception e) {
             Logger.Error("setTwitterId: "+ e.getMessage());
         }
@@ -363,7 +367,7 @@ public class dEngageMobileManager {
         try {
             this.subscription.setEmail(email);
             Logger.Debug("email: "+ email);
-            Utils.savePrefString(this.context, Constants.SUBSCRIPTION_KEY, this.subscription.toJson());
+            setSubscription(this.context);
         } catch (Exception e) {
             Logger.Error("setEmail: "+ e.getMessage());
         }
@@ -381,7 +385,7 @@ public class dEngageMobileManager {
         try {
             this.subscription.setFacebookId(facebookId);
             Logger.Debug("facebookId: "+ facebookId);
-            Utils.savePrefString(this.context, Constants.SUBSCRIPTION_KEY, this.subscription.toJson());
+            setSubscription(this.context);
         } catch (Exception e) {
             Logger.Error("setFacebookId: "+ e.getMessage());
         }
@@ -400,7 +404,7 @@ public class dEngageMobileManager {
         try {
             this.subscription.setLocation(new Location(latitude, longitude));
             Logger.Debug("lat: "+ latitude + ", long: "+ longitude);
-            Utils.savePrefString(this.context, Constants.SUBSCRIPTION_KEY, this.subscription.toJson());
+            setSubscription(this.context);
         } catch (Exception e) {
             Logger.Error("setLocation: "+ e.getMessage());
         }
@@ -418,7 +422,7 @@ public class dEngageMobileManager {
         try {
             this.subscription.setContactKey(contactKey);
             Logger.Debug("contactKey: "+ contactKey);
-            Utils.savePrefString(this.context, Constants.SUBSCRIPTION_KEY, this.subscription.toJson());
+            setSubscription(this.context);
         } catch (Exception e) {
             Logger.Error("setContactKey: "+ e.getMessage());
         }
@@ -436,7 +440,7 @@ public class dEngageMobileManager {
         try {
             this.subscription.setGsm(msisdn);
             Logger.Debug("msisdn: "+ msisdn);
-            Utils.savePrefString(this.context, Constants.SUBSCRIPTION_KEY, this.subscription.toJson());
+            setSubscription(this.context);
         } catch (Exception e) {
             Logger.Error("setGsm: "+ e.getMessage());
         }
@@ -496,6 +500,17 @@ public class dEngageMobileManager {
         }
     }
 
+
+    private void setToken(String token) {
+        Logger.Verbose("setToken method is called");
+        try {
+            this.subscription.setToken(token);
+            this.setSubscription(this.context);
+        } catch (Exception e) {
+            Logger.Error("setToken: "+ e.getMessage());
+        }
+    }
+
     /**
      * Set User Property
      * <p>
@@ -531,69 +546,23 @@ public class dEngageMobileManager {
         }
     }
 
-    private void setToken(String token) {
-        Logger.Verbose("setToken method is called");
-        try {
-            this.subscription.setToken(token);
-            this.setSubscription(this.context);
-        } catch (Exception e) {
-            Logger.Error("setToken: "+ e.getMessage());
-        }
-    }
-
     private Subscription getSubscription(final Context context) {
         Logger.Verbose("getSubscription method is called");
-        if (Utils.hasPrefString(context, Constants.SUBSCRIPTION_KEY)) {
-            Logger.Verbose(Constants.SUBSCRIPTION_KEY +" key is not empty. Subscription model is getting from json file.");
-            subscription = new Gson().fromJson(Utils.getPrefString(context, Constants.SUBSCRIPTION_KEY), Subscription.class);
-            subscription.setFirstTime(0);
-        } else {
-            subscription.setFirstTime(1);
+        try {
+
+            if (Utils.hasPrefString(context, Constants.SUBSCRIPTION_KEY)) {
+                Logger.Verbose(Constants.SUBSCRIPTION_KEY + " key is not empty. Subscription model is getting from json file.");
+                this.subscription = new Gson().fromJson(Utils.getPrefString(context, Constants.SUBSCRIPTION_KEY), Subscription.class);
+                this.subscription.setFirstTime(0);
+            } else {
+                this.subscription = new Subscription();
+                this.subscription.setFirstTime(1);
+            }
+
+        } catch (Exception ex) {
+            Logger.Error("Exception on getSubscription: "+ ex.getMessage());
         }
-
-        setUdId(Utils.udid(this.context));
-
-        // if( TextUtils.isEmpty( subscription.getAdid() )) {
-        AdvertisingIdWorker adIdWorker = new AdvertisingIdWorker(context);
-        adIdWorker.execute();
-        //}
-
-        if( TextUtils.isEmpty(subscription.getToken())) {
-            Logger.Verbose("Token is empty. The token is getting from Firebase.");
-            FirebaseInstanceId.getInstance().getInstanceId()
-            .addOnCanceledListener(new OnCanceledListener() {
-                @Override
-                public void onCanceled() {
-                    Logger.Verbose("Token onCanceled");
-                }
-            })
-            .addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Logger.Verbose("Token onFailure");
-                    Logger.Error("Token retrieved: " + e.getMessage());
-                }
-            })
-            .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-                @Override
-                public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                    Logger.Verbose("Token onComplete");
-                    if (!task.isSuccessful()) {
-                        Logger.Error("FirebaseInstanceId Failed: " + task.getException().getMessage());
-                        return;
-                    }
-
-                    String token = task.getResult().getToken();
-                    Logger.Debug("Token retrieved: " + token);
-
-                    if(!TextUtils.isEmpty(token)) {
-                        subscribe(token);
-                    }
-                }
-            });
-        }
-
-        return subscription;
+        return this.subscription;
     }
 
     private void setSubscription(Context context) {
@@ -618,6 +587,51 @@ public class dEngageMobileManager {
 
     private void setSubscriptionProperty(String key, Object value) {
         this.subscription.add(key, value);
+    }
+
+    private void refreshUdid() {
+        setUdId(Utils.udid(this.context));
+    }
+
+    private void refreshToken() {
+        if(TextUtils.isEmpty(this.subscription.getToken())) {
+            FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCanceledListener(new OnCanceledListener() {
+                    @Override
+                    public void onCanceled() {
+                        Logger.Verbose("Token onCanceled");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Logger.Verbose("Token onFailure");
+                        Logger.Error("Token retrieved: " + e.getMessage());
+                    }
+                })
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        Logger.Verbose("Token onComplete");
+                        if (!task.isSuccessful()) {
+                            Logger.Error("FirebaseInstanceId Failed: " + task.getException().getMessage());
+                            return;
+                        }
+
+                        String token = task.getResult().getToken();
+                        Logger.Debug("Token retrieved: " + token);
+
+                        if (!TextUtils.isEmpty(token)) {
+                            setToken(token);
+                        }
+                    }
+                });
+        }
+    }
+
+    private void refreshAdId() {
+        AdvertisingIdWorker adIdWorker = new AdvertisingIdWorker(context);
+        adIdWorker.execute();
     }
 
     private class AdvertisingIdWorker extends AsyncTask<Void, String, String> {

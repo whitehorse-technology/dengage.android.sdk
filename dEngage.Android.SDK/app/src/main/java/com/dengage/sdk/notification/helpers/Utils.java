@@ -229,8 +229,8 @@ public final class Utils {
     }
 
     public static String getUserAgent(Context context) {
-        //return Utils.getAppLabel(context, "An Android App") + "/"+ Utils.appVersion(context) + " "+ Build.MANUFACTURER +"/"+ Build.MODEL +" "+ System.getProperty("http.agent");
-        return new WebView(context).getSettings().getUserAgentString();
+        return Utils.getAppLabel(context, "An Android App") + "/"+ Utils.appVersion(context) + " "+ Build.MANUFACTURER +"/"+ Build.MODEL +" "+ System.getProperty("http.agent");
+        //return new WebView(context).getSettings().getUserAgentString();
     }
     public static String deviceType(Context context) {
         return android.os.Build.MANUFACTURER + " : " + android.os.Build.MODEL;

@@ -49,7 +49,7 @@ public final class RequestHelper {
         }
     }
 
-    public void sendRequestAsync(String url, ModelBase model, Type type) {
+    public void sendRequestAsync(String url, ModelBase model, @NonNull Type type) {
         new JsonAsyncTask(url, model, type).execute();
     }
 
@@ -78,14 +78,14 @@ public final class RequestHelper {
             responseCode = conn.getResponseCode();
             responseMessage = conn.getResponseMessage();
         } catch (Exception e) {
-            Logger.Error(e.getMessage());
+            Logger.Error( "sendRequest: "+ e.getMessage());
         } finally {
             try {
                 if (os != null) {
                     os.close();
                 }
             } catch (Exception e) {
-                Logger.Error(e.getMessage());
+                Logger.Error( "sendRequest finally: "+ e.getMessage());
             }
             if (conn != null) {
                 conn.disconnect();
@@ -97,7 +97,7 @@ public final class RequestHelper {
             if(responseCode <= 199 || responseCode >= 300)
                 throw new Exception("The remote server returned an error with the status code: "+ responseCode);
         } catch(Exception e) {
-            Logger.Error(e.getMessage());
+            Logger.Error( "sendRequest response: "+ e.getMessage());
         }
 
         Logger.Debug("Request: " + model.getClass().getName());
