@@ -1,4 +1,0 @@
-#Wed Sep 04 14:43:53 EET 2019
-base.0=C\:\\Repos\\dEngagePushApplicationProd\\app\\build\\intermediates\\transforms\\dexMerger\\debug\\7
-path.0=classes.dex
-renamed.0=classes.dex
