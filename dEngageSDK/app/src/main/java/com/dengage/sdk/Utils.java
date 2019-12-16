@@ -25,7 +25,7 @@ public final class Utils {
                     uniqueID = UUID.randomUUID().toString();
                     SharedPreferences.Editor editor = sharedPrefs.edit();
                     editor.putString(DEN_DEVICE_UNIQUE_ID, uniqueID);
-                    editor.commit();
+                    editor.apply();
                 }
         }
         return uniqueID;
@@ -72,9 +72,14 @@ public final class Utils {
     }
 
     public static String carrier(Context context) {
+        String carrier = "";
         TelephonyManager manager = (TelephonyManager) context
                 .getSystemService(Context.TELEPHONY_SERVICE);
-        return manager.getNetworkOperator();
+        try {
+            manager.getNetworkOperator();
+        } catch (Exception ex) {
+        }
+        return carrier;
     }
 
     public static String local(Context context) {
@@ -105,7 +110,7 @@ public final class Utils {
         ApplicationInfo lApplicationInfo = null;
         try {
             lApplicationInfo = lPackageManager.getApplicationInfo(pContext.getApplicationInfo().packageName, 0);
-        } catch (final PackageManager.NameNotFoundException e) {
+        } catch (PackageManager.NameNotFoundException e) {
         }
         return (String) (lApplicationInfo != null ? lPackageManager.getApplicationLabel(lApplicationInfo) : defaultText);
     }
