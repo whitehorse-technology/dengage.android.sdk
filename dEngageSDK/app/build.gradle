@@ -15,7 +15,7 @@ android {
     buildTypes {
 
         debug {
-            buildConfigField "String", "ENVIRONMENT", "\"dev\""
+            buildConfigField "String", "ENVIRONMENT", "\"prod\""
         }
 
         release {
@@ -50,8 +50,6 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:17.0.1'
     implementation 'com.google.firebase:firebase-messaging:19.0.1'
     implementation 'com.google.android.material:material:1.0.0'
-
-
 }
 
 repositories {
