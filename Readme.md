@@ -1,5 +1,5 @@
 <p align="center"> 
-    <img width="100" src="https://user-images.githubusercontent.com/57666388/70908801-2da2b600-201d-11ea-969e-09af69e9fc7a.png">
+    <img width="200" src="https://user-images.githubusercontent.com/57666388/70908801-2da2b600-201d-11ea-969e-09af69e9fc7a.png">
 </p>
 
 # Dengege Android Push Notification Plugin
