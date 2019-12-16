@@ -5,6 +5,8 @@
 # Dengege Android Push Notification Plugin
 This repo makes it easy to integrate your native Android app with dEngage. It provides you to handle push messages that received from dEngage and send events such as open, subscription and more.
  
+*Supports Android API level 4.1.x or higher.*
+
 ## Documentation
 Visit [dEngage's Android SDK Setup Guide](https://docs.dengage.com/push-sdk/android) page in order to view documentation.
 
@@ -13,5 +15,3 @@ Visit [dEngage's Android SDK API Guide](https://docs.dengage.com/push-sdk/androi
 
 ## Support
 Visit [dEngage support](https://dengage.com) page for account issues or support.
-
-*Supports Android API level 4.1.x or higher.*
