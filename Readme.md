@@ -4,13 +4,19 @@
   
 
 #### **Requirements**
-* Google Firebase App Configuration
-* Android Studio
-* Android Device or Emulator
+ 1. Google Firebase App Configuration
+ 2. Android Studio
+ 3. Android Device or Emulator
 
 **dEngage Android SDK** provides an interface which handles push notification messages easily. Optionally, It also gives to send event functionality such as open and subscription to dEngage Platform.
 
 *Supports Android API level 4.1.x or higher.*
+
+ 1. [Create Firebase App](#1-Creating-Firebase-App)
+ 2.  [Configuration](2-Configuration)
+ 3. [Defining Push Application](3-Creating-Push-Application)
+ 4.  [Implementing the SDK](4-Implementing-the-SDK)
+ 5. [Using the SDK](5-Using-the-SDK)
 
 ## 1. Create Firebase App
 
@@ -97,7 +103,7 @@
 </manifest>
 ```
 
-## 3. Creating dEngage Push Application
+## 3. Defining Push Application
 
 **2.1** Login your dEngage Panel. Navigate "Settings>Push Applications" page and click the "Add > Android Application" button. 
 
@@ -135,7 +141,7 @@ protected void onCreate(Bundle savedInstanceState) {
 After these steps, You will be able to send a push notification message to your app.
 
 
-## 5. Using the SDK.  
+## 5. Using the SDK
 
 **Setting Your User Contact Key** 
 to set user contact key, please use the following methods. This action requires sync() function call to notify dEngage Platform.
