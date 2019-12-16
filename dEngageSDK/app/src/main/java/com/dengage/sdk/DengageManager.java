@@ -25,7 +25,7 @@ import java.util.Map;
 
 public class DengageManager {
 
-    private static final DengageManager INSTANCE = new DengageManager();
+    private static DengageManager INSTANCE = new DengageManager();
 
     private Subscription _subscription;
 
@@ -39,13 +39,6 @@ public class DengageManager {
     private static RequestHelper request = new RequestHelper();
 
     private DengageManager() {
-
-        if(isDebugable()) {
-            openApiEndpoint           = "https://pushdev.dengage.com/api/mobile/open";
-            subsApiEndpoint           = "https://pushdev.dengage.com/api/device/subscription";
-            eventApiEndpoint          = "https://eventdev.dengage.com/api/event";
-            transOpenApiEndpoint     = "https://pushdev.dengage.com/api/transactional/mobile/open";
-        }
     }
 
     /**
@@ -419,9 +412,7 @@ public class DengageManager {
         }
     }
 
-    private boolean isDebugable() {
-        return ( 0 != ( INSTANCE._context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE ) );
-    }
+
 }
 
 
