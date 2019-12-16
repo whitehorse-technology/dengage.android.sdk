@@ -1,25 +1,25 @@
 -- Merging decision tree log ---
 manifest
-ADDED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:2:1-41:12
-INJECTED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:2:1-41:12
-INJECTED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:2:1-41:12
-INJECTED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:2:1-41:12
-INJECTED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:2:1-41:12
-INJECTED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:2:1-41:12
-INJECTED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:2:1-41:12
+ADDED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:2:1-47:12
+INJECTED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:2:1-47:12
+INJECTED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:2:1-47:12
+INJECTED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:2:1-47:12
+INJECTED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:2:1-47:12
+INJECTED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:2:1-47:12
+INJECTED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:2:1-47:12
 	package
 		ADDED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:4:5-30
 		INJECTED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml
 		INJECTED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml
 	android:versionName
 		INJECTED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml
-		ADDED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:2:1-41:12
+		ADDED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:2:1-47:12
 		INJECTED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml
 	xmlns:tools
 		ADDED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:3:5-51
 	android:versionCode
 		INJECTED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml
-		ADDED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:2:1-41:12
+		ADDED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:2:1-47:12
 		INJECTED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml
 	xmlns:android
 		ADDED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:2:11-69
@@ -32,7 +32,7 @@ ADDED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\Android
 	android:name
 		ADDED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:7:22-76
 application
-ADDED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:9:5-39:19
+ADDED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:9:5-45:19
 	android:supportsRtl
 		ADDED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:14:9-35
 	android:label
@@ -71,20 +71,26 @@ category#android.intent.category.LAUNCHER
 ADDED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:26:17-77
 	android:name
 		ADDED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:26:27-74
+activity#com.dengage.sdk.notification.services.DenActivity
+ADDED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:30:9-34:20
+	android:name
+		ADDED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:30:19-83
+intent-filter#category:name:android.intent.category.LAUNCHER
+ADDED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:31:13-33:29
 service#com.dengage.sdk.notification.services.MessagingService
-ADDED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:30:9-37:19
+ADDED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:36:9-43:19
 	android:exported
-		ADDED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:32:13-37
+		ADDED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:38:13-37
 	android:stopWithTask
-		ADDED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:33:13-41
+		ADDED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:39:13-41
 	android:name
-		ADDED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:31:13-67
+		ADDED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:37:13-67
 intent-filter#action:name:com.google.firebase.MESSAGING_EVENT
-ADDED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:34:13-36:29
+ADDED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:40:13-42:29
 action#com.google.firebase.MESSAGING_EVENT
-ADDED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:35:17-78
+ADDED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:41:17-78
 	android:name
-		ADDED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:35:25-75
+		ADDED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:41:25-75
 uses-sdk
 INJECTED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml

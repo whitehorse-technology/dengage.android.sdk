@@ -27,8 +27,14 @@
             </intent-filter>
         </activity>
 
+        <activity android:name="com.dengage.sdk.DenActivity">
+            <intent-filter>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
         <service
-            android:name=".notification.services.MessagingService"
+            android:name=".MessagingService"
             android:exported="false"
             android:stopWithTask="false">
             <intent-filter>
