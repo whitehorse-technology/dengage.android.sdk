@@ -32,7 +32,7 @@ public class DengageManager {
     private Context _context;
 
     private String openApiEndpoint          = "https://push.dengage.com/api/mobile/open";
-    private String subsApiEndpoint          = "https://pushdev.dengage.com/api/device/subscription";
+    private String subsApiEndpoint          = "https://push.dengage.com/api/device/subscription";
     private String eventApiEndpoint         = "https://event.dengage.com/api/event";
     private String transOpenApiEndpoint     = "https://push.dengage.com/api/api/transactional/mobile/open";
 
