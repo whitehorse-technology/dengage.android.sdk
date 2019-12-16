@@ -22,14 +22,14 @@
 
 **1.1** Create an Android app on Firebase Console. https://console.firebase.google.com/u/1/project/{project}/overview
 
-![](./images/CreateAppStep1.png)
+![](./images/CreateAppStep1.PNG)
 
-![](./images/CreateAppStep2.png)
+![](./images/CreateAppStep2.PNG)
 
 **1.2** Download your configuration file  (googles-services.json) and copy the file on your app directory.
 
-![](./images/DownloadConfigFile.png)
-![](./images/CopyConfig.png)
+![](./images/DownloadConfigFile.PNG)
+![](./images/CopyConfig.PNG)
 
 **1.3** Add the following dependencies to ***build.gradle*** file which is located in your project root directory and sync.
 
@@ -69,7 +69,7 @@
 
 **1.5** Run your app and verify your configuration.
 
-![](./images/CompleteAppCreate.png)
+![](./images/CompleteAppCreate.PNG)
 
 
 ## 2. Configuration
@@ -107,15 +107,15 @@
 
 **2.1** Login your dEngage Panel. Navigate "Settings>Push Applications" page and click the "Add > Android Application" button. 
 
-![](./images/NavigateApplications.png)
+![](./images/NavigateApplications.PNG)
 
 **2.2** Visit your project settings page on Firebase Console and navigate to Cloud Messaging page. Copy your Server key and Sender ID.
 
-![](./images/CopySenderKey.png)
+![](./images/CopySenderKey.PNG)
 
 **2.3** Paste your Server Key and Sender ID on your dEngage app settings page.
 
-![](./images/PasteSenderKey.png)
+![](./images/PasteSenderKey.PNG)
 
 **2.4** You'll see an integration key which is automatically generated. Keep the key for next steps.
   
