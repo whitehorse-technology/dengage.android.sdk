@@ -1,6 +1,6 @@
-package com.dengage.sdk;
+package com.dengage.sdk.models;
 
-import com.dengage.sdk.ModelBase;
+import com.dengage.sdk.models.ModelBase;
 import com.google.gson.annotations.SerializedName;
 
 public class Open extends ModelBase {

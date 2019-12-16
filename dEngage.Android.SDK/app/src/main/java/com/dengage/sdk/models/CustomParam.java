@@ -1,4 +1,4 @@
-package com.dengage.sdk;
+package com.dengage.sdk.models;
 
 public class CustomParam {
     private String key;

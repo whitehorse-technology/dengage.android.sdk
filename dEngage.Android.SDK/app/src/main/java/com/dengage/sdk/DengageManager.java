@@ -4,6 +4,11 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 import androidx.annotation.NonNull;
+
+import com.dengage.sdk.models.Event;
+import com.dengage.sdk.models.Message;
+import com.dengage.sdk.models.Open;
+import com.dengage.sdk.models.Subscription;
 import com.google.android.gms.ads.identifier.AdvertisingIdClient;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;

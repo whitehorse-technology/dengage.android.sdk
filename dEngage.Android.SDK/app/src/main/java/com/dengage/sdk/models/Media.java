@@ -1,4 +1,4 @@
-package com.dengage.sdk;
+package com.dengage.sdk.models;
 
 public class Media {
     private String url;

@@ -13,7 +13,7 @@ task sourceJar(type: Jar) {
 publishing {
     publications {
         bar(MavenPublication) {
-            groupId 'com.dengage.android.sdk'
+            groupId 'com.dengage.sample'
             artifactId 'dEngage'
             version '0.1'
             artifact(sourceJar)
@@ -85,4 +85,5 @@ repositories {
     jcenter()
 }
 
+apply plugin: 'com.google.gms.google-services' // Add this line
 

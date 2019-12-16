@@ -191,10 +191,10 @@ category#android.intent.category.LAUNCHER
 ADDED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:26:17-77
 	android:name
 		ADDED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:26:27-74
-activity#com.dengage.sdk.DenActivity
+activity#com.dengage.sdk.OpenerActivity
 ADDED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:30:9-34:20
 	android:name
-		ADDED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:30:19-61
+		ADDED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:30:19-64
 intent-filter#category:name:android.intent.category.LAUNCHER
 ADDED from C:\Repos\dEngage.Android.SDK\dEngage.Android.SDK\app\src\main\AndroidManifest.xml:31:13-33:29
 service#com.dengage.sdk.MessagingService

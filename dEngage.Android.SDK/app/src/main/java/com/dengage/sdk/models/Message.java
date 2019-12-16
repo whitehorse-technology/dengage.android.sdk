@@ -1,12 +1,12 @@
-package com.dengage.sdk;
+package com.dengage.sdk.models;
 
 import android.os.Bundle;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 
-import com.dengage.sdk.CustomParam;
-import com.dengage.sdk.Media;
+import com.dengage.sdk.models.CustomParam;
+import com.dengage.sdk.models.Media;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 

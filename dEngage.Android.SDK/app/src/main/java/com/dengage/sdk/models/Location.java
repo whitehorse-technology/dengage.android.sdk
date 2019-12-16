@@ -1,4 +1,4 @@
-package com.dengage.sdk;
+package com.dengage.sdk.models;
 
 import com.google.gson.annotations.SerializedName;
 

@@ -19,6 +19,7 @@ import androidx.core.app.NotificationCompat;
 
 import android.text.TextUtils;
 
+import com.dengage.sdk.models.Message;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -29,8 +30,6 @@ import java.util.Set;
 
 
 public class MessagingService extends FirebaseMessagingService {
-
-    private static Class<?> notificationOpenedClass;
 
     @Override
     public void onNewToken(String token) {
@@ -91,9 +90,7 @@ public class MessagingService extends FirebaseMessagingService {
 
             final int appIconResId = applicationInfo.icon;
 
-            notificationOpenedClass = DenActivity.class;
-
-            Intent denIntent = new Intent(this, notificationOpenedClass);
+            Intent denIntent = new Intent(this, OpenerActivity.class);
 
             denIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP  | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 

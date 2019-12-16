@@ -1,7 +1,9 @@
-package com.dengage.sdk;
+package com.dengage.sdk.models;
 
 import android.text.TextUtils;
 
+import com.dengage.sdk.models.Location;
+import com.dengage.sdk.models.ModelBase;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import java.util.HashMap;

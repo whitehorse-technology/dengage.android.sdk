@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 
+import com.dengage.sdk.models.ModelBase;
 import com.google.gson.Gson;
 import androidx.annotation.NonNull;
 import java.io.BufferedOutputStream;

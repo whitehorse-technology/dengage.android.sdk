@@ -13,9 +13,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         Context context = getApplicationContext();
-
         DengageManager.setLogStatus(true);
         DengageManager.setConfig(integrationKey, context);
 
