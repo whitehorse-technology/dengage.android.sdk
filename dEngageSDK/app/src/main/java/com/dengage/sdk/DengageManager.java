@@ -1,6 +1,7 @@
 package com.dengage.sdk;
 
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 import androidx.annotation.NonNull;
@@ -39,18 +40,11 @@ public class DengageManager {
 
     private DengageManager() {
 
-        if(BuildConfig.ENVIRONMENT == "dev") {
+        if(isDebugable()) {
             openApiEndpoint           = "https://pushdev.dengage.com/api/mobile/open";
             subsApiEndpoint           = "https://pushdev.dengage.com/api/device/subscription";
             eventApiEndpoint          = "https://eventdev.dengage.com/api/event";
             transOpenApiEndpoint     = "https://pushdev.dengage.com/api/transactional/mobile/open";
-        }
-
-        if(BuildConfig.ENVIRONMENT == "test") {
-            openApiEndpoint           = "https://pushtest.dengage.com/api/mobile/open";
-            subsApiEndpoint           = "https://pushtest.dengage.com/api/device/subscription";
-            eventApiEndpoint          = "https://eventtest.dengage.com/api/event";
-            transOpenApiEndpoint     = "https://pushtest.dengage.com/api/transactional/mobile/open";
         }
     }
 
@@ -423,6 +417,10 @@ public class DengageManager {
             INSTANCE._subscription.setAdid(adId);
             saveSubscription();
         }
+    }
+
+    private boolean isDebugable() {
+        return ( 0 != ( INSTANCE._context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE ) );
     }
 }
 
