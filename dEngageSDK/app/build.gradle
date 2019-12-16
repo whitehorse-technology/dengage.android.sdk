@@ -15,12 +15,12 @@ android {
     buildTypes {
 
         debug {
-            buildConfigField "String", "ENVIRONMENT", "\"prod\""
+            
         }
 
         release {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "ENVIRONMENT", "\"prod\""
+
         }
 
     }
