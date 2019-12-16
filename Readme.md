@@ -12,11 +12,11 @@
 
 *Supports Android API level 4.1.x or higher.*
 
- 1. [Create Firebase App](#1-Creating-Firebase-App)
- 2.  [Configuration](2-Configuration)
- 3. [Defining Push Application](3-Creating-Push-Application)
- 4.  [Implementing the SDK](4-Implementing-the-SDK)
- 5. [Using the SDK](5-Using-the-SDK)
+ 1. [Create Firebase App](#1-create-firebase-app)
+ 2.  [Configuration](#2-configuration)
+ 3. [Defining Push Application](#3-defining-push-application)
+ 4.  [Implementing the SDK](#4-implementing-the-sdk)
+ 5. [Using the SDK](#5-using-the-sdk)
 
 ## 1. Create Firebase App
 
