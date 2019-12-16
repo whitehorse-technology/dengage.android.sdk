@@ -20,7 +20,7 @@ android {
 
         release {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "ENVIRONMENT", "\"dev\""
+            buildConfigField "String", "ENVIRONMENT", "\"prod\""
         }
 
     }
