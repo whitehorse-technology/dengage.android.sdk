@@ -12,6 +12,6 @@ Visit [dEngage's Android SDK Setup Guide](https://docs.dengage.com/push-sdk/andr
 Visit [dEngage's Android SDK API Guide](https://docs.dengage.com/push-sdk/android)  page in order to list of all available methods.
 
 ## Support
-For account issues and support please contact [dEngage support](https://dengage.com) page  from the dashboard.  
+Visit [dEngage support](https://dengage.com) page for account issues or support.
 
 *Supports Android API level 4.1.x or higher.*
