@@ -62,6 +62,7 @@
       implementation 'com.google.firebase:firebase-core:17.0.1'  // Add this line
       implementation 'com.google.firebase:firebase-messaging:19.0.1'  // Add this line
       implementation 'com.google.firebase:firebase-analytics:17.2.0' // Add this line
+      implementation 'com.google.code.gson:gson:2.8.2'
       implementation 'com.dengage.sdk:dengage-android:1.0.0' // Add this line
       ...
     }
