@@ -10,8 +10,5 @@ This repo makes it easy to integrate your native Android app with dEngage. It pr
 ## Documentation
 Visit [dEngage's Android SDK Setup Guide](https://docs.dengage.com/push-sdk/android) page in order to view documentation.
 
-## API
-Visit [dEngage's Android SDK API Guide](https://docs.dengage.com/push-sdk/android)  page in order to list of all available methods.
-
 ## Support
-Visit [dEngage support](https://dengage.com) page for account issues or support.
+Visit [dEngage support](https://dengage.com) page for account issues.
