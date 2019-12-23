@@ -44,7 +44,7 @@ public class DengageManager {
     /**
      * Initiator method
      * <p>
-     * Use to initiate dEngage MobileManager with the application key.
+     * Use to initiate dEngage MobileManager with the integration key.
      * </p>
      * @param integrationKey Application key which you got from dEngage platform.
      */
@@ -317,7 +317,7 @@ public class DengageManager {
      * @param tableName The event table name of the schema.
      * @param data Addinational key-value data.
      */
-        public static void sendDeviceEvent(String tableName, Map<String, Object> data) {
+    public static void sendDeviceEvent(String tableName, Map<String, Object> data) {
         Logger.INSTANCE.Verbose("sendDeviceEvent method is called");
 
         try {
@@ -341,6 +341,7 @@ public class DengageManager {
         Logger.INSTANCE.setLogStatus(status);
     }
 
+    
     private static void getSubscription() {
         Logger.INSTANCE.Verbose("getSubscription method is called");
         try {

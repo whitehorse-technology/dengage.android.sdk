@@ -1,6 +1,5 @@
-//apply plugin: 'com.android.application'
-apply plugin: 'com.android.library'
-
+apply plugin: 'com.android.application'
+//apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 29
@@ -10,8 +9,17 @@ android {
         targetSdkVersion 29
         versionCode 1
         versionName "1.7"
-        //applicationId "com.dengage.sdk"
+        applicationId "com.dengage.sdk"
+
+        testApplicationId "com.test.foo"
+        testInstrumentationRunner "android.test.InstrumentationTestRunner"
+        testHandleProfiling true
+        testFunctionalTest true
+
     }
+
+    testBuildType "debug"
+
     buildTypes {
 
         debug {
@@ -20,21 +28,31 @@ android {
 
         release {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-
         }
+    }
 
-    }
-    testOptions {
-        unitTests.returnDefaultValues = true
-    }
     repositories {
         mavenCentral()
     }
+
     sourceSets {
         main {
             java.srcDirs = ['src/main/java']
         }
     }
+
+    testOptions {
+        unitTests {
+            returnDefaultValues true
+            all {
+                jvmArgs '-XX:MaxPermSize=256m'
+                if (it.name == 'testDebugUnitTest') {
+                    systemProperty 'debug', 'true'
+                }
+            }
+        }
+    }
+
 }
 
 
@@ -44,19 +62,24 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'com.google.android.material:material:1.0.0'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.2.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 'com.google.firebase:firebase-core:17.0.1'
     implementation 'com.google.firebase:firebase-messaging:19.0.1'
     implementation 'com.google.android.material:material:1.0.0'
+
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support:support-annotations:24.0.0'
+    androidTestImplementation 'androidx.test:runner:1.2.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    androidTestImplementation 'androidx.test:rules:1.1.0'
+    androidTestImplementation 'org.hamcrest:hamcrest-library:1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
+    androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
+
 }
 
 repositories {
     mavenCentral()
-    google()
-    jcenter()
 }
 
-//apply plugin: 'com.google.gms.google-services' // Add this line
+apply plugin: 'com.google.gms.google-services' // Add this line
 
