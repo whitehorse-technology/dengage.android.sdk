@@ -10,6 +10,8 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.telephony.TelephonyManager;
+import android.util.Log;
+
 import java.util.UUID;
 
 public final class Utils {
@@ -97,8 +99,9 @@ public final class Utils {
     }
 
     public static String getUserAgent(Context context) {
-        return Utils.getAppLabel(context, "An Android App") + "/"+ Utils.appVersion(context) + " "+ Build.MANUFACTURER +"/"+ Build.MODEL +" "+ System.getProperty("http.agent");
-        //return new WebView(context).getSettings().getUserAgentString();
+        String userAgent = Utils.getAppLabel(context, "An Android App") + "/"+ Utils.appVersion(context) + " "+ Build.MANUFACTURER +"/"+ Build.MODEL +" "+ System.getProperty("http.agent") +" Mobile/"+ Build.ID +"";
+        Log.d(Constants.LOG_TAG, userAgent);
+        return userAgent;
     }
 
     public static String deviceType(Context context) {
