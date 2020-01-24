@@ -46,7 +46,7 @@ public class DengageManager {
      * <p>
      * Use to initiate dEngage MobileManager with the integration key.
      * </p>
-     * @param integrationKey Application key which you got from dEngage platform.
+     * @param integrationKey Application key which you took from dEngage platform.
      */
     public static void setConfig(String integrationKey, Context context) {
 
@@ -56,7 +56,7 @@ public class DengageManager {
         Logger.INSTANCE.Verbose("Transactional API Endpoint: "+ INSTANCE.transOpenApiEndpoint);
         Logger.INSTANCE.Verbose("Event API Endpoint:         "+ INSTANCE.eventApiEndpoint);
 
-        if(integrationKey == null) {
+        if(integrationKey == null || TextUtils.isEmpty(integrationKey)) {
             throw new IllegalArgumentException("Argument null: integrationKey");
         }
 
@@ -78,7 +78,7 @@ public class DengageManager {
     }
 
     /**
-     * Gets Device ID
+     * Gets Device Identifier
      * @return String
      */
     public static String getDeviceId() {
@@ -88,7 +88,7 @@ public class DengageManager {
     }
 
     /**
-     * Gets Advertising ID
+     * Gets Advertising Identifier
      * @return String
      */
     public static String getAdvertisingId() {
@@ -145,8 +145,9 @@ public class DengageManager {
     public static void setContactKey(String contactKey) {
         Logger.INSTANCE.Verbose("setContactKey method is called");
         try {
+            if(TextUtils.isEmpty(contactKey))
+                throw new IllegalArgumentException("Argument empty: contactKey");
             INSTANCE._subscription.setContactKey(contactKey);
-            if(TextUtils.isEmpty(contactKey)) throw new IllegalArgumentException("Argument empty: contactKey");
             Logger.INSTANCE.Debug("contactKey: "+ contactKey);
             saveSubscription();
         } catch (Exception e) {
@@ -166,7 +167,6 @@ public class DengageManager {
         Logger.INSTANCE.Verbose("setIntegrationKey method is called");
         try {
             Logger.INSTANCE.Debug("setIntegrationKey: "+ key);
-            if(TextUtils.isEmpty(key)) throw new IllegalArgumentException("Argument empty: key");
             INSTANCE._subscription.setIntegrationKey(key);
             saveSubscription();
         } catch (Exception e) {
@@ -179,13 +179,14 @@ public class DengageManager {
      * <p>
      * Use to register a user to dEngage. Only required when you perform a manuel GCM registration.
      * </p>
-     * @param token  GCM Token
+     * @param token GCM Token
      */
     public static void subscribe(String token) {
         Logger.INSTANCE.Verbose("subscribe(token) method is called");
         try {
             INSTANCE._subscription.setToken(token);
-            if(TextUtils.isEmpty(token)) throw new IllegalArgumentException("Argument empty: token");
+            if(TextUtils.isEmpty(token))
+                throw new IllegalArgumentException("Argument empty: token");
             saveSubscription();
             Logger.INSTANCE.Debug("subscribe(token): " + token);
             syncSubscription();
@@ -214,30 +215,26 @@ public class DengageManager {
                             .addOnCanceledListener(new OnCanceledListener() {
                                 @Override
                                 public void onCanceled() {
-                                    Logger.INSTANCE.Verbose("Token onCanceled");
+                                    Logger.INSTANCE.Verbose("Token retrieving canceled");
                                 }
                             })
                             .addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
-                                    Logger.INSTANCE.Verbose("Token onFailure");
-                                    Logger.INSTANCE.Error("Token retrieved: " + e.getMessage());
+                                    Logger.INSTANCE.Error("Token retrieving failed: " + e.getMessage());
                                 }
                             })
                             .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
                                 @Override
                                 public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                                    Logger.INSTANCE.Verbose("Token onComplete");
                                     if (!task.isSuccessful()) {
                                         Logger.INSTANCE.Error("Firebase InstanceId Failed: " + task.getException().getMessage());
                                         return;
                                     }
                                     String token = task.getResult().getToken();
                                     Logger.INSTANCE.Debug("Token retrieved: " + token);
-                                    if (!TextUtils.isEmpty(token)) {
-                                        INSTANCE._subscription.setToken(token);
-                                        saveSubscription();
-                                    }
+                                    INSTANCE._subscription.setToken(token);
+                                    saveSubscription();
                                 }
                             });
             }
@@ -256,21 +253,21 @@ public class DengageManager {
 
 
     /**
-     * Retention service
+     * Sends open event
      * <p>
      * Use to open report when a GCM message is received. Only required when you perform a manuel GCM registration.
      * </p>
-     * @param message The message object.
+     * @param message The dEngage message object.
      */
     public static void sendOpenEvent(Message message) {
-        Logger.INSTANCE.Verbose("open method is called");
+        Logger.INSTANCE.Verbose("sendOpenEvent method is called");
         try {
             getSubscription();
 
             if(message == null) throw new IllegalArgumentException("Argument null: message");
 
-            Logger.INSTANCE.Debug("MobileManager.open message: " + message.toJson());
-            Logger.INSTANCE.Debug("MobileManager.open token: " + INSTANCE._subscription.getToken());
+            Logger.INSTANCE.Debug("sendOpenEvent > message: " + message.toJson());
+            Logger.INSTANCE.Debug("sendOpenEvent > token: " + INSTANCE._subscription.getToken());
 
             Open openSignal = new Open();
             openSignal.setIntegrationKey(INSTANCE._subscription.getIntegrationKey());
@@ -284,18 +281,18 @@ public class DengageManager {
                 request.sendRequestAsync(INSTANCE.openApiEndpoint, Utils.getUserAgent(INSTANCE._context), openSignal, Open.class);
 
         } catch (Exception e) {
-            Logger.INSTANCE.Error("open: "+ e.getMessage());
+            Logger.INSTANCE.Error("sendOpenEvent: "+ e.getMessage());
         }
     }
 
     /**
-     * Retention service
+     * Sends a custom event
      * <p>
      * Use to hit a custom event report.
      * </p>
      * @param tableName The event table name of the schema.
-     * @param key Value of the table key.
-     * @param data Addinational key-value data.
+     * @param key Value of the event key.
+     * @param data Additional key-value data which is correspond table column name-value.
      */
     public static void sendCustomEvent(String tableName, String key, Map<String,Object> data) {
         Logger.INSTANCE.Verbose("sendCustomEvent method is called");
@@ -310,16 +307,15 @@ public class DengageManager {
     }
 
     /**
-     * Retention service
+     * Sends a device event
      * <p>
      * Use to hit a device event report.
      * </p>
      * @param tableName The event table name of the schema.
-     * @param data Addinational key-value data.
+     * @param data Additional key-value data which is correspond table column name-value.
      */
     public static void sendDeviceEvent(String tableName, Map<String, Object> data) {
         Logger.INSTANCE.Verbose("sendDeviceEvent method is called");
-
         try {
             getSubscription();
             Event event = new Event(INSTANCE._subscription.getIntegrationKey(), tableName, getDeviceId(), data);
@@ -412,8 +408,6 @@ public class DengageManager {
             saveSubscription();
         }
     }
-
-
 }
 
 

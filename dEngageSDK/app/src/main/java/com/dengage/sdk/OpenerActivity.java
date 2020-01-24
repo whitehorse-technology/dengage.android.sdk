@@ -13,7 +13,7 @@ public class OpenerActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Logger.INSTANCE.Verbose("Called DenActivity onCreate.");
+        Logger.INSTANCE.Verbose("Called OpenerActivity onCreate.");
         Intent intent = getIntent();
         ProcessMessage(intent);
         finish();
@@ -22,7 +22,7 @@ public class OpenerActivity extends Activity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        Logger.INSTANCE.Verbose("Called DenActivity onNewIntent.");
+        Logger.INSTANCE.Verbose("Called OpenerActivity onNewIntent.");
         ProcessMessage(intent);
         finish();
     }
@@ -46,13 +46,5 @@ public class OpenerActivity extends Activity {
             launchIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
             getApplicationContext().startActivity(launchIntent);
         }
-
-        //PackageManager packageManager = this.getPackageManager();
-
-        //Intent resultIntent = packageManager.getLaunchIntentForPackage(this.getPackageName());
-
-        //ComponentName componentName = denIntent.getComponent();
-
-        // Intent notificationIntent = Intent.makeRestartActivityTask(componentName)
     }
 }
