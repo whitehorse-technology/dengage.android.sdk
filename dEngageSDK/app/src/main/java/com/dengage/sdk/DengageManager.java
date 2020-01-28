@@ -145,8 +145,6 @@ public class DengageManager {
     public static void setContactKey(String contactKey) {
         Logger.INSTANCE.Verbose("setContactKey method is called");
         try {
-            if(TextUtils.isEmpty(contactKey))
-                throw new IllegalArgumentException("Argument empty: contactKey");
             INSTANCE._subscription.setContactKey(contactKey);
             Logger.INSTANCE.Debug("contactKey: "+ contactKey);
             saveSubscription();
