@@ -32,9 +32,6 @@ public class Subscription extends ModelBase {
     @SerializedName("sdkVersion")
     private String sdkVersion = "";
 
-    @SerializedName("firstTime")
-    private transient  int firstTime = 1;
-
     @SerializedName("udid")
     private String udid = "";
 
@@ -68,6 +65,9 @@ public class Subscription extends ModelBase {
     @SerializedName("extra")
     private transient Map<String, Object> extra = new HashMap<>();
 
+    @SerializedName("tokenSaved")
+    private boolean tokenSaved = false;
+
     public void add(String key, Object value) {
         extra.put(key, value);
     }
@@ -82,6 +82,14 @@ public class Subscription extends ModelBase {
 
     public boolean isValid() {
         return !TextUtils.isEmpty(getToken()) & !TextUtils.isEmpty(getIntegrationKey()) & !TextUtils.isEmpty(getUdid());
+    }
+
+    public Boolean getTokenSaved() {
+        return this.tokenSaved;
+    }
+
+    public void setTokenSaved(Boolean value) {
+        this.tokenSaved = value;
     }
 
     public String getUdid() {
@@ -198,14 +206,6 @@ public class Subscription extends ModelBase {
 
     public void setSdkVersion(String sdkVersion) {
         this.sdkVersion = sdkVersion;
-    }
-
-    public int getFirstTime() {
-        return firstTime;
-    }
-
-    public void setFirstTime(int firstTime) {
-        this.firstTime = firstTime;
     }
 
     public void setAppVersion(String appVersion) {

@@ -205,44 +205,51 @@ public class DengageManager {
 
             getSubscription();
 
-            String token = INSTANCE._subscription.getToken();
+            Logger.INSTANCE.Debug("tokenSaved: " + INSTANCE._subscription.getTokenSaved());
 
-            if(TextUtils.isEmpty(token)) {
+            FirebaseInstanceId.getInstance().getInstanceId()
+            .addOnCanceledListener(new OnCanceledListener() {
+                @Override
+                public void onCanceled() {
+                    Logger.INSTANCE.Verbose("Token retrieving canceled");
+                }
+            })
+            .addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Logger.INSTANCE.Error("Token retrieving failed: " + e.getMessage());
+                }
+            })
+            .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                @Override
+                public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                    if (!task.isSuccessful()) {
+                        Logger.INSTANCE.Error("Firebase InstanceId Failed: " + task.getException().getMessage());
+                        return;
+                    }
 
-                    FirebaseInstanceId.getInstance().getInstanceId()
-                            .addOnCanceledListener(new OnCanceledListener() {
-                                @Override
-                                public void onCanceled() {
-                                    Logger.INSTANCE.Verbose("Token retrieving canceled");
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Logger.INSTANCE.Error("Token retrieving failed: " + e.getMessage());
-                                }
-                            })
-                            .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                                    if (!task.isSuccessful()) {
-                                        Logger.INSTANCE.Error("Firebase InstanceId Failed: " + task.getException().getMessage());
-                                        return;
-                                    }
-                                    String token = task.getResult().getToken();
-                                    Logger.INSTANCE.Debug("Token retrieved: " + token);
-                                    INSTANCE._subscription.setToken(token);
-                                    saveSubscription();
-                                }
-                            });
-            }
+                    String token = task.getResult().getToken();
+                    Logger.INSTANCE.Debug("Token retrieved: " + token);
+                    INSTANCE._subscription.setToken(token);
+
+                    if(!INSTANCE._subscription.getTokenSaved() ) {
+                        Logger.INSTANCE.Debug("syncSubscription: " + INSTANCE._subscription.toJson());
+                        INSTANCE._subscription.setTokenSaved(true);
+                        request.sendRequestAsync(INSTANCE.subsApiEndpoint, Utils.getUserAgent(INSTANCE._context), INSTANCE._subscription, Subscription.class);
+                    }
+
+                    saveSubscription();
+                }
+            });
+
 
             AdvertisingIdWorker adIdWorker = new AdvertisingIdWorker(INSTANCE._context);
             adIdWorker.execute();
 
-            Logger.INSTANCE.Debug("syncSubscription: " + INSTANCE._subscription.toJson());
-
-            request.sendRequestAsync(INSTANCE.subsApiEndpoint, Utils.getUserAgent(INSTANCE._context), INSTANCE._subscription, Subscription.class);
+            if( INSTANCE._subscription.getTokenSaved() ) {
+                request.sendRequestAsync(INSTANCE.subsApiEndpoint, Utils.getUserAgent(INSTANCE._context), INSTANCE._subscription, Subscription.class);
+                Logger.INSTANCE.Debug("syncSubscription: " + INSTANCE._subscription.toJson());
+            }
 
         } catch (Exception e) {
             Logger.INSTANCE.Error("syncSubscription: "+ e.getMessage());
