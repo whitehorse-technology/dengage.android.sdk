@@ -49,8 +49,8 @@ public class MessagingService extends FirebaseMessagingService {
         Message pushMessage = new Message(data);
 
         String source = pushMessage.getMessageSource();
-        if(source.equals(Constants.MESSAGE_SOURCE)) {
-            Logger.INSTANCE.Debug("There is a message receives from dEngage: " + pushMessage.getMessage());
+        if(Constants.MESSAGE_SOURCE.equals(source)) {
+            Logger.INSTANCE.Debug("There is a message that received from dEngage: " + pushMessage.getMessage());
             if (!TextUtils.isEmpty(pushMessage.getMessage())) {
                 Logger.INSTANCE.Verbose("Generating notification");
                 generateNotification(pushMessage, data);

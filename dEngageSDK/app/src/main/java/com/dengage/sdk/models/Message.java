@@ -2,14 +2,9 @@ package com.dengage.sdk.models;
 
 import android.os.Bundle;
 import android.text.TextUtils;
-
 import androidx.annotation.NonNull;
-
-import com.dengage.sdk.models.CustomParam;
-import com.dengage.sdk.models.Media;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -77,40 +72,40 @@ public class Message {
 
     private void setProperties(@NonNull Map<String,String> bundle) {
 
-        if (bundle.get("messageId") != null & !TextUtils.isEmpty(bundle.get("messageId")))
+        if (bundle.get("messageId") != null && !TextUtils.isEmpty(bundle.get("messageId")))
             messageId = Integer.parseInt(bundle.get("messageId"));
 
-        if (bundle.get("messageSource") != null & !TextUtils.isEmpty(bundle.get("messageSource")))
+        if (bundle.get("messageSource") != null && !TextUtils.isEmpty(bundle.get("messageSource")))
             messageSource = bundle.get("messageSource");
 
-        if (bundle.get("messageDetails") != null & !TextUtils.isEmpty(bundle.get("messageDetails")))
+        if (bundle.get("messageDetails") != null && !TextUtils.isEmpty(bundle.get("messageDetails")))
             messageDetails = bundle.get("messageDetails");
 
-        if (bundle.get("mediaUrl") != null & !TextUtils.isEmpty(bundle.get("mediaUrl")))
+        if (bundle.get("mediaUrl") != null && !TextUtils.isEmpty(bundle.get("mediaUrl")))
             mediaUrl = bundle.get("mediaUrl");
 
-        if (bundle.get("targetUrl") != null & !TextUtils.isEmpty(bundle.get("targetUrl")))
+        if (bundle.get("targetUrl") != null && !TextUtils.isEmpty(bundle.get("targetUrl")))
             targetUrl = bundle.get("targetUrl");
 
-        if (bundle.get("title") != null & !TextUtils.isEmpty(bundle.get("title")))
+        if (bundle.get("title") != null && !TextUtils.isEmpty(bundle.get("title")))
             title = bundle.get("title");
 
-        if (bundle.get("transactionId") != null & !TextUtils.isEmpty(bundle.get("transactionId")))
+        if (bundle.get("transactionId") != null && !TextUtils.isEmpty(bundle.get("transactionId")))
             transactionId = bundle.get("transactionId");
 
-        if (bundle.get("subTitle") != null & !TextUtils.isEmpty(bundle.get("subTitle")))
+        if (bundle.get("subTitle") != null && !TextUtils.isEmpty(bundle.get("subTitle")))
             subTitle = bundle.get("subTitle");
 
-        if (bundle.get("message") != null & !TextUtils.isEmpty(bundle.get("message")))
+        if (bundle.get("message") != null && !TextUtils.isEmpty(bundle.get("message")))
             message = bundle.get("message");
 
         if (bundle.get("badge") != null & !TextUtils.isEmpty(bundle.get("badge")))
             badge = Boolean.parseBoolean(bundle.get("badge"));
 
-        if (bundle.get("badgeCount") != null & !TextUtils.isEmpty(bundle.get("badgeCount")))
-            badgeCount = Integer.parseInt(bundle.get("badgeCount"));
+        if (bundle.get("badgeCount") != null && !TextUtils.isEmpty(bundle.get("badgeCount")))
+            badgeCount = Integer.parseInt( bundle.get("badgeCount") );
 
-        if (bundle.get("sound") != null & !TextUtils.isEmpty(bundle.get("sound")))
+        if (bundle.get("sound") != null && !TextUtils.isEmpty(bundle.get("sound")))
             sound = bundle.get("sound");
 
         if (bundle.get("customParams") != null)
@@ -119,11 +114,11 @@ public class Message {
         if (bundle.get("media") != null)
             medias = gson.fromJson(bundle.get("media"), Media[].class);
 
-        if (TextUtils.isEmpty(this.mediaUrl) & medias != null & medias.length > 0) {
+        if (TextUtils.isEmpty(this.mediaUrl) && medias != null && medias.length > 0) {
             mediaUrl = medias[0].getUrl();
         }
 
-        if (TextUtils.isEmpty(this.targetUrl) & medias != null & medias.length > 0) {
+        if (TextUtils.isEmpty(this.targetUrl) && medias != null && medias.length > 0) {
             targetUrl = medias[0].getTarget();
         }
     }
@@ -187,6 +182,5 @@ public class Message {
     public String toJson() {
         return new Gson().toJson(this);
     }
-
 
 }

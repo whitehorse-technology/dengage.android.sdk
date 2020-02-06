@@ -335,7 +335,7 @@ public class DengageManager {
         Logger.INSTANCE.setLogStatus(status);
     }
 
-    
+
     private static void getSubscription() {
         Logger.INSTANCE.Verbose("getSubscription method is called");
         try {
@@ -363,7 +363,7 @@ public class DengageManager {
             INSTANCE._subscription.setLocal(Utils.local(INSTANCE._context));
             INSTANCE._subscription.setOs(Utils.osType());
             INSTANCE._subscription.setOsVersion(Utils.osVersion());
-            INSTANCE._subscription.setSdkVersion(Constants.SDK_VERSION);
+            INSTANCE._subscription.setSdkVersion(BuildConfig.VERSION_NAME);
             INSTANCE._subscription.setDeviceName(Utils.deviceName());
             INSTANCE._subscription.setDeviceType(Utils.deviceType(INSTANCE._context));
 
