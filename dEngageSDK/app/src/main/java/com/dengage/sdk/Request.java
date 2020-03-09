@@ -14,15 +14,11 @@ import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public final class RequestHelper  {
+class Request  {
 
-    private final int connectionTimeout = 15000;
-    private final int readTimeout = 10000;
-    private Gson gson = new Gson();
+    private Logger logger = Logger.getInstance();
 
-    public static RequestHelper INSTANCE = new RequestHelper();
-
-    public Bitmap getBitmap(String urlString) {
+    Bitmap getBitmap(String urlString) {
         try {
             return BitmapFactory.decodeStream(new URL(urlString).openConnection().getInputStream());
         } catch (Exception e) {
@@ -33,12 +29,11 @@ public final class RequestHelper  {
         }
     }
 
-    public void sendRequestAsync(String url, String userAgent, ModelBase model, @NonNull Type type) {
-        new JsonAsyncTask(url, userAgent, model, type).execute();
-    }
+    boolean send(String url, String userAgent, ModelBase model, @NonNull Type modelType) {
+        logger.Verbose("sendReuqest to: "+ url);
 
-    public boolean sendRequest(String url, String userAgent, ModelBase model, @NonNull Type modelType) {
-        Logger.INSTANCE.Verbose("sendReuqest to: "+ url);
+        final int connectionTimeout = 15000;
+        final int readTimeout = 10000;
 
         HttpURLConnection conn = null;
         OutputStream os = null;
@@ -46,9 +41,10 @@ public final class RequestHelper  {
         String responseMessage = "";
         try {
             URL uri = new URL(url);
-            Logger.INSTANCE.Verbose("sendReuqest: Request body parsing...");
+            logger.Verbose("sendReuqest: Request body parsing...");
+            Gson gson = new Gson();
             String message = gson.toJson(model, modelType);
-            Logger.INSTANCE.Verbose("sendReuqest:  Request for " + url + " with : " + message);
+            logger.Verbose("sendReuqest:  Request for " + url + " with : " + message);
             conn = (HttpURLConnection) uri.openConnection();
             conn.setReadTimeout(readTimeout);
             conn.setConnectTimeout(connectionTimeout);
@@ -66,22 +62,22 @@ public final class RequestHelper  {
             responseCode = conn.getResponseCode();
             responseMessage = conn.getResponseMessage();
         } catch (Exception e) {
-            Logger.INSTANCE.Error( "sendRequest: "+ e.getMessage());
+            logger.Error( "sendRequest: "+ e.getMessage());
         } finally {
             try {
                 if (os != null) {
                     os.close();
                 }
             } catch (Exception e) {
-                Logger.INSTANCE.Error( "sendRequest finally: "+ e.getMessage());
+                logger.Error( "sendRequest finally: "+ e.getMessage());
             }
             if (conn != null) {
                 conn.disconnect();
             }
         }
 
-        Logger.INSTANCE.Verbose("Response Message: "+ responseMessage);
-        Logger.INSTANCE.Verbose("Response Message: "+ responseCode);
+        logger.Verbose("Response Message: "+ responseMessage);
+        logger.Verbose("Response Message: "+ responseCode);
 
         try {
 
@@ -89,31 +85,9 @@ public final class RequestHelper  {
                 throw new Exception("The remote server returned an error with the status code: "+ responseCode);
 
         } catch(Exception e) {
-            Logger.INSTANCE.Error(e.getMessage());
+            logger.Error(e.getMessage());
         }
 
         return responseCode > 199 && responseCode < 300;
     }
-
-    private class JsonAsyncTask extends AsyncTask<Void, Void, Void> {
-
-        private WeakReference<String> urlReference;
-        private WeakReference<ModelBase> modelReference;
-        private WeakReference<Type> modelTypeReference;
-        private WeakReference<String> userAgentReference;
-
-        JsonAsyncTask(String url, String userAgent, ModelBase model, Type modelType){
-            urlReference = new WeakReference<>(url);
-            modelReference = new WeakReference<>(model);
-            modelTypeReference = new WeakReference<>(modelType);
-            userAgentReference = new WeakReference<>(userAgent);
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            sendRequest(urlReference.get(), userAgentReference.get(), modelReference.get(), modelTypeReference.get());
-            return null;
-        }
-    }
-
 }
