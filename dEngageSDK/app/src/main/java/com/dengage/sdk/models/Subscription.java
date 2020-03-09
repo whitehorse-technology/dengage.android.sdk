@@ -235,8 +235,4 @@ public class Subscription extends ModelBase {
     public void setExtra(Map<String, Object> extra) {
         this.extra = extra;
     }
-
-    public String toJson() {
-        return new Gson().toJson(this);
-    }
 }

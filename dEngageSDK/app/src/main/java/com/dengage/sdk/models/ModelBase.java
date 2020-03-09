@@ -1,5 +1,6 @@
 package com.dengage.sdk.models;
 
+import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
 public abstract class ModelBase {
@@ -47,4 +48,7 @@ public abstract class ModelBase {
         this.userAgent = agent;
     }
 
+    public String toJson() {
+        return new Gson().toJson(this);
+    }
 }

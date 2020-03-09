@@ -42,8 +42,4 @@ public class Event extends ModelBase {
         this.eventTable = eventTable;
         this.eventDetails = details;
     }
-
-    public String toJson() {
-        return new Gson().toJson(this);
-    }
 }

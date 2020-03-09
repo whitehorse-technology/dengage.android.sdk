@@ -40,11 +40,11 @@ class Request  {
         int responseCode = 0;
         String responseMessage = "";
         try {
+
             URL uri = new URL(url);
-            logger.Verbose("sendReuqest: Request body parsing...");
             Gson gson = new Gson();
             String message = gson.toJson(model, modelType);
-            logger.Verbose("sendReuqest:  Request for " + url + " with : " + message);
+            logger.Verbose("sendReuqest body: " + message);
             conn = (HttpURLConnection) uri.openConnection();
             conn.setReadTimeout(readTimeout);
             conn.setConnectTimeout(connectionTimeout);
