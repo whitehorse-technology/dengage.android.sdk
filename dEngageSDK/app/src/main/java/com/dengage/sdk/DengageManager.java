@@ -1,10 +1,10 @@
 package com.dengage.sdk;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 import androidx.annotation.NonNull;
-
 import com.dengage.sdk.models.Event;
 import com.dengage.sdk.models.Message;
 import com.dengage.sdk.models.Open;
@@ -24,9 +24,9 @@ import java.util.Map;
 
 public class DengageManager {
 
-    private static DengageManager INSTANCE  = new DengageManager();;
     private static Logger logger = Logger.getInstance();
-    private Context _context;
+    @SuppressLint("MayStaticFieldLeak")
+    private static Context _context;
 
     DengageManager() {
 
@@ -57,10 +57,10 @@ public class DengageManager {
 
         try {
 
-            INSTANCE._context = context;
+            _context = context;
             getSubscription();
             setIntegrationKey(integrationKey);
-            FirebaseApp.initializeApp(INSTANCE._context);
+            FirebaseApp.initializeApp(_context);
             syncSubscription();
 
         } catch (Exception e) {
@@ -236,7 +236,7 @@ public class DengageManager {
                     if(!subscription.getTokenSaved() ) {
                         logger.Debug("syncSubscription: " + subscription.toJson());
                         subscription.setTokenSaved(true);
-                        RequestAsync req = new RequestAsync(Constants.subsApiEndpoint, Utils.getUserAgent(INSTANCE._context), subscription, Subscription.class);
+                        RequestAsync req = new RequestAsync(Constants.subsApiEndpoint, Utils.getUserAgent(_context), subscription, Subscription.class);
                         req.execute();
                     }
 
@@ -248,7 +248,7 @@ public class DengageManager {
             adIdWorker.execute();
 
             if( subscription.getTokenSaved() ) {
-                RequestAsync req = new RequestAsync(Constants.subsApiEndpoint, Utils.getUserAgent(INSTANCE._context), subscription, Subscription.class);
+                RequestAsync req = new RequestAsync(Constants.subsApiEndpoint, Utils.getUserAgent(_context), subscription, Subscription.class);
                 req.execute();
                 logger.Debug("syncSubscription: " + subscription.toJson());
             }
@@ -285,11 +285,11 @@ public class DengageManager {
             logger.Debug("sendOpenEvent: " + openSignal.toJson());
 
             if (!TextUtils.isEmpty(message.getTransactionId())) {
-                RequestAsync req = new RequestAsync(Constants.transOpenApiEndpoint, Utils.getUserAgent(INSTANCE._context), openSignal, Open.class);
+                RequestAsync req = new RequestAsync(Constants.transOpenApiEndpoint, Utils.getUserAgent(_context), openSignal, Open.class);
                 req.execute();
             }
             else {
-                RequestAsync req = new RequestAsync(Constants.openApiEndpoint, Utils.getUserAgent(INSTANCE._context), openSignal, Open.class);
+                RequestAsync req = new RequestAsync(Constants.openApiEndpoint, Utils.getUserAgent(_context), openSignal, Open.class);
                 req.execute();
             }
 
@@ -313,7 +313,7 @@ public class DengageManager {
             Subscription subscription = getSubscription();
             Event event = new Event(subscription.getIntegrationKey(), tableName, key, data);
             logger.Debug("sendCustomEvent: " + event.toJson());
-            RequestAsync req = new RequestAsync(Constants.eventApiEndpoint, Utils.getUserAgent(INSTANCE._context), event, Event.class);
+            RequestAsync req = new RequestAsync(Constants.eventApiEndpoint, Utils.getUserAgent(_context), event, Event.class);
             req.execute();
         } catch (Exception e) {
             logger.Error("sendCustomEvent: "+ e.getMessage());
@@ -334,7 +334,7 @@ public class DengageManager {
             Subscription subscription = getSubscription();
             Event event = new Event(subscription.getIntegrationKey(), tableName, getDeviceId(), data);
             logger.Debug("sendDeviceEvent: " + event.toJson());
-            RequestAsync req = new RequestAsync(Constants.eventApiEndpoint, Utils.getUserAgent(INSTANCE._context), event, Event.class);
+            RequestAsync req = new RequestAsync(Constants.eventApiEndpoint, Utils.getUserAgent(_context), event, Event.class);
             req.execute();
         } catch (Exception e) {
             logger.Error("sendDeviceEvent: "+ e.getMessage());
@@ -355,8 +355,8 @@ public class DengageManager {
     private static Subscription getSubscription() {
         try {
 
-            if (Utils.hasPrefString(INSTANCE._context, Constants.SUBSCRIPTION_KEY)) {
-                return new Gson().fromJson(Utils.getPrefString(INSTANCE._context, Constants.SUBSCRIPTION_KEY), Subscription.class);
+            if (Utils.hasSubscription(_context)) {
+                return new Gson().fromJson(Utils.getSubscription(_context), Subscription.class);
             } else {
                 return new Subscription();
             }
@@ -371,17 +371,17 @@ public class DengageManager {
         logger.Verbose("saveSubscription method is called");
         try {
 
-            subscription.setUdid(Utils.udid(INSTANCE._context));
-            subscription.setCarrierId(Utils.carrier(INSTANCE._context));
-            subscription.setAppVersion(Utils.appVersion(INSTANCE._context));
-            subscription.setLocal(Utils.local(INSTANCE._context));
+            subscription.setUdid(Utils.getDeviceId(_context));
+            subscription.setCarrierId(Utils.carrier(_context));
+            subscription.setAppVersion(Utils.appVersion(_context));
+            subscription.setLocal(Utils.local(_context));
             subscription.setOs(Utils.osType());
             subscription.setOsVersion(Utils.osVersion());
-            subscription.setSdkVersion(BuildConfig.VERSION_NAME);
+            subscription.setSdkVersion(com.dengage.sdk.BuildConfig.VERSION_NAME);
             subscription.setDeviceName(Utils.deviceName());
-            subscription.setDeviceType(Utils.deviceType(INSTANCE._context));
+            subscription.setDeviceType(Utils.deviceType());
 
-            Utils.savePrefString(INSTANCE._context, Constants.SUBSCRIPTION_KEY, subscription.toJson());
+            Utils.saveSubscription(_context, subscription.toJson());
         } catch (Exception e) {
             logger.Error("saveSubscription: "+ e.getMessage());
         }
@@ -391,10 +391,10 @@ public class DengageManager {
         @Override
         protected String doInBackground(Void... params) {
             logger.Debug("Getting advertising ID");
-            AdvertisingIdClient.Info adInfo = null;
+            AdvertisingIdClient.Info adInfo;
             String advertisingId = "";
             try {
-                adInfo = AdvertisingIdClient.getAdvertisingIdInfo(INSTANCE._context);
+                adInfo = AdvertisingIdClient.getAdvertisingIdInfo(_context);
                 if (!adInfo.isLimitAdTrackingEnabled())
                     advertisingId = adInfo.getId();
             } catch (GooglePlayServicesNotAvailableException e) {

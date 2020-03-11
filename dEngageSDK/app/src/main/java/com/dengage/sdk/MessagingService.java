@@ -45,23 +45,17 @@ public class MessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
-
-        logger.Verbose("There is a message that received from FCM");
-
+        logger.Verbose("There is a message.");
         Map<String, String> data = remoteMessage.getData();
         if( (data != null && data.size() > 0)) {
             Message pushMessage = new Message(data);
+            logger.Verbose("Message Json: "+ pushMessage.toJson());
             String source = pushMessage.getMessageSource();
             if (Constants.MESSAGE_SOURCE.equals(source)) {
-                logger.Debug("There is a message that received from dEngage: " + pushMessage.getMessage());
+                logger.Debug("There is a message that received from dEngage");
                 generateNotification(pushMessage, data);
             }
         }
-    }
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
     }
 
     private void generateNotification(Message pushMessage, Map<String, String> data) {
@@ -73,7 +67,7 @@ public class MessagingService extends FirebaseMessagingService {
             NotificationManager mNotificationManager = (NotificationManager)this.getSystemService(Context.NOTIFICATION_SERVICE);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && mNotificationManager != null) {
-                ChannelHelper.createNotificationChannel(mNotificationManager, pushMessage.getBadge(), getApplicationContext(),notificationChannelId);
+                ChannelHelper.createNotificationChannel(mNotificationManager, pushMessage.getBadge(), context,notificationChannelId);
             }
 
             PackageManager packageManager = this.getPackageManager();
@@ -103,7 +97,7 @@ public class MessagingService extends FirebaseMessagingService {
             if(!TextUtils.isEmpty(pushMessage.getTitle())) {
                 mBuilder.setContentTitle(pushMessage.getTitle());
             } else { // default
-                String title = Utils.getAppLabel(getApplicationContext(), "");
+                String title = Utils.getAppLabel(context, "");
                 mBuilder.setContentTitle(title);
             }
 
@@ -115,29 +109,18 @@ public class MessagingService extends FirebaseMessagingService {
                 mBuilder.setContentText(pushMessage.getMessage());
             }
 
-            if(!TextUtils.isEmpty(pushMessage.getSmallIcon())) { // from resource
-                int smallIcon = context.getResources().getIdentifier(pushMessage.getLargeIcon(), "raw", context.getPackageName());
-                mBuilder.setSmallIcon(smallIcon);
-            } else { // default
-                mBuilder.setSmallIcon(applicationInfo.icon);
-            }
+            final int appIconResId = applicationInfo.icon;
+            mBuilder.setSmallIcon(appIconResId);
 
-            if(!TextUtils.isEmpty(pushMessage.getLargeIcon())) { // from resource
-                int id = context.getResources().getIdentifier(pushMessage.getLargeIcon(), "raw", context.getPackageName());
-                Bitmap bitmap = BitmapFactory.decodeResource(getResources(), id);
-                mBuilder.setLargeIcon(bitmap);
-            }
-
-            if(!TextUtils.isEmpty(pushMessage.getSound())){ // from resource
-                int id = context.getResources().getIdentifier(pushMessage.getSound(), "raw", context.getPackageName());
-                Uri sound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + "/" + id);
-                mBuilder.setSound(sound);
-            } else { // default
+            if(!TextUtils.isEmpty(pushMessage.getSound())){
+                mBuilder.setSound(Utils.getSound(context, pushMessage.getSound()));
+            } else {
                 Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
                 mBuilder.setSound(sound);
             }
 
-            if(pushMessage.getBadge() && pushMessage.getBadgeCount() > 0){
+            if(pushMessage.getBadgeCount() > 0){
+                mBuilder.setBadgeIconType(NotificationCompat.BADGE_ICON_SMALL);
                 mBuilder.setNumber(pushMessage.getBadgeCount());
             }
 
@@ -155,7 +138,9 @@ public class MessagingService extends FirebaseMessagingService {
             PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             mBuilder.setContentIntent(contentIntent);
 
-            mNotificationManager.notify(0, mBuilder.build());
+            Notification notification = mBuilder.build();
+
+            mNotificationManager.notify(12, notification);
 
         } catch (Exception e) {
             logger.Error("generateNotification: " + e.getMessage());
@@ -163,15 +148,12 @@ public class MessagingService extends FirebaseMessagingService {
     }
  
     private static class ChannelHelper {
-
         @TargetApi(Build.VERSION_CODES.O)
         public static void createNotificationChannel(NotificationManager notificationManager, Boolean badge, Context context, String notificationChannelId) {
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
             NotificationChannel notificationChannel = new NotificationChannel(notificationChannelId, Constants.CHANNEL_NAME, importance);
             notificationChannel.setDescription(Constants.CHANNEL_DESCRIPTION);
-            if(badge) {
-                notificationChannel.setShowBadge(true);
-            }
+            notificationChannel.setShowBadge(true);
             notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
             notificationChannel.enableVibration(true);
             notificationChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});

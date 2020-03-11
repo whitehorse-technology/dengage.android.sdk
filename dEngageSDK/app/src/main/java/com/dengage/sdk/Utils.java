@@ -16,7 +16,7 @@ class Utils {
 
     private static String uniqueID = null;
 
-    synchronized static String udid(Context context) {
+    synchronized static String getDeviceId(Context context) {
         if (uniqueID == null) {
             SharedPreferences sharedPrefs = context.getSharedPreferences(Constants.DEN_DEVICE_UNIQUE_ID, Context.MODE_PRIVATE);
                 uniqueID = sharedPrefs.getString(Constants.DEN_DEVICE_UNIQUE_ID, null);
@@ -30,34 +30,31 @@ class Utils {
         return uniqueID;
     }
 
-    static String savePrefString(Context context, String key, String value) {
+    static void saveSubscription(Context context, String value) {
         String appName = context.getPackageName();
         SharedPreferences sp = context.getSharedPreferences(appName, Context.MODE_PRIVATE);
         SharedPreferences.Editor spEditor = sp.edit();
-        spEditor.putString(key, value);
+        spEditor.putString(Constants.SUBSCRIPTION_KEY, value);
         spEditor.apply();
-        return value;
     }
 
-    static boolean hasPrefString(Context context, String key) {
-        String appName = context.getPackageName();
-        SharedPreferences sp = context.getSharedPreferences(appName,
-                Context.MODE_PRIVATE);
-        boolean res = sp.contains(key);
-        return res;
-    }
-
-    static String getPrefString(Context context, String key) {
+    static boolean hasSubscription(Context context) {
         String appName = context.getPackageName();
         SharedPreferences sp = context.getSharedPreferences(appName, Context.MODE_PRIVATE);
-        return sp.getString(key, "");
+        return sp.contains(Constants.SUBSCRIPTION_KEY);
+    }
+
+    static String getSubscription(Context context) {
+        String appName = context.getPackageName();
+        SharedPreferences sp = context.getSharedPreferences(appName, Context.MODE_PRIVATE);
+        return sp.getString(Constants.SUBSCRIPTION_KEY, "");
     }
 
     static String appVersion(Context context) {
         try {
             PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
             return pInfo.versionName;
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return null;
     }
@@ -75,8 +72,9 @@ class Utils {
         TelephonyManager manager = (TelephonyManager) context
                 .getSystemService(Context.TELEPHONY_SERVICE);
         try {
+            assert manager != null;
             manager.getNetworkOperator();
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
         return carrier;
     }
@@ -96,11 +94,10 @@ class Utils {
     }
 
     static String getUserAgent(Context context) {
-        String userAgent = Utils.getAppLabel(context, "An Android App") + "/"+ Utils.appVersion(context) + " "+ Build.MANUFACTURER +"/"+ Build.MODEL +" "+ System.getProperty("http.agent") +" Mobile/"+ Build.ID +"";
-        return userAgent;
+        return Utils.getAppLabel(context, "An Android App") + "/"+ Utils.appVersion(context) + " "+ Build.MANUFACTURER +"/"+ Build.MODEL +" "+ System.getProperty("http.agent") +" Mobile/"+ Build.ID +"";
     }
 
-    static String deviceType(Context context) {
+    static String deviceType() {
         return android.os.Build.MANUFACTURER + " : " + android.os.Build.MODEL;
     }
 
@@ -109,9 +106,17 @@ class Utils {
         ApplicationInfo lApplicationInfo = null;
         try {
             lApplicationInfo = lPackageManager.getApplicationInfo(pContext.getApplicationInfo().packageName, 0);
-        } catch (PackageManager.NameNotFoundException e) {
+        } catch (PackageManager.NameNotFoundException ignored) {
         }
         return (String) (lApplicationInfo != null ? lPackageManager.getApplicationLabel(lApplicationInfo) : defaultText);
     }
 
+    public static Uri getSound(Context context, String sound) {
+        int id = context.getResources().getIdentifier(sound, "raw", context.getPackageName());
+        if (id != 0) {
+            return Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + "/" + id);
+        }else{
+            return RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        }
+    }
 }
