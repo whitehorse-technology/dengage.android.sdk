@@ -8,8 +8,8 @@ class Constants {
     static final String SUBSCRIPTION_KEY         = "dengage_subscription";
     static final String MESSAGE_SOURCE           = "DENGAGE";
     static final String DEN_DEVICE_UNIQUE_ID     = "___DEN_DEVICE_UNIQUE_ID___";
-    static final String openApiEndpoint          = "https://pushtest.dengage.com/api/mobile/open";
-    static final String subsApiEndpoint          = "https://pushtest.dengage.com/api/device/subscription";
-    static final String eventApiEndpoint         = "https://eventtest.dengage.com/api/event";
-    static final String transOpenApiEndpoint     = "https://pushtest.dengage.com/api/api/transactional/mobile/open";
+    static final String openApiEndpoint          = "https://push.dengage.com/api/mobile/open";
+    static final String subsApiEndpoint          = "https://push.dengage.com/api/device/subscription";
+    static final String eventApiEndpoint         = "https://event.dengage.com/api/event";
+    static final String transOpenApiEndpoint     = "https://push.dengage.com/api/api/transactional/mobile/open";
 }

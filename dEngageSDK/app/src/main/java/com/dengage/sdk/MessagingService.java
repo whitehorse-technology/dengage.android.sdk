@@ -134,7 +134,7 @@ public class MessagingService extends FirebaseMessagingService {
             } else if( !TextUtils.isEmpty( pushMessage.getTargetUrl()) ) {
                 notificationIntent = new Intent("android.intent.action.VIEW", Uri.parse(pushMessage.getTargetUrl()));
                 notificationIntent.setData(Uri.parse(pushMessage.getTargetUrl()));
-                notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             } else {
                 notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             }
