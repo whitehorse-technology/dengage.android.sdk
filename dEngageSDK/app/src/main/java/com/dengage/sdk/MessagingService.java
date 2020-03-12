@@ -126,9 +126,18 @@ public class MessagingService extends FirebaseMessagingService {
 
             Intent intent = packageManager.getLaunchIntentForPackage(this.getPackageName());
             ComponentName componentName = intent.getComponent();
-
             Intent notificationIntent = Intent.makeRestartActivityTask(componentName);
-            notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+            if(!TextUtils.isEmpty( pushMessage.getTargetUrl()) && pushMessage.getTargetUrl().startsWith("http")) {
+                notificationIntent = new Intent("android.intent.action.VIEW", Uri.parse(pushMessage.getTargetUrl()));
+                notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            } else if( !TextUtils.isEmpty( pushMessage.getTargetUrl()) ) {
+                notificationIntent = new Intent("android.intent.action.VIEW", Uri.parse(pushMessage.getTargetUrl()));
+                notificationIntent.setData(Uri.parse(pushMessage.getTargetUrl()));
+                notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            } else {
+                notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            }
 
             Set<Map.Entry<String, String>> entrySet = data.entrySet();
             for (Map.Entry<String, String> entry : entrySet) {
@@ -145,6 +154,7 @@ public class MessagingService extends FirebaseMessagingService {
         } catch (Exception e) {
             logger.Error("generateNotification: " + e.getMessage());
         }
+
     }
  
     private static class ChannelHelper {
@@ -160,4 +170,5 @@ public class MessagingService extends FirebaseMessagingService {
             notificationManager.createNotificationChannel(notificationChannel);
         }
     }
+
 }
