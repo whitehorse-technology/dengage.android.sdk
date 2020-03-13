@@ -24,12 +24,17 @@ import java.util.Map;
 
 public class DengageManager {
 
+    private  static DengageManager _instance = null;
     private static Logger logger = Logger.getInstance();
     @SuppressLint("MayStaticFieldLeak")
     private static Context _context;
 
     DengageManager() {
 
+    }
+
+    DengageManager(Context context) {
+        _context = context;
     }
 
     /**
@@ -66,6 +71,12 @@ public class DengageManager {
         } catch (Exception e) {
             logger.Error("setConfig: "+ e.getMessage());
         }
+    }
+
+    public static DengageManager getInstance(Context context) {
+        if(_instance == null)
+            _instance = new DengageManager(context);
+        return _instance;
     }
 
     /**
@@ -207,42 +218,42 @@ public class DengageManager {
             logger.Debug("tokenSaved: " + subscription.getTokenSaved());
 
             FirebaseInstanceId.getInstance().getInstanceId()
-            .addOnCanceledListener(new OnCanceledListener() {
-                @Override
-                public void onCanceled() {
-                    logger.Verbose("Token retrieving canceled");
-                }
-            })
-            .addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    logger.Error("Token retrieving failed: " + e.getMessage());
-                }
-            })
-            .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-                @Override
-                public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                    if (!task.isSuccessful()) {
-                        logger.Error("Firebase InstanceId Failed: " + task.getException().getMessage());
-                        return;
-                    }
+                    .addOnCanceledListener(new OnCanceledListener() {
+                        @Override
+                        public void onCanceled() {
+                            logger.Verbose("Token retrieving canceled");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            logger.Error("Token retrieving failed: " + e.getMessage());
+                        }
+                    })
+                    .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                            if (!task.isSuccessful()) {
+                                logger.Error("Firebase InstanceId Failed: " + task.getException().getMessage());
+                                return;
+                            }
 
-                    String token = task.getResult().getToken();
-                    logger.Debug("Token retrieved: " + token);
+                            String token = task.getResult().getToken();
+                            logger.Debug("Token retrieved: " + token);
 
-                    Subscription subscription = getSubscription();
-                    subscription.setToken(token);
+                            Subscription subscription = getSubscription();
+                            subscription.setToken(token);
 
-                    if(!subscription.getTokenSaved() ) {
-                        logger.Debug("syncSubscription: " + subscription.toJson());
-                        subscription.setTokenSaved(true);
-                        RequestAsync req = new RequestAsync(Constants.subsApiEndpoint, Utils.getUserAgent(_context), subscription, Subscription.class);
-                        req.execute();
-                    }
+                            if(!subscription.getTokenSaved() ) {
+                                logger.Debug("syncSubscription: " + subscription.toJson());
+                                subscription.setTokenSaved(true);
+                                RequestAsync req = new RequestAsync(Constants.subsApiEndpoint, Utils.getUserAgent(_context), subscription, Subscription.class);
+                                req.execute();
+                            }
 
-                    saveSubscription(subscription);
-                }
-            });
+                            saveSubscription(subscription);
+                        }
+                    });
 
             AdvertisingIdWorker adIdWorker = new AdvertisingIdWorker();
             adIdWorker.execute();
