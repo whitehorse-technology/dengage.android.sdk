@@ -24,58 +24,46 @@ import java.util.Map;
 
 public class DengageManager {
 
-    private  static DengageManager _instance = null;
     private static Logger logger = Logger.getInstance();
-    @SuppressLint("MayStaticFieldLeak")
-    private static Context _context;
 
-    DengageManager() {
+    @SuppressLint("StaticFieldLeak")
+    private static DengageManager _instance = null;
 
-    }
+    private Context _context;
 
-    DengageManager(Context context) {
+    private Subscription _subscription;
+
+    private DengageManager(Context context) {
         _context = context;
     }
 
     /**
      * Initiator method
      * <p>
-     * Use to initiate dEngage MobileManager with the integration key.
+     * Use to initiate dEngage MobileManager.
      * </p>
-     * @param integrationKey Application key which you took from dEngage platform.
      */
-    public static void setConfig(String integrationKey, Context context) {
-
-        logger.Verbose("setConfig method called");
-        logger.Verbose("Open API Endpoint:          "+ Constants.openApiEndpoint);
-        logger.Verbose("Subscription API Endpoint:  "+ Constants.subsApiEndpoint);
-        logger.Verbose("Transactional API Endpoint: "+ Constants.transOpenApiEndpoint);
-        logger.Verbose("Event API Endpoint:         "+ Constants.eventApiEndpoint);
-
-        if(integrationKey == null || TextUtils.isEmpty(integrationKey)) {
-            throw new IllegalArgumentException("Argument null: integrationKey");
-        }
+    public static DengageManager getInstance(Context context) {
 
         if(context == null) {
             throw new IllegalArgumentException("Argument null: context");
         }
 
-        try {
-
-            _context = context;
-            getSubscription();
-            setIntegrationKey(integrationKey);
-            FirebaseApp.initializeApp(_context);
-            syncSubscription();
-
-        } catch (Exception e) {
-            logger.Error("setConfig: "+ e.getMessage());
-        }
-    }
-
-    public static DengageManager getInstance(Context context) {
         if(_instance == null)
             _instance = new DengageManager(context);
+
+        _instance.getSubscription();
+
+        return _instance;
+    }
+
+    public DengageManager init() {
+        try {
+            if(_context == null) throw new Exception("_context is null.");
+            FirebaseApp.initializeApp(_context);
+        } catch (Exception e) {
+            logger.Error("initialization:" + e.getMessage());
+        }
         return _instance;
     }
 
@@ -83,44 +71,40 @@ public class DengageManager {
      * Gets Device Identifier
      * @return String
      */
-    public static String getDeviceId() {
-        Subscription subscription = getSubscription();
+    public String getDeviceId() {
         logger.Verbose("getDeviceId method is called.");
-        logger.Debug("getDeviceId: "+ subscription.getUdid());
-        return subscription.getUdid();
+        logger.Debug("getDeviceId: "+ _subscription.getUdid());
+        return _subscription.getUdid();
     }
 
     /**
      * Gets Advertising Identifier
      * @return String
      */
-    public static String getAdvertisingId() {
-        Subscription subscription = getSubscription();
+    public String getAdvertisingId() {
         logger.Verbose("getAdvertisingId method is called.");
-        logger.Debug("getAdvertisingId: "+ subscription.getAdid());
-        return subscription.getAdid();
+        logger.Debug("getAdvertisingId: "+ _subscription.getAdid());
+        return _subscription.getAdid();
     }
 
     /**
      * Gets Subscription Token
      * @return String
      */
-    public static String getToken() {
-        Subscription subscription = getSubscription();
+    public String getToken() {
         logger.Verbose("getToken method is called.");
-        logger.Debug("getToken: "+ subscription.getToken());
-        return subscription.getToken();
+        logger.Debug("getToken: "+ _subscription.getToken());
+        return _subscription.getToken();
     }
 
     /**
      * Gets dEngage User Key
      * @return String
      */
-    public static String getContactKey() {
-        Subscription subscription = getSubscription();
+    public String getContactKey() {
         logger.Verbose("getContactKey method is called.");
-        logger.Debug("getContactKey: "+ subscription.getContactKey());
-        return subscription.getContactKey();
+        logger.Debug("getContactKey: "+ _subscription.getContactKey());
+        return _subscription.getContactKey();
     }
 
     /**
@@ -130,13 +114,12 @@ public class DengageManager {
      * </p>
      * @param permission True/False
      */
-    public static void setPermission(Boolean permission) {
+    public void setPermission(Boolean permission) {
         logger.Verbose("setPermission method is called");
         try {
-            Subscription subscription = getSubscription();
-            subscription.setPermission(permission);
+            _subscription.setPermission(permission);
             logger.Debug("permission: "+ permission);
-            saveSubscription(subscription);
+            saveSubscription();
         } catch (Exception e) {
             logger.Error("setPermission: "+ e.getMessage());
         }
@@ -149,13 +132,12 @@ public class DengageManager {
      * </p>
      * @param contactKey user key
      */
-    public static void setContactKey(String contactKey) {
+    public void setContactKey(String contactKey) {
         logger.Verbose("setContactKey method is called");
         try {
-            Subscription subscription = getSubscription();
-            subscription.setContactKey(contactKey);
+            _subscription.setContactKey(contactKey);
             logger.Debug("contactKey: "+ contactKey);
-            saveSubscription(subscription);
+            saveSubscription();
         } catch (Exception e) {
             logger.Error("setContactKey: "+ e.getMessage());
         }
@@ -169,16 +151,22 @@ public class DengageManager {
      * </p>
      * @param key dEngage Integration Key
      */
-    public static void setIntegrationKey(String key) {
+    public DengageManager setIntegrationKey(String key) {
         logger.Verbose("setIntegrationKey method is called");
+
+        if(key == null || TextUtils.isEmpty(key)) {
+            throw new IllegalArgumentException("Argument null: key");
+        }
+
         try {
-            Subscription subscription = getSubscription();
             logger.Debug("setIntegrationKey: "+ key);
-            subscription.setIntegrationKey(key);
-            saveSubscription(subscription);
+            _subscription.setIntegrationKey(key);
+            saveSubscription();
+            syncSubscription();
         } catch (Exception e) {
             logger.Error("setIntegrationKey: "+ e.getMessage());
         }
+        return _instance;
     }
 
     /**
@@ -188,14 +176,13 @@ public class DengageManager {
      * </p>
      * @param token GCM Token
      */
-    public static void subscribe(String token) {
+    public void subscribe(String token) {
         logger.Verbose("subscribe(token) method is called");
         try {
-            Subscription subscription = getSubscription();
-            subscription.setToken(token);
+            _subscription.setToken(token);
             if(TextUtils.isEmpty(token))
                 throw new IllegalArgumentException("Argument empty: token");
-            saveSubscription(subscription);
+            saveSubscription();
             logger.Debug("subscribe(token): " + token);
             syncSubscription();
         } catch (Exception e) {
@@ -209,13 +196,12 @@ public class DengageManager {
      * Use to send the latest information to dEngage. If you set any property or perform a logout, you are advised to call this method.
      * </p>
      */
-    public static void syncSubscription() {
+    public void syncSubscription() {
         logger.Verbose("syncSubscription method is called");
 
         try {
 
-            Subscription subscription = getSubscription();
-            logger.Debug("tokenSaved: " + subscription.getTokenSaved());
+            logger.Debug("tokenSaved: " + _subscription.getTokenSaved());
 
             FirebaseInstanceId.getInstance().getInstanceId()
                     .addOnCanceledListener(new OnCanceledListener() {
@@ -241,27 +227,26 @@ public class DengageManager {
                             String token = task.getResult().getToken();
                             logger.Debug("Token retrieved: " + token);
 
-                            Subscription subscription = getSubscription();
-                            subscription.setToken(token);
+                            _subscription.setToken(token);
 
-                            if(!subscription.getTokenSaved() ) {
-                                logger.Debug("syncSubscription: " + subscription.toJson());
-                                subscription.setTokenSaved(true);
-                                RequestAsync req = new RequestAsync(Constants.subsApiEndpoint, Utils.getUserAgent(_context), subscription, Subscription.class);
+                            if(!_subscription.getTokenSaved() ) {
+                                logger.Debug("syncSubscription: " + _subscription.toJson());
+                                _subscription.setTokenSaved(true);
+                                RequestAsync req = new RequestAsync(Constants.subsApiEndpoint, Utils.getUserAgent(_context), _subscription, Subscription.class);
                                 req.execute();
                             }
 
-                            saveSubscription(subscription);
+                            saveSubscription();
                         }
                     });
 
             AdvertisingIdWorker adIdWorker = new AdvertisingIdWorker();
             adIdWorker.execute();
 
-            if( subscription.getTokenSaved() ) {
-                RequestAsync req = new RequestAsync(Constants.subsApiEndpoint, Utils.getUserAgent(_context), subscription, Subscription.class);
+            if( _subscription.getTokenSaved() ) {
+                RequestAsync req = new RequestAsync(Constants.subsApiEndpoint, Utils.getUserAgent(_context), _subscription, Subscription.class);
                 req.execute();
-                logger.Debug("syncSubscription: " + subscription.toJson());
+                logger.Debug("syncSubscription: " + _subscription.toJson());
             }
 
         } catch (Exception e) {
@@ -277,10 +262,10 @@ public class DengageManager {
      * </p>
      * @param message The dEngage message object.
      */
-    public static void sendOpenEvent(Message message) {
+    public void sendOpenEvent(Message message) {
         logger.Verbose("sendOpenEvent method is called");
         try {
-            Subscription subscription = getSubscription();
+            getSubscription();
 
             if(message == null) throw new IllegalArgumentException("Argument null: message");
 
@@ -288,7 +273,7 @@ public class DengageManager {
             if (!Constants.MESSAGE_SOURCE.equals(source))  return;
 
             Open openSignal = new Open();
-            openSignal.setIntegrationKey(subscription.getIntegrationKey());
+            openSignal.setIntegrationKey(_subscription.getIntegrationKey());
             openSignal.setMessageId(message.getMessageId());
             openSignal.setMessageDetails(message.getMessageDetails());
             openSignal.setTransactionId(message.getTransactionId());
@@ -318,11 +303,11 @@ public class DengageManager {
      * @param key Value of the event key.
      * @param data Additional key-value data which is correspond table column name-value.
      */
-    public static void sendCustomEvent(String tableName, String key, Map<String,Object> data) {
+    public void sendCustomEvent(String tableName, String key, Map<String,Object> data) {
         logger.Verbose("sendCustomEvent method is called");
         try {
-            Subscription subscription = getSubscription();
-            Event event = new Event(subscription.getIntegrationKey(), tableName, key, data);
+            getSubscription();
+            Event event = new Event(_subscription.getIntegrationKey(), tableName, key, data);
             logger.Debug("sendCustomEvent: " + event.toJson());
             RequestAsync req = new RequestAsync(Constants.eventApiEndpoint, Utils.getUserAgent(_context), event, Event.class);
             req.execute();
@@ -339,11 +324,11 @@ public class DengageManager {
      * @param tableName The event table name of the schema.
      * @param data Additional key-value data which is correspond table column name-value.
      */
-    public static void sendDeviceEvent(String tableName, Map<String, Object> data) {
+    public void sendDeviceEvent(String tableName, Map<String, Object> data) {
         logger.Verbose("sendDeviceEvent method is called");
         try {
-            Subscription subscription = getSubscription();
-            Event event = new Event(subscription.getIntegrationKey(), tableName, getDeviceId(), data);
+            getSubscription();
+            Event event = new Event(_subscription.getIntegrationKey(), tableName, getDeviceId(), data);
             logger.Debug("sendDeviceEvent: " + event.toJson());
             RequestAsync req = new RequestAsync(Constants.eventApiEndpoint, Utils.getUserAgent(_context), event, Event.class);
             req.execute();
@@ -356,49 +341,49 @@ public class DengageManager {
      * Console Log
      * <p>
      * Use to show logs on console.
-     * </p>
+     * </p>setLogStatus
      * @param status True/False
      */
-    public static void setLogStatus(Boolean status) {
+    public DengageManager setLogStatus(Boolean status) {
         logger.setLogStatus(status);
+        return _instance;
     }
 
-    private static Subscription getSubscription() {
+    private void getSubscription() {
         try {
-
             if (Utils.hasSubscription(_context)) {
-                return new Gson().fromJson(Utils.getSubscription(_context), Subscription.class);
+                _subscription = new Gson().fromJson(Utils.getSubscription(_context), Subscription.class);
             } else {
-                return new Subscription();
+                _subscription = new Subscription();
             }
-
         } catch (Exception ex) {
             logger.Error("Exception on getSubscription: "+ ex.getMessage());
-            return new Subscription();
+            _subscription = new Subscription();
         }
     }
 
-    private static void saveSubscription(Subscription subscription) {
+    private void saveSubscription() {
         logger.Verbose("saveSubscription method is called");
         try {
 
-            subscription.setUdid(Utils.getDeviceId(_context));
-            subscription.setCarrierId(Utils.carrier(_context));
-            subscription.setAppVersion(Utils.appVersion(_context));
-            subscription.setLocal(Utils.local(_context));
-            subscription.setOs(Utils.osType());
-            subscription.setOsVersion(Utils.osVersion());
-            subscription.setSdkVersion(com.dengage.sdk.BuildConfig.VERSION_NAME);
-            subscription.setDeviceName(Utils.deviceName());
-            subscription.setDeviceType(Utils.deviceType());
+            _subscription.setUdid(Utils.getDeviceId(_context));
+            _subscription.setCarrierId(Utils.carrier(_context));
+            _subscription.setAppVersion(Utils.appVersion(_context));
+            _subscription.setLocal(Utils.local(_context));
+            _subscription.setOs(Utils.osType());
+            _subscription.setOsVersion(Utils.osVersion());
+            _subscription.setSdkVersion(com.dengage.sdk.BuildConfig.VERSION_NAME);
+            _subscription.setDeviceName(Utils.deviceName());
+            _subscription.setDeviceType(Utils.deviceType());
 
-            Utils.saveSubscription(_context, subscription.toJson());
+            Utils.saveSubscription(_context, _subscription.toJson());
         } catch (Exception e) {
             logger.Error("saveSubscription: "+ e.getMessage());
         }
     }
 
-    private static class AdvertisingIdWorker extends AsyncTask<Void, String, String> {
+    @SuppressLint("StaticFieldLeak")
+    private class AdvertisingIdWorker extends AsyncTask<Void, String, String> {
         @Override
         protected String doInBackground(Void... params) {
             logger.Debug("Getting advertising ID");
@@ -420,9 +405,8 @@ public class DengageManager {
 
         @Override
         protected void onPostExecute(String adId) {
-            Subscription subscription = getSubscription();
-            subscription.setAdid(adId);
-            saveSubscription(subscription);
+            _subscription.setAdid(adId);
+            saveSubscription();
         }
     }
 }

@@ -17,7 +17,7 @@ public class MessagingService extends FirebaseMessagingService {
     public void onNewToken(String token) {
         try {
             logger.Debug("On new token : " + token);
-            DengageManager.getInstance(this.getApplicationContext()).subscribe(token);
+            DengageManager.getInstance(getApplicationContext()).subscribe(token);
         } catch (Exception e) {
             logger.Error("onNewToken: "+ e.getMessage());
         }

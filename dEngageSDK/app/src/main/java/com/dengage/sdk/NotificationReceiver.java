@@ -13,11 +13,13 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import androidx.core.app.NotificationCompat;
 import com.dengage.sdk.models.Message;
 import java.util.Random;
@@ -30,6 +32,7 @@ public class NotificationReceiver extends BroadcastReceiver {
     public static final String PUSH_OPEN = "com.dengage.push.intent.OPEN";
     public static final String PUSH_DELETE = "com.dengage.push.intent.DELETE";
     public static final String PUSH_ACTION_CLICK = "com.dengage.push.intent.ACTION_CLICK";
+    public static final String CAROUSEL_ITEM_CLICK = "com.dengage.push.intent.CAROUSEL_ITEM_CLICK";
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -49,6 +52,9 @@ public class NotificationReceiver extends BroadcastReceiver {
                     break;
                 case PUSH_ACTION_CLICK:
                     onActionClick(context, intent);
+                    break;
+                case CAROUSEL_ITEM_CLICK:
+                    onCarouselItemClick(context, intent);
                     break;
             }
         }
@@ -99,6 +105,10 @@ public class NotificationReceiver extends BroadcastReceiver {
         logger.Verbose("onActionClick method is called.");
     }
 
+    protected void onCarouselItemClick(Context context, Intent intent) {
+        logger.Verbose("onCarouselItemClick method is called.");
+    }
+
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public static void startActivities(Context context, Class<? extends Activity> cls, Intent activityIntent) {
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
@@ -109,6 +119,7 @@ public class NotificationReceiver extends BroadcastReceiver {
 
     protected void generateNotification(Context context, Intent intent) {
         Bundle extras = intent.getExtras();
+        if(extras == null) return;
 
         Random random = new Random();
         int contentIntentRequestCode = random.nextInt();
@@ -130,22 +141,26 @@ public class NotificationReceiver extends BroadcastReceiver {
             channelId = notificationChannel.getId();
         }
 
+        @SuppressWarnings("ConstantConditions")
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, channelId);
+
         notificationBuilder
                 .setVibrate(new long[]{0, 100, 100, 100, 100, 100})
-                .setSmallIcon(getSmallIconId(context, intent))
                 .setContentIntent(pContentIntent)
                 .setDeleteIntent(pDeleteIntent)
                 .setAutoCancel(true)
-                .setDefaults(Notification.DEFAULT_ALL);
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setSmallIcon(getSmallIconId(context, intent));
 
         Message pushMessage = new Message(extras);
 
         if(!TextUtils.isEmpty(pushMessage.getMediaUrl())) {
+
             NotificationCompat.Style style;
             Request req = new Request();
             Bitmap image = req.getBitmap(pushMessage.getMediaUrl());
             if(image == null) {
+                logger.Debug(pushMessage.getMediaUrl());
                 style = new NotificationCompat.BigTextStyle()
                         .bigText(pushMessage.getMessage());
             } else {
@@ -186,7 +201,9 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         NotificationManager mNotificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
         Notification notification = notificationBuilder.build();
-        mNotificationManager.notify(pushMessage.getMessageId(), notification);
+        if (mNotificationManager != null) {
+            mNotificationManager.notify(pushMessage.getMessageId(), notification);
+        }
     }
 
     protected Class<? extends Activity> getActivity(Context context, Intent intent) {
@@ -233,14 +250,14 @@ public class NotificationReceiver extends BroadcastReceiver {
     }
 
     protected int getSmallIconId(Context context, Intent intent) {
-        PackageManager packageManager = context.getPackageManager();
-        ApplicationInfo applicationInfo = null;
         int iconId = 0;
         try {
+            PackageManager packageManager = context.getPackageManager();
+            ApplicationInfo applicationInfo = null;
             applicationInfo = packageManager.getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
             iconId = applicationInfo.icon;
         } catch (PackageManager.NameNotFoundException e) {
-            logger.Error("Package name not found.");
+            return 0;
         }
         return iconId;
     }
