@@ -13,12 +13,6 @@ public class Message {
     @SerializedName("messageId")
     private int messageId = 0;
 
-    @SerializedName("smallIcon")
-    private String smallIcon = "";
-
-    @SerializedName("largeIcon")
-    private String largeIcon = "";
-
     @SerializedName("messageSource")
     private String messageSource = "";
 
@@ -80,12 +74,6 @@ public class Message {
         if (bundle.get("messageId") != null && !TextUtils.isEmpty(bundle.get("messageId")))
             messageId = Integer.parseInt(bundle.get("messageId"));
 
-        if (bundle.get("smallIcon") != null && !TextUtils.isEmpty(bundle.get("smallIcon")))
-            smallIcon = bundle.get("smallIcon");
-
-        if (bundle.get("largeIcon") != null && !TextUtils.isEmpty(bundle.get("largeIcon")))
-            largeIcon = bundle.get("largeIcon");
-
         if (bundle.get("messageSource") != null && !TextUtils.isEmpty(bundle.get("messageSource")))
             messageSource = bundle.get("messageSource");
 
@@ -132,14 +120,6 @@ public class Message {
         if (TextUtils.isEmpty(this.targetUrl) && medias != null && medias.length > 0) {
             targetUrl = medias[0].getTarget();
         }
-    }
-
-    public String getLargeIcon() {
-        return largeIcon;
-    }
-
-    public String getSmallIcon() {
-        return smallIcon;
     }
 
     public int getMessageId() {
