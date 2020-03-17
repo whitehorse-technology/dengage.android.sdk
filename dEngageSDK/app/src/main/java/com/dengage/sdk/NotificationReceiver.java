@@ -250,15 +250,12 @@ public class NotificationReceiver extends BroadcastReceiver {
     }
 
     protected int getSmallIconId(Context context, Intent intent) {
-        int iconId = 0;
         try {
             PackageManager packageManager = context.getPackageManager();
-            ApplicationInfo applicationInfo = null;
-            applicationInfo = packageManager.getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
-            iconId = applicationInfo.icon;
+            ApplicationInfo applicationInfo = packageManager.getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
+            return applicationInfo.icon;
         } catch (PackageManager.NameNotFoundException e) {
             return 0;
         }
-        return iconId;
     }
 }
