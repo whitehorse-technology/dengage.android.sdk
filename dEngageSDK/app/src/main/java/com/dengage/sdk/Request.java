@@ -8,26 +8,17 @@ import com.dengage.sdk.models.ModelBase;
 import com.google.gson.Gson;
 import androidx.annotation.NonNull;
 import java.io.BufferedOutputStream;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 
 class Request  {
 
     private Logger logger = Logger.getInstance();
-
-    Bitmap getBitmap(String urlString) {
-        try {
-            return BitmapFactory.decodeStream(new URL(urlString).openConnection().getInputStream());
-        } catch (Exception e) {
-            if (BuildConfig.DEBUG) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-    }
 
     boolean send(String url, String userAgent, ModelBase model, @NonNull Type modelType) {
         logger.Verbose("sendReuqest to: "+ url);
