@@ -32,7 +32,7 @@ public class Message {
     private String title = "";
 
     @SerializedName("subTitle")
-    private String subTitle = "";
+    private String subText = "";
 
     @SerializedName("message")
     private String message = "";
@@ -46,11 +46,17 @@ public class Message {
     @SerializedName("sound")
     private String sound = "";
 
+    @SerializedName("notificationType")
+    private NotificationType notificationType = NotificationType.TEXT;
+
     @SerializedName("customParams")
     private CustomParam[] customParams = null;
 
-    @SerializedName("medias")
-    private Media[] medias = null;
+    @SerializedName("carouselContent")
+    private CarouselItem[] carouselContent = null;
+
+    @SerializedName("actionButtons")
+    private ActionButton[] actionButtons = null;
 
     private transient Gson gson = new Gson();
 
@@ -70,6 +76,9 @@ public class Message {
     }
 
     private void setProperties(@NonNull Map<String,String> bundle) {
+
+        if(bundle.get("notificationType") != null && !TextUtils.isEmpty(bundle.get("notificationType")))
+            notificationType = NotificationType.valueOf(bundle.get("notificationType"));
 
         if (bundle.get("messageId") != null && !TextUtils.isEmpty(bundle.get("messageId")))
             messageId = Integer.parseInt(bundle.get("messageId"));
@@ -93,7 +102,7 @@ public class Message {
             transactionId = bundle.get("transactionId");
 
         if (bundle.get("subTitle") != null && !TextUtils.isEmpty(bundle.get("subTitle")))
-            subTitle = bundle.get("subTitle");
+            subText = bundle.get("subTitle");
 
         if (bundle.get("message") != null && !TextUtils.isEmpty(bundle.get("message")))
             message = bundle.get("message");
@@ -110,16 +119,15 @@ public class Message {
         if (bundle.get("customParams") != null)
             customParams = gson.fromJson(bundle.get("customParams"), CustomParam[].class);
 
-        if (bundle.get("media") != null)
-            medias = gson.fromJson(bundle.get("media"), Media[].class);
+        if (bundle.get("carouselContent") != null)
+            carouselContent = gson.fromJson(bundle.get("carouselContent"), CarouselItem[].class);
 
-        if (TextUtils.isEmpty(this.mediaUrl) && medias != null && medias.length > 0) {
-            mediaUrl = medias[0].getUrl();
-        }
+        if (bundle.get("actionButtons") != null)
+            actionButtons = gson.fromJson(bundle.get("actionButtons"), ActionButton[].class);
+    }
 
-        if (TextUtils.isEmpty(this.targetUrl) && medias != null && medias.length > 0) {
-            targetUrl = medias[0].getTarget();
-        }
+    public NotificationType getNotificationType() {
+        return notificationType;
     }
 
     public int getMessageId() {
@@ -146,8 +154,8 @@ public class Message {
         return this.transactionId;
     }
 
-    public String getSubTitle() {
-        return subTitle;
+    public String getSubText() {
+        return subText;
     }
 
     public String getMessage() {
@@ -170,8 +178,12 @@ public class Message {
         return customParams;
     }
 
-    public Media[] getMedias() {
-        return medias;
+    public CarouselItem[] getCarouselContent() {
+        return carouselContent;
+    }
+
+    public ActionButton[] getActionButtons() {
+        return actionButtons;
     }
 
     public String getMessageSource() {

@@ -32,7 +32,7 @@ public class MessagingService extends FirebaseMessagingService {
         if( (data != null && data.size() > 0)) {
             Message pushMessage = new Message(data);
             String json = pushMessage.toJson();
-            logger.Verbose("Message Json: "+ pushMessage.toJson());
+            logger.Verbose("Message Json: "+ json);
             String source = pushMessage.getMessageSource();
             if (Constants.MESSAGE_SOURCE.equals(source)) {
                 logger.Debug("There is a message that received from dEngage");
