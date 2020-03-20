@@ -20,6 +20,9 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.google.gson.Gson;
+
+import org.w3c.dom.Text;
+
 import java.util.Map;
 
 public class DengageManager {
@@ -398,15 +401,17 @@ public class DengageManager {
             } catch (GooglePlayServicesRepairableException e) {
                 logger.Error("GooglePlayServicesRepairableException: "+ e.getMessage());
             } catch (Exception e) {
-                logger.Error("Exception: "+e.getMessage());
+                logger.Error("AdvertisingIdWorker Exception: "+e.getMessage());
             }
             return advertisingId;
         }
 
         @Override
         protected void onPostExecute(String adId) {
-            _subscription.setAdid(adId);
-            saveSubscription();
+            if(adId != null && !TextUtils.isEmpty(adId)) {
+                _subscription.setAdid(adId);
+                saveSubscription();
+            }
         }
     }
 }

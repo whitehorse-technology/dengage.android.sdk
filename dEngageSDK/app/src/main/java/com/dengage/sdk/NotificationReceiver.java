@@ -21,15 +21,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.text.TextUtils;
-import android.util.Log;
 import androidx.core.app.NotificationCompat;
 
 import com.dengage.sdk.models.ActionButton;
 import com.dengage.sdk.models.Message;
 import com.dengage.sdk.models.NotificationType;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Random;
 
@@ -205,15 +201,17 @@ public class NotificationReceiver extends BroadcastReceiver {
             notificationBuilder.setNumber(message.getBadgeCount());
         }
 
-        for (ActionButton button : message.getActionButtons()) {
-            int requestCode = random.nextInt();
-            Intent buttonIntent = new Intent(NotificationReceiver.PUSH_ACTION_CLICK);
-            buttonIntent.putExtra("id", button.getId());
-            buttonIntent.putExtra("targetUrl", button.getTargetUrl());
-            buttonIntent.setPackage(packageName);
-            PendingIntent btnPendingIntent = PendingIntent.getBroadcast(context, requestCode, buttonIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-            int icon = getResourceId(context, button.getIcon());
-            notificationBuilder.addAction(icon, button.getText(), btnPendingIntent);
+        if(message.getActionButtons() != null && message.getActionButtons().length > 0) {
+            for (ActionButton button : message.getActionButtons()) {
+                int requestCode = random.nextInt();
+                Intent buttonIntent = new Intent(NotificationReceiver.PUSH_ACTION_CLICK);
+                buttonIntent.putExtra("id", button.getId());
+                buttonIntent.putExtra("targetUrl", button.getTargetUrl());
+                buttonIntent.setPackage(packageName);
+                PendingIntent btnPendingIntent = PendingIntent.getBroadcast(context, requestCode, buttonIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                int icon = getResourceId(context, button.getIcon());
+                notificationBuilder.addAction(icon, button.getText(), btnPendingIntent);
+            }
         }
 
 
