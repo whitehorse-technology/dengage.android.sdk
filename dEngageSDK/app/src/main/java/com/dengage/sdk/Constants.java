@@ -11,5 +11,6 @@ class Constants {
     static final String openApiEndpoint          = "https://push.dengage.com/api/mobile/open";
     static final String subsApiEndpoint          = "https://push.dengage.com/api/device/subscription";
     static final String eventApiEndpoint         = "https://event.dengage.com/api/event";
-    static final String transOpenApiEndpoint     = "https://push.dengage.com/api/api/transactional/mobile/open";
+    static final String transOpenApiEndpoint     = "https://push.dengage.com/api/transactional/mobile/open";
+    static final String ecApiEndpoint     = "https://ec.dengage.com/";
 }
