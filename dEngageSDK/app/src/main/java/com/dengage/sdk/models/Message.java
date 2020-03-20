@@ -47,7 +47,7 @@ public class Message {
     private String sound = "";
 
     @SerializedName("notificationType")
-    private NotificationType notificationType = NotificationType.TEXT;
+    private NotificationType notificationType = NotificationType.RICH;
 
     @SerializedName("customParams")
     private CustomParam[] customParams = null;
