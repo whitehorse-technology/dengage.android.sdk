@@ -5,6 +5,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 import androidx.annotation.NonNull;
+
+import com.dengage.sdk.models.DenEvent;
 import com.dengage.sdk.models.Event;
 import com.dengage.sdk.models.Message;
 import com.dengage.sdk.models.Open;
@@ -334,6 +336,48 @@ public class DengageManager {
             req.execute();
         } catch (Exception e) {
             logger.Error("sendDeviceEvent: "+ e.getMessage());
+        }
+    }
+
+    public void startSession(String actionUrl) {
+        logger.Verbose("startSession method is called");
+        try {
+            getSubscription();
+            String userAgent = Utils.getUserAgent(_context);
+            Event event = new Event(_subscription.getIntegrationKey(), "startSession", getDeviceId(), null);
+            logger.Debug("startSession: " + event.toJson());
+            RequestAsync req = new RequestAsync(Constants.ecApiEndpoint, userAgent, event, Event.class);
+            req.execute();
+        } catch (Exception e) {
+            logger.Error("startSession: "+ e.getMessage());
+        }
+    }
+
+    public void sendPageView(Map<String, Object> data) {
+        logger.Verbose("sendPageView method is called");
+        try {
+            getSubscription();
+            String userAgent = Utils.getUserAgent(_context);
+            Event event = new Event(_subscription.getIntegrationKey(), "pageView", getDeviceId(), data);
+            logger.Debug("sendPageView: " + event.toJson());
+            RequestAsync req = new RequestAsync(Constants.ecApiEndpoint, userAgent, event, Event.class);
+            req.execute();
+        } catch (Exception e) {
+            logger.Error("sendPageView: "+ e.getMessage());
+        }
+    }
+
+    public void sendCustomEvent(String eventName, Map<String, Object> data) {
+        logger.Verbose("sendCustomEvent method is called");
+        try {
+            getSubscription();
+            String userAgent = Utils.getUserAgent(_context);
+            DenEvent event = new DenEvent(eventName, "", "");
+            logger.Debug("sendCustomEvent: " + event.toJson());
+            RequestAsync req = new RequestAsync(Constants.ecApiEndpoint, userAgent, event, Event.class);
+            req.execute();
+        } catch (Exception e) {
+            logger.Error("sendCustomEvent: "+ e.getMessage());
         }
     }
 
