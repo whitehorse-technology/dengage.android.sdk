@@ -25,6 +25,9 @@ public class Message {
     @SerializedName("mediaUrl")
     private String mediaUrl = "";
 
+    @SerializedName("media")
+    private Media[] media = null;
+
     @SerializedName("targetUrl")
     private String targetUrl = "";
 
@@ -124,6 +127,13 @@ public class Message {
 
         if (bundle.get("actionButtons") != null)
             actionButtons = gson.fromJson(bundle.get("actionButtons"), ActionButton[].class);
+
+        if (bundle.get("media") != null)
+            media = gson.fromJson(bundle.get("media"), Media[].class);
+
+        if(media != null && media.length > 0) {
+            mediaUrl = media[0].getUrl();
+        }
     }
 
     public NotificationType getNotificationType() {

@@ -241,6 +241,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                 style = new NotificationCompat.BigTextStyle()
                         .bigText(pushMessage.getMessage());
             } else {
+                notificationBuilder.setLargeIcon(image);
                 style = new NotificationCompat.BigPictureStyle()
                         .bigPicture(image)
                         .bigLargeIcon(null)
