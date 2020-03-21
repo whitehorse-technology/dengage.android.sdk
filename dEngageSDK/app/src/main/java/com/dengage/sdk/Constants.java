@@ -1,6 +1,7 @@
 package com.dengage.sdk;
 
 class Constants {
+    static final String NOTIFICATION_TAG         = "DenNotification";
     static final String LOG_TAG                  = "DenPush";
     static final String CHANNEL_ID               = "denChannel";
     static final String CHANNEL_NAME             = "DEN Message Channel";

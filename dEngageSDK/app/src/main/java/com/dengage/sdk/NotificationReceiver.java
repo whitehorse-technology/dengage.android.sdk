@@ -23,6 +23,7 @@ import android.os.StrictMode;
 import android.text.TextUtils;
 import android.util.Log;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import com.dengage.sdk.models.ActionButton;
 import com.dengage.sdk.models.Message;
@@ -99,12 +100,21 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         String uri = null;
         Bundle extras = intent.getExtras();
+        int notificationId = 0;
         if (extras != null) {
             // send action click event to dengage.
             uri = extras.getString("targetUrl");
+            notificationId = extras.getInt("notificationId");
         } else {
             logger.Debug("No extra data for action.");
         }
+
+        NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        if(manager != null) {
+            manager.cancel(Constants.NOTIFICATION_TAG, notificationId);
+        }
+
+        launchActivity(context, intent, uri);
     }
 
     protected void onCarouselItemClick(Context context, Intent intent) {
@@ -208,6 +218,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         for (ActionButton button : message.getActionButtons()) {
             int requestCode = random.nextInt();
             Intent buttonIntent = new Intent(NotificationReceiver.PUSH_ACTION_CLICK);
+            buttonIntent.putExtra("notificationId", message.getMessageId());
             buttonIntent.putExtra("id", button.getId());
             buttonIntent.putExtra("targetUrl", button.getTargetUrl());
             buttonIntent.setPackage(packageName);
@@ -227,10 +238,10 @@ public class NotificationReceiver extends BroadcastReceiver {
     }
 
     protected void generateTextNotification(Context context, Message pushMessage, NotificationCompat.Builder notificationBuilder) {
-        NotificationManager mNotificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager manager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
         Notification notification = notificationBuilder.build();
-        if (mNotificationManager != null) {
-            mNotificationManager.notify(pushMessage.getMessageId(), notification);
+        if (manager != null) {
+            manager.notify(Constants.LOG_TAG, pushMessage.getMessageId(), notification);
         }
     }
 
@@ -251,10 +262,10 @@ public class NotificationReceiver extends BroadcastReceiver {
             notificationBuilder.setStyle(style);
         }
 
-        NotificationManager mNotificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager manager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
         Notification notification = notificationBuilder.build();
-        if (mNotificationManager != null) {
-            mNotificationManager.notify(pushMessage.getMessageId(), notification);
+        if (manager != null) {
+            manager.notify(Constants.NOTIFICATION_TAG, pushMessage.getMessageId(), notification);
         }
     }
 
