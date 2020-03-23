@@ -14,23 +14,16 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.text.TextUtils;
-import android.util.Log;
 import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
-
 import com.dengage.sdk.models.ActionButton;
 import com.dengage.sdk.models.Message;
 import com.dengage.sdk.models.NotificationType;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Random;
 
@@ -79,14 +72,18 @@ public class NotificationReceiver extends BroadcastReceiver {
     protected void onPushOpen(Context context, Intent intent) {
         logger.Verbose("onPushOpen method is called.");
 
+        DengageManager manager = DengageManager.getInstance(context);
+
         String uri = null;
         Bundle extras = intent.getExtras();
         if (extras != null) {
-            DengageManager.getInstance(context).sendOpenEvent(new Message(extras));
+            manager.sendOpenEvent(new Message(extras));
             uri = extras.getString("targetUrl");
         } else {
             logger.Error("No extra data for open.");
         }
+
+        if(uri != null) manager.startSession(uri);
 
         launchActivity(context, intent, uri);
     }
@@ -172,7 +169,7 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         String channelId = null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel notificationChannel = getNotificationChannel(context, intent);
+            NotificationChannel notificationChannel = getNotificationChannel();
             createNotificationChannel(context, notificationChannel);
             channelId = notificationChannel.getId();
         }
@@ -186,7 +183,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                 .setDeleteIntent(pDeleteIntent)
                 .setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_ALL)
-                .setSmallIcon(getSmallIconId(context, intent));
+                .setSmallIcon(getSmallIconId(context));
 
         if(!TextUtils.isEmpty(message.getTitle())) {
             notificationBuilder.setContentTitle(message.getTitle());
@@ -226,7 +223,6 @@ public class NotificationReceiver extends BroadcastReceiver {
             int icon = getResourceId(context, button.getIcon());
             notificationBuilder.addAction(icon, button.getText(), btnPendingIntent);
         }
-
 
         if(message.getNotificationType() == NotificationType.CAROUSEL) {
             generateCarouselNotification(context, message, notificationBuilder);
@@ -304,7 +300,7 @@ public class NotificationReceiver extends BroadcastReceiver {
     }
 
     @TargetApi(Build.VERSION_CODES.O)
-    protected NotificationChannel getNotificationChannel(Context context, Intent intent) {
+    protected NotificationChannel getNotificationChannel() {
         NotificationChannel channel = new NotificationChannel(Constants.CHANNEL_ID, Constants.CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
         channel.setDescription(Constants.CHANNEL_DESCRIPTION);
         return channel;
@@ -313,10 +309,12 @@ public class NotificationReceiver extends BroadcastReceiver {
     @TargetApi(Build.VERSION_CODES.O)
     protected void createNotificationChannel(Context context, NotificationChannel notificationChannel) {
         NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        nm.createNotificationChannel(notificationChannel);
+        if (nm != null) {
+            nm.createNotificationChannel(notificationChannel);
+        }
     }
 
-    protected int getSmallIconId(Context context, Intent intent) {
+    protected int getSmallIconId(Context context) {
         try {
             PackageManager packageManager = context.getPackageManager();
             ApplicationInfo applicationInfo = packageManager.getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);

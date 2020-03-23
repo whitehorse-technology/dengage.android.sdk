@@ -1,13 +1,16 @@
 package com.dengage.sdk.models;
 
-import android.text.TextUtils;
-
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Map;
 
-public class DenEvent extends ModelBase {
+public class EcEvent extends ModelBase {
 
     @SerializedName("eventName")
     private String eventName;
@@ -58,23 +61,7 @@ public class DenEvent extends ModelBase {
     private String pushToken;
 
     @SerializedName("eventDetails")
-    private Map<String,Object> params;
-
-    public DenEvent(String eventName, String sessionId, String persistentId) {
-
-        if(eventName == null || TextUtils.isEmpty(eventName))
-            throw new IllegalArgumentException("Argument null: eventName");
-
-        if(sessionId == null || TextUtils.isEmpty(sessionId))
-            throw new IllegalArgumentException("Argument null: sessionId");
-
-        if(persistentId == null || TextUtils.isEmpty(persistentId))
-            throw new IllegalArgumentException("Argument null: persistentId");
-
-        this.eventName = eventName;
-        this.sessionId = sessionId;
-        this.persistentId = persistentId;
-    }
+    private transient Map<String,Object> params;
 
     public Map<String, Object> getParams() {
         return params;
@@ -212,7 +199,37 @@ public class DenEvent extends ModelBase {
         this.sdkVersion = sdkVersion;
     }
 
+    @Override
     public String toJson() {
-        return new Gson().toJson(this);
+        GsonBuilder builder = new GsonBuilder();
+        builder.setExclusionStrategies(new FieldExclusionStrategy());
+        Gson gson = builder.create();
+        JsonElement doc = gson.toJsonTree(this);
+        if(this.params != null) {
+            JsonObject obj = doc.getAsJsonObject();
+            for (Map.Entry<String, Object> param : this.getParams().entrySet()) {
+                if(param.getValue() instanceof Boolean) {
+                    obj.addProperty(param.getKey(), (Boolean)param.getValue());
+                }
+                else if(param.getValue() instanceof Number) {
+                    obj.addProperty(param.getKey(), (Number)param.getValue());
+                }
+                else {
+                    obj.addProperty(param.getKey(), param.getValue().toString());
+                }
+            }
+        }
+        return gson.toJson(doc);
+    }
+
+    private static class FieldExclusionStrategy implements ExclusionStrategy {
+        public boolean shouldSkipField(FieldAttributes f) {
+            return f.getName().equals("integrationKey");
+        }
+
+        @Override
+        public boolean shouldSkipClass(Class<?> clazz) {
+            return false;
+        }
     }
 }

@@ -6,11 +6,13 @@ import android.os.AsyncTask;
 import android.text.TextUtils;
 import androidx.annotation.NonNull;
 
-import com.dengage.sdk.models.DenEvent;
+import com.dengage.sdk.models.EcEvent;
 import com.dengage.sdk.models.Event;
 import com.dengage.sdk.models.Message;
 import com.dengage.sdk.models.Open;
+import com.dengage.sdk.models.Session;
 import com.dengage.sdk.models.Subscription;
+import com.dengage.sdk.models.TransactionalOpen;
 import com.google.android.gms.ads.identifier.AdvertisingIdClient;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -40,9 +42,10 @@ public class DengageManager {
     }
 
     /**
-     * Initiator method
+     * Singleton Object
      * <p>
-     * Use to initiate dEngage MobileManager.
+     * Use to create dEngage MobileManager.
+     * @return DengageManager
      * </p>
      */
     public static DengageManager getInstance(Context context) {
@@ -59,6 +62,13 @@ public class DengageManager {
         return _instance;
     }
 
+    /**
+     * FirebaseApp Initiator method
+     * <p>
+     * Use to init Firebase Messaging
+     * @return DengageManager
+     * </p>
+     */
     public DengageManager init() {
         try {
             if(_context == null) throw new Exception("_context is null.");
@@ -75,8 +85,8 @@ public class DengageManager {
      */
     public String getDeviceId() {
         logger.Verbose("getDeviceId method is called.");
-        logger.Debug("getDeviceId: "+ _subscription.getUdid());
-        return _subscription.getUdid();
+        logger.Debug("getDeviceId: "+ _subscription.getDeviceId());
+        return _subscription.getDeviceId();
     }
 
     /**
@@ -85,8 +95,8 @@ public class DengageManager {
      */
     public String getAdvertisingId() {
         logger.Verbose("getAdvertisingId method is called.");
-        logger.Debug("getAdvertisingId: "+ _subscription.getAdid());
-        return _subscription.getAdid();
+        logger.Debug("getAdvertisingId: "+ _subscription.getAdvertisingId());
+        return _subscription.getAdvertisingId();
     }
 
     /**
@@ -172,6 +182,26 @@ public class DengageManager {
     }
 
     /**
+     * Set subscription service endpoint
+     * <p>
+     * Use to set subscription service url at runtime.
+     * </p>
+     * @param url Your subscription service endpoint.
+     */
+    public DengageManager setSubscriptionUri(String url) {
+        logger.Verbose("setSubscriptionUri method is called");
+
+        try {
+            logger.Debug("setSubscriptionUri: "+ url);
+            _subscription.setSubscriptionUri(url);
+            saveSubscription();
+        } catch (Exception e) {
+            logger.Error("setSubscriptionUri: "+ e.getMessage());
+        }
+        return _instance;
+    }
+
+    /**
      * Subscribe User
      * <p>
      * Use to register a user to dEngage. Only required when you perform a manuel GCM registration.
@@ -204,6 +234,7 @@ public class DengageManager {
         try {
 
             logger.Debug("tokenSaved: " + _subscription.getTokenSaved());
+            final String userAgent = Utils.getUserAgent(_context);
 
             FirebaseInstanceId.getInstance().getInstanceId()
                     .addOnCanceledListener(new OnCanceledListener() {
@@ -234,7 +265,7 @@ public class DengageManager {
                             if(!_subscription.getTokenSaved() ) {
                                 logger.Debug("syncSubscription: " + _subscription.toJson());
                                 _subscription.setTokenSaved(true);
-                                RequestAsync req = new RequestAsync(Constants.subsApiEndpoint, Utils.getUserAgent(_context), _subscription, Subscription.class);
+                                RequestAsync req = new RequestAsync(_subscription);
                                 req.execute();
                             }
 
@@ -246,7 +277,7 @@ public class DengageManager {
             adIdWorker.execute();
 
             if( _subscription.getTokenSaved() ) {
-                RequestAsync req = new RequestAsync(Constants.subsApiEndpoint, Utils.getUserAgent(_context), _subscription, Subscription.class);
+                RequestAsync req = new RequestAsync(_subscription);
                 req.execute();
                 logger.Debug("syncSubscription: " + _subscription.toJson());
             }
@@ -274,20 +305,22 @@ public class DengageManager {
             String source = message.getMessageSource();
             if (!Constants.MESSAGE_SOURCE.equals(source))  return;
 
-            Open openSignal = new Open();
-            openSignal.setIntegrationKey(_subscription.getIntegrationKey());
-            openSignal.setMessageId(message.getMessageId());
-            openSignal.setMessageDetails(message.getMessageDetails());
-            openSignal.setTransactionId(message.getTransactionId());
-
-            logger.Debug("sendOpenEvent: " + openSignal.toJson());
-
             if (!TextUtils.isEmpty(message.getTransactionId())) {
-                RequestAsync req = new RequestAsync(Constants.transOpenApiEndpoint, Utils.getUserAgent(_context), openSignal, Open.class);
+                TransactionalOpen openSignal = new TransactionalOpen();
+                openSignal.setUserAgent(Utils.getUserAgent(_context));
+                openSignal.setIntegrationKey(_subscription.getIntegrationKey());
+                openSignal.setMessageId(message.getMessageId());
+                openSignal.setTransactionId(message.getTransactionId());
+                openSignal.setMessageDetails(message.getMessageDetails());
+                RequestAsync req = new RequestAsync(openSignal);
                 req.execute();
-            }
-            else {
-                RequestAsync req = new RequestAsync(Constants.openApiEndpoint, Utils.getUserAgent(_context), openSignal, Open.class);
+            } else {
+                Open openSignal = new Open();
+                openSignal.setUserAgent(Utils.getUserAgent(_context));
+                openSignal.setIntegrationKey(_subscription.getIntegrationKey());
+                openSignal.setMessageId(message.getMessageId());
+                openSignal.setMessageDetails(message.getMessageDetails());
+                RequestAsync req = new RequestAsync(openSignal);
                 req.execute();
             }
 
@@ -310,8 +343,9 @@ public class DengageManager {
         try {
             getSubscription();
             Event event = new Event(_subscription.getIntegrationKey(), tableName, key, data);
+            event.setUserAgent(Utils.getUserAgent(_context));
             logger.Debug("sendCustomEvent: " + event.toJson());
-            RequestAsync req = new RequestAsync(Constants.eventApiEndpoint, Utils.getUserAgent(_context), event, Event.class);
+            RequestAsync req = new RequestAsync(event);
             req.execute();
         } catch (Exception e) {
             logger.Error("sendCustomEvent: "+ e.getMessage());
@@ -331,8 +365,9 @@ public class DengageManager {
         try {
             getSubscription();
             Event event = new Event(_subscription.getIntegrationKey(), tableName, getDeviceId(), data);
+            event.setUserAgent(Utils.getUserAgent(_context));
             logger.Debug("sendDeviceEvent: " + event.toJson());
-            RequestAsync req = new RequestAsync(Constants.eventApiEndpoint, Utils.getUserAgent(_context), event, Event.class);
+            RequestAsync req = new RequestAsync(event);
             req.execute();
         } catch (Exception e) {
             logger.Error("sendDeviceEvent: "+ e.getMessage());
@@ -343,10 +378,26 @@ public class DengageManager {
         logger.Verbose("startSession method is called");
         try {
             getSubscription();
-            String userAgent = Utils.getUserAgent(_context);
-            Event event = new Event(_subscription.getIntegrationKey(), "startSession", getDeviceId(), null);
+            EcEvent event = new EcEvent();
+            event.setIntegrationKey(_subscription.getIntegrationKey());
+            event.setEventName("startSession");
+            event.setSessionId(Session.createSession().getSessionId());
+            event.setPersistentId(Utils.getDeviceId(_context));
+            event.setLanguage(Utils.getSystemLanguage());
+            event.setScreenWidth(Utils.getScreenWith(_context));
+            event.setScreenHeight(Utils.getScreenHeight(_context));
+            event.setTimeZone(Utils.getTimezoneId());
+            event.setSdkVersion(Utils.getSdkVersion());
+            event.setOs(Utils.getOsVersion());
+            event.setModel(Utils.getModel());
+            event.setManufacturer(Utils.getManufacturer());
+            event.setBrand(Utils.getBrand());
+            event.setDeviceUniqueId(Utils.getDeviceUniqueId());
+            event.setReferrer("");
+            event.setLocation(actionUrl);
+            event.setPushToken(_subscription.getToken());
             logger.Debug("startSession: " + event.toJson());
-            RequestAsync req = new RequestAsync(Constants.ecApiEndpoint, userAgent, event, Event.class);
+            RequestAsync req = new RequestAsync(event);
             req.execute();
         } catch (Exception e) {
             logger.Error("startSession: "+ e.getMessage());
@@ -357,10 +408,27 @@ public class DengageManager {
         logger.Verbose("sendPageView method is called");
         try {
             getSubscription();
-            String userAgent = Utils.getUserAgent(_context);
-            Event event = new Event(_subscription.getIntegrationKey(), "pageView", getDeviceId(), data);
+            EcEvent event = new EcEvent();
+            event.setIntegrationKey(_subscription.getIntegrationKey());
+            event.setEventName("pageView");
+            event.setSessionId(Session.getSession().getSessionId());
+            event.setPersistentId(Utils.getDeviceId(_context));
+            event.setLanguage(Utils.getSystemLanguage());
+            event.setScreenWidth(Utils.getScreenWith(_context));
+            event.setScreenHeight(Utils.getScreenHeight(_context));
+            event.setTimeZone(Utils.getTimezoneId());
+            event.setSdkVersion(Utils.getSdkVersion());
+            event.setOs(Utils.getOsVersion());
+            event.setModel(Utils.getModel());
+            event.setManufacturer(Utils.getManufacturer());
+            event.setBrand(Utils.getBrand());
+            event.setDeviceUniqueId(Utils.getDeviceUniqueId());
+            event.setReferrer("");
+            event.setLocation("");
+            event.setPushToken(_subscription.getToken());
+            event.setParams(data);
             logger.Debug("sendPageView: " + event.toJson());
-            RequestAsync req = new RequestAsync(Constants.ecApiEndpoint, userAgent, event, Event.class);
+            RequestAsync req = new RequestAsync(event);
             req.execute();
         } catch (Exception e) {
             logger.Error("sendPageView: "+ e.getMessage());
@@ -371,10 +439,27 @@ public class DengageManager {
         logger.Verbose("sendCustomEvent method is called");
         try {
             getSubscription();
-            String userAgent = Utils.getUserAgent(_context);
-            DenEvent event = new DenEvent(eventName, "", "");
+            EcEvent event = new EcEvent();
+            event.setIntegrationKey(_subscription.getIntegrationKey());
+            event.setEventName(eventName);
+            event.setSessionId(Session.getSession().getSessionId());
+            event.setPersistentId(Utils.getDeviceId(_context));
+            event.setLanguage(Utils.getSystemLanguage());
+            event.setScreenWidth(Utils.getScreenWith(_context));
+            event.setScreenHeight(Utils.getScreenHeight(_context));
+            event.setTimeZone(Utils.getTimezoneId());
+            event.setSdkVersion(Utils.getSdkVersion());
+            event.setOs(Utils.getOsVersion());
+            event.setModel(Utils.getModel());
+            event.setManufacturer(Utils.getManufacturer());
+            event.setBrand(Utils.getBrand());
+            event.setDeviceUniqueId(Utils.getDeviceUniqueId());
+            event.setReferrer("");
+            event.setLocation("");
+            event.setPushToken(_subscription.getToken());
+            event.setParams(data);
             logger.Debug("sendCustomEvent: " + event.toJson());
-            RequestAsync req = new RequestAsync(Constants.ecApiEndpoint, userAgent, event, Event.class);
+            RequestAsync req = new RequestAsync(event);
             req.execute();
         } catch (Exception e) {
             logger.Error("sendCustomEvent: "+ e.getMessage());
@@ -410,15 +495,11 @@ public class DengageManager {
         logger.Verbose("saveSubscription method is called");
         try {
 
-            _subscription.setUdid(Utils.getDeviceId(_context));
+            _subscription.setDeviceId(Utils.getDeviceId(_context));
             _subscription.setCarrierId(Utils.carrier(_context));
             _subscription.setAppVersion(Utils.appVersion(_context));
-            _subscription.setLocal(Utils.local(_context));
-            _subscription.setOs(Utils.osType());
-            _subscription.setOsVersion(Utils.osVersion());
             _subscription.setSdkVersion(com.dengage.sdk.BuildConfig.VERSION_NAME);
-            _subscription.setDeviceName(Utils.deviceName());
-            _subscription.setDeviceType(Utils.deviceType());
+            _subscription.setUserAgent(Utils.getUserAgent(_context));
 
             Utils.saveSubscription(_context, _subscription.toJson());
         } catch (Exception e) {
@@ -449,7 +530,7 @@ public class DengageManager {
 
         @Override
         protected void onPostExecute(String adId) {
-            _subscription.setAdid(adId);
+            _subscription.setAdvertingId(adId);
             saveSubscription();
         }
     }
