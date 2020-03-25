@@ -2,7 +2,7 @@ package com.dengage.sdk;
 
 import android.os.AsyncTask;
 
-import com.dengage.sdk.models.EcEvent;
+import com.dengage.sdk.models.DenEvent;
 import com.dengage.sdk.models.Event;
 import com.dengage.sdk.models.ModelBase;
 import com.dengage.sdk.models.Open;
@@ -37,8 +37,8 @@ class RequestAsync extends AsyncTask<Void, Void, Void> {
             req.sendEvent((Event) this.model);
         }
 
-        else  if(this.model instanceof EcEvent) {
-            req.sendEcEvent((EcEvent) this.model);
+        else  if(this.model instanceof DenEvent) {
+            req.sendEcEvent((DenEvent) this.model);
         }
 
         return null;

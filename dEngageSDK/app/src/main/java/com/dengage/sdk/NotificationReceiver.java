@@ -83,7 +83,7 @@ public class NotificationReceiver extends BroadcastReceiver {
             logger.Error("No extra data for open.");
         }
 
-        if(uri != null) manager.startSession(uri);
+        //if(uri != null) manager.startSession(uri);
 
         launchActivity(context, intent, uri);
     }

@@ -70,6 +70,20 @@ public class Subscription extends ModelBase {
     @SerializedName("subscriptionUri")
     private transient String subscriptionUri;
 
+    @SerializedName("tokenType")
+    private String testGroup = "";
+
+    @SerializedName("userAgent")
+    private transient String userAgent = "";
+
+    public String getUserAgent() {
+        return userAgent;
+    }
+
+    public void setUserAgent(String userAgent) {
+        this.userAgent = userAgent;
+    }
+
     public String getToken() {
         return this.token;
     }
@@ -152,5 +166,13 @@ public class Subscription extends ModelBase {
 
     public boolean isValidSubscriptionUri() {
         return this.getSubscriptionUri() != null && !TextUtils.isEmpty(this.getSubscriptionUri());
+    }
+
+    public String getTestGroup() {
+        return testGroup;
+    }
+
+    public void setTestGroup(String testGroup) {
+        this.testGroup = testGroup;
     }
 }

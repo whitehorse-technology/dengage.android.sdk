@@ -12,6 +12,17 @@ public class TransactionalOpen extends ModelBase {
     @SerializedName("transactionId")
     private String transactionId;
 
+    @SerializedName("userAgent")
+    private transient String userAgent = "";
+
+    public String getUserAgent() {
+        return userAgent;
+    }
+
+    public void setUserAgent(String userAgent) {
+        this.userAgent = userAgent;
+    }
+
     public String getTransactionId() {
         return transactionId;
     }

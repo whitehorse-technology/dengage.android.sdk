@@ -9,17 +9,6 @@ public abstract class ModelBase {
     @SerializedName("integrationKey")
     public String integrationKey = "";
 
-    @SerializedName("userAgent")
-    public transient String userAgent = "";
-
-    public String getUserAgent() {
-        return userAgent;
-    }
-
-    public void setUserAgent(String userAgent) {
-        this.userAgent = userAgent;
-    }
-
     public String getIntegrationKey() {
         return this.integrationKey;
     }

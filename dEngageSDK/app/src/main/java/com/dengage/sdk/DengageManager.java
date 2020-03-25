@@ -6,7 +6,7 @@ import android.os.AsyncTask;
 import android.text.TextUtils;
 import androidx.annotation.NonNull;
 
-import com.dengage.sdk.models.EcEvent;
+import com.dengage.sdk.models.DenEvent;
 import com.dengage.sdk.models.Event;
 import com.dengage.sdk.models.Message;
 import com.dengage.sdk.models.Open;
@@ -76,6 +76,8 @@ public class DengageManager {
         } catch (Exception e) {
             logger.Error("initialization:" + e.getMessage());
         }
+        // or startSession
+        syncSubscription();
         return _instance;
     }
 
@@ -174,7 +176,26 @@ public class DengageManager {
             logger.Debug("setIntegrationKey: "+ key);
             _subscription.setIntegrationKey(key);
             saveSubscription();
-            syncSubscription();
+        } catch (Exception e) {
+            logger.Error("setIntegrationKey: "+ e.getMessage());
+        }
+        return _instance;
+    }
+
+    /**
+     * Set Test Group
+     * <p>
+     * Use to set testGroup alias at runtime.
+     * </p>
+     * @param testGroup Test group alias
+     */
+    public DengageManager setTestGroup(String testGroup) {
+        logger.Verbose("setTestGroup method is called");
+
+        try {
+            logger.Debug("setIntegrationKey: "+ testGroup);
+            _subscription.setTestGroup(testGroup);
+            saveSubscription();
         } catch (Exception e) {
             logger.Error("setIntegrationKey: "+ e.getMessage());
         }
@@ -330,143 +351,6 @@ public class DengageManager {
     }
 
     /**
-     * Sends a custom event
-     * <p>
-     * Use to hit a custom event report.
-     * </p>
-     * @param tableName The event table name of the schema.
-     * @param key Value of the event key.
-     * @param data Additional key-value data which is correspond table column name-value.
-     */
-    public void sendCustomEvent(String tableName, String key, Map<String,Object> data) {
-        logger.Verbose("sendCustomEvent method is called");
-        try {
-            getSubscription();
-            Event event = new Event(_subscription.getIntegrationKey(), tableName, key, data);
-            event.setUserAgent(Utils.getUserAgent(_context));
-            logger.Debug("sendCustomEvent: " + event.toJson());
-            RequestAsync req = new RequestAsync(event);
-            req.execute();
-        } catch (Exception e) {
-            logger.Error("sendCustomEvent: "+ e.getMessage());
-        }
-    }
-
-    /**
-     * Sends a device event
-     * <p>
-     * Use to hit a device event report.
-     * </p>
-     * @param tableName The event table name of the schema.
-     * @param data Additional key-value data which is correspond table column name-value.
-     */
-    public void sendDeviceEvent(String tableName, Map<String, Object> data) {
-        logger.Verbose("sendDeviceEvent method is called");
-        try {
-            getSubscription();
-            Event event = new Event(_subscription.getIntegrationKey(), tableName, getDeviceId(), data);
-            event.setUserAgent(Utils.getUserAgent(_context));
-            logger.Debug("sendDeviceEvent: " + event.toJson());
-            RequestAsync req = new RequestAsync(event);
-            req.execute();
-        } catch (Exception e) {
-            logger.Error("sendDeviceEvent: "+ e.getMessage());
-        }
-    }
-
-    public void startSession(String actionUrl) {
-        logger.Verbose("startSession method is called");
-        try {
-            getSubscription();
-            EcEvent event = new EcEvent();
-            event.setIntegrationKey(_subscription.getIntegrationKey());
-            event.setEventName("startSession");
-            event.setSessionId(Session.createSession().getSessionId());
-            event.setPersistentId(Utils.getDeviceId(_context));
-            event.setLanguage(Utils.getSystemLanguage());
-            event.setScreenWidth(Utils.getScreenWith(_context));
-            event.setScreenHeight(Utils.getScreenHeight(_context));
-            event.setTimeZone(Utils.getTimezoneId());
-            event.setSdkVersion(Utils.getSdkVersion());
-            event.setOs(Utils.getOsVersion());
-            event.setModel(Utils.getModel());
-            event.setManufacturer(Utils.getManufacturer());
-            event.setBrand(Utils.getBrand());
-            event.setDeviceUniqueId(Utils.getDeviceUniqueId());
-            event.setReferrer("");
-            event.setLocation(actionUrl);
-            event.setPushToken(_subscription.getToken());
-            logger.Debug("startSession: " + event.toJson());
-            RequestAsync req = new RequestAsync(event);
-            req.execute();
-        } catch (Exception e) {
-            logger.Error("startSession: "+ e.getMessage());
-        }
-    }
-
-    public void sendPageView(Map<String, Object> data) {
-        logger.Verbose("sendPageView method is called");
-        try {
-            getSubscription();
-            EcEvent event = new EcEvent();
-            event.setIntegrationKey(_subscription.getIntegrationKey());
-            event.setEventName("pageView");
-            event.setSessionId(Session.getSession().getSessionId());
-            event.setPersistentId(Utils.getDeviceId(_context));
-            event.setLanguage(Utils.getSystemLanguage());
-            event.setScreenWidth(Utils.getScreenWith(_context));
-            event.setScreenHeight(Utils.getScreenHeight(_context));
-            event.setTimeZone(Utils.getTimezoneId());
-            event.setSdkVersion(Utils.getSdkVersion());
-            event.setOs(Utils.getOsVersion());
-            event.setModel(Utils.getModel());
-            event.setManufacturer(Utils.getManufacturer());
-            event.setBrand(Utils.getBrand());
-            event.setDeviceUniqueId(Utils.getDeviceUniqueId());
-            event.setReferrer("");
-            event.setLocation("");
-            event.setPushToken(_subscription.getToken());
-            event.setParams(data);
-            logger.Debug("sendPageView: " + event.toJson());
-            RequestAsync req = new RequestAsync(event);
-            req.execute();
-        } catch (Exception e) {
-            logger.Error("sendPageView: "+ e.getMessage());
-        }
-    }
-
-    public void sendCustomEvent(String eventName, Map<String, Object> data) {
-        logger.Verbose("sendCustomEvent method is called");
-        try {
-            getSubscription();
-            EcEvent event = new EcEvent();
-            event.setIntegrationKey(_subscription.getIntegrationKey());
-            event.setEventName(eventName);
-            event.setSessionId(Session.getSession().getSessionId());
-            event.setPersistentId(Utils.getDeviceId(_context));
-            event.setLanguage(Utils.getSystemLanguage());
-            event.setScreenWidth(Utils.getScreenWith(_context));
-            event.setScreenHeight(Utils.getScreenHeight(_context));
-            event.setTimeZone(Utils.getTimezoneId());
-            event.setSdkVersion(Utils.getSdkVersion());
-            event.setOs(Utils.getOsVersion());
-            event.setModel(Utils.getModel());
-            event.setManufacturer(Utils.getManufacturer());
-            event.setBrand(Utils.getBrand());
-            event.setDeviceUniqueId(Utils.getDeviceUniqueId());
-            event.setReferrer("");
-            event.setLocation("");
-            event.setPushToken(_subscription.getToken());
-            event.setParams(data);
-            logger.Debug("sendCustomEvent: " + event.toJson());
-            RequestAsync req = new RequestAsync(event);
-            req.execute();
-        } catch (Exception e) {
-            logger.Error("sendCustomEvent: "+ e.getMessage());
-        }
-    }
-
-    /**
      * Console Log
      * <p>
      * Use to show logs on console.
@@ -478,16 +362,16 @@ public class DengageManager {
         return _instance;
     }
 
-    private void getSubscription() {
+    Subscription getSubscription() {
         try {
             if (Utils.hasSubscription(_context)) {
-                _subscription = new Gson().fromJson(Utils.getSubscription(_context), Subscription.class);
+                return _subscription = new Gson().fromJson(Utils.getSubscription(_context), Subscription.class);
             } else {
-                _subscription = new Subscription();
+                return _subscription = new Subscription();
             }
         } catch (Exception ex) {
             logger.Error("Exception on getSubscription: "+ ex.getMessage());
-            _subscription = new Subscription();
+            return _subscription = new Subscription();
         }
     }
 

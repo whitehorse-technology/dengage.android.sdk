@@ -11,6 +11,17 @@ public class Open extends ModelBase {
     @SerializedName("messageDetails")
     private String messageDetails;
 
+    @SerializedName("userAgent")
+    private transient String userAgent = "";
+
+    public String getUserAgent() {
+        return userAgent;
+    }
+
+    public void setUserAgent(String userAgent) {
+        this.userAgent = userAgent;
+    }
+
     public int getMessageId() {
         return messageId;
     }

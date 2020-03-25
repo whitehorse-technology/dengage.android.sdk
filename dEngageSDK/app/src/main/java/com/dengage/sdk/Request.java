@@ -2,7 +2,7 @@ package com.dengage.sdk;
 
 import android.util.Base64;
 
-import com.dengage.sdk.models.EcEvent;
+import com.dengage.sdk.models.DenEvent;
 import com.dengage.sdk.models.Event;
 import com.dengage.sdk.models.Open;
 import com.dengage.sdk.models.Subscription;
@@ -16,15 +16,13 @@ import java.net.URLEncoder;
 
 class Request  {
 
-    private final int connectionTimeout = 15000;
-    private final int readTimeout = 10000;
     private Logger logger = Logger.getInstance();
 
     void sendSubscription(Subscription model) {
         try {
-            String url = model.isValidSubscriptionUri() ? model.getSubscriptionUri() : Constants.SUBS_API_ENDPOINT;
+            String url = Constants.SUBS_API_ENDPOINT;
             String json = model.toJson();
-            String userAgent = model.userAgent;
+            String userAgent = model.getUserAgent();
             logger.Verbose("sendSubscription: " + url + " with the json: "+ json);
             sendRequest(url, userAgent, json, "application/json");
         } catch (Exception e) {
@@ -36,7 +34,7 @@ class Request  {
         try {
             String url = Constants.OPEN_API_ENDPOINT;
             String json = model.toJson();
-            String userAgent = model.userAgent;
+            String userAgent = model.getUserAgent();
             logger.Verbose("sendOpen: " + url + " with the json: "+ json);
             sendRequest(url, userAgent, json, "application/json");
         } catch (Exception e) {
@@ -48,7 +46,7 @@ class Request  {
         try {
             String url = Constants.TRANS_OPEN_API_ENDPOINT;
             String json = model.toJson();
-            String userAgent = model.userAgent;
+            String userAgent = model.getUserAgent();
             logger.Verbose("sendTransactionalOpen: " + url + " with the json: "+ json);
             sendRequest(url, userAgent, json, "application/json");
         } catch (Exception e) {
@@ -60,7 +58,7 @@ class Request  {
         try {
             String url = Constants.EVENT_API_ENDPOINT;
             String json = model.toJson();
-            String userAgent = model.userAgent;
+            String userAgent = model.getUserAgent();
             logger.Verbose("sendEvent: " + url + " with the json: "+ json);
             sendRequest(url, userAgent, json, "application/json");
         } catch (Exception e) {
@@ -68,7 +66,7 @@ class Request  {
         }
     }
 
-    void sendEcEvent(EcEvent model) {
+    void sendEcEvent(DenEvent model) {
         try {
             String url = Constants.EC_API_ENDPOINT + "/"+ model.integrationKey;
             String json = model.toJson();
@@ -90,7 +88,9 @@ class Request  {
         try {
             URL uri = new URL(url);
             HttpURLConnection conn = (HttpURLConnection) uri.openConnection();
+            int readTimeout = 10000;
             conn.setReadTimeout(readTimeout);
+            int connectionTimeout = 15000;
             conn.setConnectTimeout(connectionTimeout);
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", contentType);
