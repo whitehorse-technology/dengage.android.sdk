@@ -5,8 +5,11 @@ import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
 import java.util.Map;
 
 public class DenEvent extends ModelBase {
@@ -17,16 +20,15 @@ public class DenEvent extends ModelBase {
     @SerializedName("sessionId")
     private String sessionId;
 
-    @SerializedName("persistentId")
-    private String persistentId;
+    @SerializedName("udid")
+    private String deviceId;
 
     @SerializedName("testGroup")
     private String testGroup;
 
-    @SerializedName("memberId")
-    private String memberId;
+    @SerializedName("contactKey")
+    private String contactKey;
 
-    @SerializedName("eventDetails")
     private transient Map<String,Object> params;
 
     public Map<String, Object> getParams() {
@@ -45,12 +47,12 @@ public class DenEvent extends ModelBase {
         this.eventName = eventName;
     }
 
-    public String getPersistentId() {
-        return persistentId;
+    public String getDeviceId() {
+        return deviceId;
     }
 
-    public void setPersistentId(String persistentId) {
-        this.persistentId = persistentId;
+    public void setDeviceId(String persistentId) {
+        this.deviceId = persistentId;
     }
 
     public String getSessionId() {
@@ -69,28 +71,35 @@ public class DenEvent extends ModelBase {
         this.testGroup = testGroup;
     }
 
-    public String getMemberId() {
-        return memberId;
+    public String getContactKey() {
+        return contactKey;
     }
 
-    public void setMemberId(String memberId) {
-        this.memberId = memberId;
+    public void setContactKey(String contactKey) {
+        this.contactKey = contactKey;
     }
 
     @Override
     public String toJson() {
         GsonBuilder builder = new GsonBuilder();
-        builder.setExclusionStrategies(new FieldExclusionStrategy());
-        Gson gson = builder.create();
+        builder.serializeNulls();
+        Gson gson = builder.setExclusionStrategies(new CustomExclusionStrategy()).create();
         JsonElement doc = gson.toJsonTree(this);
         if(this.params != null) {
             JsonObject obj = doc.getAsJsonObject();
             for (Map.Entry<String, Object> param : this.getParams().entrySet()) {
-                if(param.getValue() instanceof Boolean) {
+                if(param.getValue() instanceof Map) {
+                    JsonElement e = gson.toJsonTree(param.getValue(), Map.class);
+                    obj.add(param.getKey(), e);
+                }
+                else if(param.getValue() instanceof Boolean) {
                     obj.addProperty(param.getKey(), (Boolean)param.getValue());
                 }
                 else if(param.getValue() instanceof Number) {
                     obj.addProperty(param.getKey(), (Number)param.getValue());
+                }
+                else if(param.getValue() == null) {
+                    obj.add(param.getKey(), JsonNull.INSTANCE);
                 }
                 else {
                     obj.addProperty(param.getKey(), param.getValue().toString());
@@ -100,14 +109,15 @@ public class DenEvent extends ModelBase {
         return gson.toJson(doc);
     }
 
-    private static class FieldExclusionStrategy implements ExclusionStrategy {
+    private class CustomExclusionStrategy implements ExclusionStrategy {
+
         public boolean shouldSkipField(FieldAttributes f) {
             return f.getName().equals("integrationKey");
         }
 
-        @Override
         public boolean shouldSkipClass(Class<?> clazz) {
             return false;
         }
+
     }
 }

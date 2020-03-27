@@ -38,7 +38,7 @@ class RequestAsync extends AsyncTask<Void, Void, Void> {
         }
 
         else  if(this.model instanceof DenEvent) {
-            req.sendEcEvent((DenEvent) this.model);
+            req.sendEvent((DenEvent) this.model);
         }
 
         return null;

@@ -1,6 +1,11 @@
 package com.dengage.sdk.models;
 
 import android.text.TextUtils;
+
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,21 +18,6 @@ public class Subscription extends ModelBase {
     @SerializedName("appVersion")
     private String appVersion = "";
 
-    @SerializedName("os")
-    private transient String os = "";
-
-    @SerializedName("osVersion")
-    private transient String osVersion = "";
-
-    @SerializedName("deviceType")
-    private transient String deviceType = "";
-
-    @SerializedName("deviceName")
-    private transient String deviceName = "";
-
-    @SerializedName("local")
-    private transient String local = "";
-
     @SerializedName("sdkVersion")
     private String sdkVersion = "";
 
@@ -36,12 +26,6 @@ public class Subscription extends ModelBase {
 
     @SerializedName("advertisingId")
     private String advertisingId = "";
-
-    @SerializedName("gsm")
-    private transient String gsm = "";
-
-    @SerializedName("email")
-    private transient String email = "";
 
     @SerializedName("carrierId")
     private String carrierId = "";
@@ -52,12 +36,6 @@ public class Subscription extends ModelBase {
     @SerializedName("permission")
     private Boolean permission = true;
 
-    @SerializedName("extra")
-    private transient Map<String, Object> extra = new HashMap<>();
-
-    @SerializedName("tokenSaved")
-    private transient boolean tokenSaved = false;
-
     @SerializedName("trackingPermission")
     private boolean trackingPermission = true;
 
@@ -67,10 +45,10 @@ public class Subscription extends ModelBase {
     @SerializedName("webSubscription")
     private String webSubscription = null;
 
-    @SerializedName("subscriptionUri")
-    private transient String subscriptionUri;
+    @SerializedName("cloudSubscription")
+    private boolean cloudSubscription = false;
 
-    @SerializedName("tokenType")
+    @SerializedName("testGroup")
     private String testGroup = "";
 
     @SerializedName("userAgent")
@@ -92,14 +70,6 @@ public class Subscription extends ModelBase {
         this.token = token;
     }
 
-    public Boolean getTokenSaved() {
-        return this.tokenSaved;
-    }
-
-    public void setTokenSaved(Boolean value) {
-        this.tokenSaved = value;
-    }
-
     public String getDeviceId() {
         return this.deviceId;
     }
@@ -112,7 +82,7 @@ public class Subscription extends ModelBase {
         return this.advertisingId;
     }
 
-    public void setAdvertingId(String advertisingId) {
+    public void setAdvertisingId(String advertisingId) {
         this.advertisingId = advertisingId;
     }
 
@@ -156,16 +126,12 @@ public class Subscription extends ModelBase {
         this.sdkVersion = sdkVersion;
     }
 
-    public String getSubscriptionUri() {
-        return subscriptionUri;
+    public boolean getCloudSubscription() {
+        return cloudSubscription;
     }
 
-    public void setSubscriptionUri(String subscriptionUri) {
-        this.subscriptionUri = subscriptionUri;
-    }
-
-    public boolean isValidSubscriptionUri() {
-        return this.getSubscriptionUri() != null && !TextUtils.isEmpty(this.getSubscriptionUri());
+    public void setCloudSubscription(boolean cloudSubscription) {
+        this.cloudSubscription = cloudSubscription;
     }
 
     public String getTestGroup() {
@@ -175,4 +141,29 @@ public class Subscription extends ModelBase {
     public void setTestGroup(String testGroup) {
         this.testGroup = testGroup;
     }
+
+    public String getTokenType() {
+        return tokenType;
+    }
+
+    public void setTokenType(String tokenType) {
+        this.tokenType = tokenType;
+    }
+
+    public String getWebSubscription() {
+        return webSubscription;
+    }
+
+    public void setWebSubscription(String webSubscription) {
+        this.webSubscription = webSubscription;
+    }
+
+    public boolean getTrackingPermission() {
+        return trackingPermission;
+    }
+
+    public void setTrackingPermission(boolean trackingPermission) {
+        this.trackingPermission = trackingPermission;
+    }
+
 }

@@ -5,9 +5,6 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 import androidx.annotation.NonNull;
-
-import com.dengage.sdk.models.DenEvent;
-import com.dengage.sdk.models.Event;
 import com.dengage.sdk.models.Message;
 import com.dengage.sdk.models.Open;
 import com.dengage.sdk.models.Session;
@@ -24,7 +21,6 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.google.gson.Gson;
-import java.util.Map;
 
 public class DengageManager {
 
@@ -57,7 +53,7 @@ public class DengageManager {
         if(_instance == null)
             _instance = new DengageManager(context);
 
-        _instance.getSubscription();
+        _instance.buildSubscription();
 
         return _instance;
     }
@@ -72,53 +68,19 @@ public class DengageManager {
     public DengageManager init() {
         try {
             if(_context == null) throw new Exception("_context is null.");
+
             FirebaseApp.initializeApp(_context);
+
+            FirebaseTokenWorker tokenWorker = new FirebaseTokenWorker();
+            tokenWorker.execute();
+
+            AdvertisingIdWorker adIdWorker = new AdvertisingIdWorker();
+            adIdWorker.execute();
+
         } catch (Exception e) {
             logger.Error("initialization:" + e.getMessage());
         }
-        // or startSession
-        syncSubscription();
         return _instance;
-    }
-
-    /**
-     * Gets Device Identifier
-     * @return String
-     */
-    public String getDeviceId() {
-        logger.Verbose("getDeviceId method is called.");
-        logger.Debug("getDeviceId: "+ _subscription.getDeviceId());
-        return _subscription.getDeviceId();
-    }
-
-    /**
-     * Gets Advertising Identifier
-     * @return String
-     */
-    public String getAdvertisingId() {
-        logger.Verbose("getAdvertisingId method is called.");
-        logger.Debug("getAdvertisingId: "+ _subscription.getAdvertisingId());
-        return _subscription.getAdvertisingId();
-    }
-
-    /**
-     * Gets Subscription Token
-     * @return String
-     */
-    public String getToken() {
-        logger.Verbose("getToken method is called.");
-        logger.Debug("getToken: "+ _subscription.getToken());
-        return _subscription.getToken();
-    }
-
-    /**
-     * Gets dEngage User Key
-     * @return String
-     */
-    public String getContactKey() {
-        logger.Verbose("getContactKey method is called.");
-        logger.Debug("getContactKey: "+ _subscription.getContactKey());
-        return _subscription.getContactKey();
     }
 
     /**
@@ -156,7 +118,6 @@ public class DengageManager {
             logger.Error("setContactKey: "+ e.getMessage());
         }
     }
-
 
     /**
      * Set App Integration Key
@@ -202,22 +163,15 @@ public class DengageManager {
         return _instance;
     }
 
-    /**
-     * Set subscription service endpoint
-     * <p>
-     * Use to set subscription service url at runtime.
-     * </p>
-     * @param url Your subscription service endpoint.
-     */
-    public DengageManager setSubscriptionUri(String url) {
-        logger.Verbose("setSubscriptionUri method is called");
+    public DengageManager useCloudSubscription(boolean cloudSubscription) {
+        logger.Verbose("useCloudSubscription method is called");
 
         try {
-            logger.Debug("setSubscriptionUri: "+ url);
-            _subscription.setSubscriptionUri(url);
+            logger.Debug("useCloudSubscription: "+ cloudSubscription);
+            _subscription.setCloudSubscription(cloudSubscription);
             saveSubscription();
         } catch (Exception e) {
-            logger.Error("setSubscriptionUri: "+ e.getMessage());
+            logger.Error("useCloudSubscription: "+ e.getMessage());
         }
         return _instance;
     }
@@ -232,14 +186,56 @@ public class DengageManager {
     public void subscribe(String token) {
         logger.Verbose("subscribe(token) method is called");
         try {
-            _subscription.setToken(token);
             if(TextUtils.isEmpty(token))
                 throw new IllegalArgumentException("Argument empty: token");
+            _subscription.setToken(token);
             saveSubscription();
-            logger.Debug("subscribe(token): " + token);
             syncSubscription();
         } catch (Exception e) {
             logger.Error("subscribe(token): "+ e.getMessage());
+        }
+    }
+
+    /**
+     *
+     * @return Subscription Object from the saved json.
+     */
+    public Subscription getSubscription() {
+        return _subscription;
+    }
+
+    private void buildSubscription() {
+        try {
+            if (Utils.hasSubscription(_context)) {
+                 _subscription = new Gson().fromJson(Utils.getSubscription(_context), Subscription.class);
+            } else {
+                _subscription = new Subscription();
+            }
+        } catch (Exception ex) {
+            logger.Error("buildSubscription: "+ ex.getMessage());
+            _subscription = new Subscription();
+        }
+    }
+
+    /**
+     * Save subscription json to disk.
+     */
+    private void saveSubscription() {
+        logger.Verbose("saveSubscription method is called");
+        try {
+
+            _subscription.setDeviceId(Utils.getDeviceId(_context));
+            _subscription.setCarrierId(Utils.carrier(_context));
+            _subscription.setAppVersion(Utils.appVersion(_context));
+            _subscription.setSdkVersion(com.dengage.sdk.BuildConfig.VERSION_NAME);
+            _subscription.setUserAgent(Utils.getUserAgent(_context));
+
+            String json = _subscription.toJson();
+            logger.Debug("subscriptionJson: "+ json);
+            Utils.saveSubscription(_context, json);
+
+        } catch (Exception e) {
+            logger.Error("saveSubscription: "+ e.getMessage());
         }
     }
 
@@ -253,61 +249,17 @@ public class DengageManager {
         logger.Verbose("syncSubscription method is called");
 
         try {
-
-            logger.Debug("tokenSaved: " + _subscription.getTokenSaved());
-            final String userAgent = Utils.getUserAgent(_context);
-
-            FirebaseInstanceId.getInstance().getInstanceId()
-                    .addOnCanceledListener(new OnCanceledListener() {
-                        @Override
-                        public void onCanceled() {
-                            logger.Verbose("Token retrieving canceled");
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            logger.Error("Token retrieving failed: " + e.getMessage());
-                        }
-                    })
-                    .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                            if (!task.isSuccessful()) {
-                                logger.Error("Firebase InstanceId Failed: " + task.getException().getMessage());
-                                return;
-                            }
-
-                            String token = task.getResult().getToken();
-                            logger.Debug("Token retrieved: " + token);
-
-                            _subscription.setToken(token);
-
-                            if(!_subscription.getTokenSaved() ) {
-                                logger.Debug("syncSubscription: " + _subscription.toJson());
-                                _subscription.setTokenSaved(true);
-                                RequestAsync req = new RequestAsync(_subscription);
-                                req.execute();
-                            }
-
-                            saveSubscription();
-                        }
-                    });
-
-            AdvertisingIdWorker adIdWorker = new AdvertisingIdWorker();
-            adIdWorker.execute();
-
-            if( _subscription.getTokenSaved() ) {
+            boolean cloudSubscription = _subscription.getCloudSubscription();
+            if(cloudSubscription) {
+                DengageEvent.getInstance(_context, null).subscription();
+            } else {
                 RequestAsync req = new RequestAsync(_subscription);
                 req.execute();
-                logger.Debug("syncSubscription: " + _subscription.toJson());
             }
-
         } catch (Exception e) {
             logger.Error("syncSubscription: "+ e.getMessage());
         }
     }
-
 
     /**
      * Sends open event
@@ -362,35 +314,6 @@ public class DengageManager {
         return _instance;
     }
 
-    Subscription getSubscription() {
-        try {
-            if (Utils.hasSubscription(_context)) {
-                return _subscription = new Gson().fromJson(Utils.getSubscription(_context), Subscription.class);
-            } else {
-                return _subscription = new Subscription();
-            }
-        } catch (Exception ex) {
-            logger.Error("Exception on getSubscription: "+ ex.getMessage());
-            return _subscription = new Subscription();
-        }
-    }
-
-    private void saveSubscription() {
-        logger.Verbose("saveSubscription method is called");
-        try {
-
-            _subscription.setDeviceId(Utils.getDeviceId(_context));
-            _subscription.setCarrierId(Utils.carrier(_context));
-            _subscription.setAppVersion(Utils.appVersion(_context));
-            _subscription.setSdkVersion(com.dengage.sdk.BuildConfig.VERSION_NAME);
-            _subscription.setUserAgent(Utils.getUserAgent(_context));
-
-            Utils.saveSubscription(_context, _subscription.toJson());
-        } catch (Exception e) {
-            logger.Error("saveSubscription: "+ e.getMessage());
-        }
-    }
-
     @SuppressLint("StaticFieldLeak")
     private class AdvertisingIdWorker extends AsyncTask<Void, String, String> {
         @Override
@@ -414,8 +337,45 @@ public class DengageManager {
 
         @Override
         protected void onPostExecute(String adId) {
-            _subscription.setAdvertingId(adId);
+            _subscription.setAdvertisingId(adId);
             saveSubscription();
+        }
+    }
+
+    private class FirebaseTokenWorker  {
+
+        void execute() {
+
+            FirebaseInstanceId.getInstance().getInstanceId()
+            .addOnCanceledListener(new OnCanceledListener() {
+                @Override
+                public void onCanceled() {
+                    logger.Verbose("Token retrieving canceled");
+                }
+            })
+            .addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    logger.Error("Token retrieving failed: " + e.getMessage());
+                }
+            })
+            .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                @Override
+                public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                    if (!task.isSuccessful()) {
+                        logger.Error("Firebase InstanceId Failed: " + task.getException().getMessage());
+                        return;
+                    }
+
+                    if(task.getResult() != null) {
+                        String token = task.getResult().getToken();
+                        logger.Debug("Token retrieved: " + token);
+                        _subscription.setToken(token);
+                        saveSubscription();
+                    }
+                }
+            });
+
         }
     }
 }

@@ -83,8 +83,6 @@ public class NotificationReceiver extends BroadcastReceiver {
             logger.Error("No extra data for open.");
         }
 
-        //if(uri != null) manager.startSession(uri);
-
         launchActivity(context, intent, uri);
     }
 
@@ -99,7 +97,6 @@ public class NotificationReceiver extends BroadcastReceiver {
         Bundle extras = intent.getExtras();
         int notificationId = 0;
         if (extras != null) {
-            // send action click event to dengage.
             uri = extras.getString("targetUrl");
             notificationId = extras.getInt("notificationId");
         } else {

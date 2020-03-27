@@ -5,6 +5,7 @@ import android.util.Base64;
 import com.dengage.sdk.models.DenEvent;
 import com.dengage.sdk.models.Event;
 import com.dengage.sdk.models.Open;
+import com.dengage.sdk.models.Session;
 import com.dengage.sdk.models.Subscription;
 import com.dengage.sdk.models.TransactionalOpen;
 
@@ -13,6 +14,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.HashMap;
 
 class Request  {
 
@@ -66,21 +68,21 @@ class Request  {
         }
     }
 
-    void sendEcEvent(DenEvent model) {
+    void sendEvent(DenEvent model) {
         try {
             String url = Constants.EC_API_ENDPOINT + "/"+ model.integrationKey;
+            logger.Verbose("sendEvent: " + url);
             String json = model.toJson();
+            logger.Verbose("sendEvent: " + json);
             String data = URLEncoder.encode(json, "utf-8");
+            logger.Verbose("sendEvent: " + data);
             String postData = Base64.encodeToString(data.getBytes(), Base64.DEFAULT).replaceAll("(\\s|\\r\\n|\\r|\\n)", "");
-
-            logger.Verbose("sendEcEvent: " + url + " with the json: "+ json);
-            logger.Verbose("sendEcEvent: " + data);
-            logger.Verbose("sendEcEvent: " + postData);
+            logger.Verbose("sendEvent: " + postData);
 
             sendRequest(url, "", postData, "text/plain");
 
         } catch (Exception e) {
-            logger.Error("sendDenEvent: "+ e.getMessage());
+            logger.Error("sendEvent: "+ e.getMessage());
         }
     }
 

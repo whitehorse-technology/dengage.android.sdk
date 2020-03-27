@@ -2,209 +2,218 @@ package com.dengage.sdk;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-
+import android.content.Intent;
+import android.os.Bundle;
 import com.dengage.sdk.models.CardItem;
 import com.dengage.sdk.models.DenEvent;
-import com.dengage.sdk.models.Event;
 import com.dengage.sdk.models.Session;
 import com.dengage.sdk.models.Subscription;
-
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-
-
 
 public class DengageEvent {
 
-    private static Logger logger = Logger.getInstance();
-
     @SuppressLint("StaticFieldLeak")
-    private static Context _context;
+    private static DengageEvent _instance = null;
+    private Logger logger = Logger.getInstance();
+    private Context _context;
+    private boolean sessionStarted = false;
 
-    public DengageEvent(Context context) {
-        _context = context;
+    private DengageEvent(Context context) {
+        this._context = context;
     }
 
-    /**
-     * Sends a custom event
-     * <p>
-     * Use to hit a custom event report.
-     * </p>
-     * @param tableName The event table name of the schema.
-     * @param key Value of the event key.
-     * @param data Additional key-value data which is correspond table column name-value.
-     */
-    public void sendCustomEvent(String tableName, String key, Map<String,Object> data) {
-        logger.Verbose("sendCustomEvent method is called");
+    public static DengageEvent getInstance(Context context, Intent intent) {
+
+        if(_instance == null) _instance = new DengageEvent(context);
+
+        String launchUrl = "";
+        if(intent != null) {
+            Bundle extras = intent.getExtras();
+            if (extras != null)
+                launchUrl = extras.getString("targetUrl");
+        }
+
+        _instance.startSession(launchUrl);
+
+        return _instance;
+    }
+
+    public DengageEvent setLogStatus(Boolean status) {
+        logger.setLogStatus(status);
+        return _instance;
+    }
+
+    public void subscription() {
         try {
             Subscription subscription = DengageManager.getInstance(_context).getSubscription();
-            Event event = new Event(subscription.getIntegrationKey(), tableName, key, data);
-            event.setUserAgent(Utils.getUserAgent(_context));
-            logger.Debug("sendCustomEvent: " + event.toJson());
-            RequestAsync req = new RequestAsync(event);
-            req.execute();
-        } catch (Exception e) {
-            logger.Error("sendCustomEvent: "+ e.getMessage());
-        }
+            HashMap<String, Object> extras = new HashMap<>();
+            extras.put("advertisingId", subscription.getAdvertisingId());
+            extras.put("appVersion", subscription.getAppVersion());
+            extras.put("carrierId", subscription.getCarrierId());
+            extras.put("udid", subscription.getDeviceId());
+            extras.put("permission", subscription.getPermission());
+            extras.put("sdkVersion", subscription.getSdkVersion());
+            extras.put("token", subscription.getToken());
+            extras.put("tokenType", subscription.getTokenType());
+            extras.put("trackingPermission", subscription.getTrackingPermission());
+            extras.put("webSubscription", subscription.getWebSubscription());
+            extras.put("integrationKey", subscription.getIntegrationKey());
+
+            sendEvent("subscription", extras);
+        } catch (Exception ignored) { }
     }
 
-    /**
-     * Sends a device event
-     * <p>
-     * Use to hit a device event report.
-     * </p>
-     * @param tableName The event table name of the schema.
-     * @param data Additional key-value data which is correspond table column name-value.
-     */
-    public void sendDeviceEvent(String tableName, Map<String, Object> data) {
-        logger.Verbose("sendDeviceEvent method is called");
+    public void startSession(String launchUrl) {
+        if(sessionStarted) return;
         try {
             Subscription subscription = DengageManager.getInstance(_context).getSubscription();
-            Event event = new Event(subscription.getIntegrationKey(), tableName, subscription.getDeviceId(), data);
-            event.setUserAgent(Utils.getUserAgent(_context));
-            logger.Debug("sendDeviceEvent: " + event.toJson());
-            RequestAsync req = new RequestAsync(event);
-            req.execute();
-        } catch (Exception e) {
-            logger.Error("sendDeviceEvent: "+ e.getMessage());
-        }
-    }
-
-    public void startSession(String actionUrl) {
-        Subscription subscription = DengageManager.getInstance(_context).getSubscription();
-        HashMap<String, Object> extras = new HashMap<>();
-        extras.put("language", Utils.getSystemLanguage());
-        extras.put("platform", "");
-        extras.put("screenWidth", Utils.getScreenWith(_context));
-        extras.put("screenHeight", Utils.getScreenHeight(_context));
-        extras.put("timeZone", Utils.getTimezoneId());
-        extras.put("sdkVersion", Utils.getSdkVersion());
-        extras.put("referrer", "");
-        extras.put("location", actionUrl);
-        extras.put("userAgent", Utils.getUserAgent(_context));
-        extras.put("advertisingId", subscription.getAdvertisingId());
-        extras.put("carrierId", subscription.getCarrierId());
-        extras.put("token", subscription.getToken());
-        extras.put("appVersion", subscription.getAppVersion());
-        extras.put("permission", subscription.getPermission());
-        extras.put("os", Utils.getOsVersion());
-        extras.put("model", Utils.getModel());
-        extras.put("manufacturer", Utils.getManufacturer());
-        extras.put("brand", Utils.getBrand());
-        extras.put("deviceUniqueId", Utils.getDeviceUniqueId());
-        sendCustomDenEvent("startSession", actionUrl, extras);
+            HashMap<String, Object> extras = new HashMap<>();
+            extras.put("language", Utils.getSystemLanguage());
+            extras.put("platform", "");
+            extras.put("screenWidth", Utils.getScreenWith(_context));
+            extras.put("screenHeight", Utils.getScreenHeight(_context));
+            extras.put("timeZone", Utils.getTimezoneId());
+            extras.put("sdkVersion", Utils.getSdkVersion());
+            extras.put("referrer", "");
+            extras.put("location", launchUrl);
+            extras.put("userAgent", Utils.getUserAgent(_context));
+            extras.put("token", subscription.getToken());
+            extras.put("appVersion", subscription.getAppVersion());
+            extras.put("permission", subscription.getPermission());
+            extras.put("os", Utils.getOsVersion());
+            extras.put("model", Utils.getModel());
+            extras.put("manufacturer", Utils.getManufacturer());
+            extras.put("brand", Utils.getBrand());
+            extras.put("deviceId", Utils.getDeviceUniqueId());
+            sendEvent("startSession", extras);
+            sessionStarted = true;
+        } catch (Exception ignored) {  }
     }
 
     public void tokenRefresh(String token) {
-        HashMap<String, Object> extras = new HashMap<>();
-        extras.put("token", token);
+        try {
+            HashMap<String, Object> extras = new HashMap<>();
+            extras.put("token", token);
 
-        sendCustomDenEvent("tokenRefresh", null, extras);
+            sendEvent("sdkTokenAction", extras);
+        } catch (Exception ignored) { }
     }
 
     public void productDetail(String productId, Double price, Double discountedPrice, String currency, String supplierId) {
+        logger.Verbose("productDetail method is called.");
+        try {
+            HashMap<String, Object> extras = new HashMap<>();
+            extras.put("entityType", "product");
+            extras.put("entityId", productId);
+            extras.put("price", price);
+            extras.put("discountedPrice", discountedPrice);
+            extras.put("currency", currency);
+            extras.put("supplierId", supplierId);
+            extras.put("pageType", "productDetail");
 
-        HashMap<String, Object> extras = new HashMap<>();
-        extras.put("entityType", "product");
-        extras.put("entityId", productId);
-        extras.put("price", price);
-        extras.put("discountedPrice", discountedPrice);
-        extras.put("currency", currency);
-        extras.put("supplierId", supplierId);
-        extras.put("pageType", "productDetail");
-
-        sendCustomDenEvent("PV", null, extras);
+            sendEvent("PV", extras);
+        } catch (Exception e) { logger.Error(e.getMessage()); }
     }
 
     public void promotionPage(String promotionId) {
+        try {
+            HashMap<String, Object> extras = new HashMap<>();
+            extras.put("entityType", "promotion");
+            extras.put("entityId", promotionId);
+            extras.put("pageType", "promotionPage");
 
-        HashMap<String, Object> extras = new HashMap<>();
-        extras.put("entityType", "promotion");
-        extras.put("entityId", promotionId);
-        extras.put("pageType", "promotionPage");
-
-        sendCustomDenEvent("PV", null, extras);
+            sendEvent("PV", extras);
+        } catch (Exception ignored) { }
     }
 
-    public void CategoryPage(String categoryId, String parentCategoryId) {
+    public void categoryPage(String categoryId, String parentCategory) {
+        try {
+            HashMap<String, Object> extras = new HashMap<>();
+            extras.put("entityType", "category");
+            extras.put("entityId", categoryId);
+            extras.put("parentCategory", parentCategory);
+            extras.put("pageType", "categoryPage");
 
-        HashMap<String, Object> extras = new HashMap<>();
-        extras.put("entityType", "category");
-        extras.put("entityId", categoryId);
-        extras.put("parentCategory", parentCategoryId);
-        extras.put("pageType", "categoryPage");
-
-        sendCustomDenEvent("PV", null, extras);
+            sendEvent("PV", extras);
+        } catch (Exception ignored) { }
     }
 
-    public void HomePage() {
+    public void homePage() {
+        try {
+            HashMap<String, Object> extras = new HashMap<>();
+            extras.put("pageType", "homePage");
 
-        HashMap<String, Object> extras = new HashMap<>();
-        extras.put("pageType", "homePage");
-
-        sendCustomDenEvent("PV", null, extras);
+            sendEvent("PV", extras);
+        } catch (Exception ignored) { }
     }
 
-    public void SearchPage(String keyword, long resultCount) {
+    public void searchPage(String keyword, long resultCount) {
+        try {
+            HashMap<String, Object> extras = new HashMap<>();
+            extras.put("pageType", "searchPage");
+            extras.put("resultCount", resultCount);
+            extras.put("keyword", keyword);
 
-        HashMap<String, Object> extras = new HashMap<>();
-        extras.put("pageType", "searchPage");
-        extras.put("keyword", keyword);
-        extras.put("resultCount", resultCount);
-
-        sendCustomDenEvent("PV", null, extras);
+            sendEvent("PV", extras);
+        } catch (Exception ignored) { }
     }
 
-    public void Refinement(Map<String, String[]> filters, long resultCount) {
+    public void refinement(Map<String, List<String>> filters, long resultCount) {
+        try {
+            HashMap<String, Object> extras = new HashMap<>();
+            extras.put("pageType", "searchPage");
+            extras.put("filters", filters);
+            extras.put("resultCount", resultCount);
+            extras.put("entityType", "products");
 
-        HashMap<String, Object> extras = new HashMap<>();
-        extras.put("pageType", "searchPage");
-        extras.put("filters", filters);
-        extras.put("resultCount", resultCount);
-        extras.put("entityType", "products");
-
-        sendCustomDenEvent("Action", null, extras);
+            sendEvent("Action", extras);
+        } catch (Exception ignored) { }
     }
 
-    public void LoginPage() {
+    public void loginPage() {
+        try {
+            HashMap<String, Object> extras = new HashMap<>();
+            extras.put("pageType", "loginPage");
 
-        HashMap<String, Object> extras = new HashMap<>();
-        extras.put("pageType", "loginPage");
-
-        sendCustomDenEvent("PV", null, extras);
+            sendEvent("PV", extras);
+        } catch (Exception ignored) { }
     }
 
-    public void LoginAction(String memberId, String status, String origin) {
+    public void loginAction(String memberId, boolean success, String origin) {
 
         HashMap<String, Object> extras = new HashMap<>();
         extras.put("eventType", "loginAction");
         extras.put("origin", origin);
-        extras.put("success", status);
+        extras.put("success", success);
         extras.put("memberId", memberId);
 
-        sendCustomDenEvent("Action", null, extras);
+        sendEvent("Action", extras);
     }
 
-    public void RegisterPage() {
+    public void registerPage() {
+        try {
+            HashMap<String, Object> extras = new HashMap<>();
+            extras.put("pageType", "registerPage");
 
-        HashMap<String, Object> extras = new HashMap<>();
-        extras.put("pageType", "registerPage");
-
-        sendCustomDenEvent("PV", null, extras);
+            sendEvent("PV", extras);
+        } catch (Exception ignored) { }
     }
 
-    public void RegisterAction(String memberId, String status, String origin) {
+    public void registerAction(String memberId, boolean success, String origin) {
+        try {
+            HashMap<String, Object> extras = new HashMap<>();
+            extras.put("eventType", "registerAction");
+            extras.put("origin", origin);
+            extras.put("success", success);
+            extras.put("memberId", memberId);
 
-        HashMap<String, Object> extras = new HashMap<>();
-        extras.put("eventType", "registerAction");
-        extras.put("origin", origin);
-        extras.put("success", status);
-        extras.put("memberId", memberId);
-
-        sendCustomDenEvent("Action", null, extras);
+            sendEvent("Action", extras);
+        } catch (Exception ignored) { }
     }
 
-    public void AddToBasket(CardItem item, String origin, String basketId) {
+    public void addToBasket(CardItem item, String origin, String basketId) {
 
         HashMap<String, Object> extras = new HashMap<>();
         extras.put("eventType", "addToBasket");
@@ -217,108 +226,110 @@ public class DengageEvent {
         extras.put("variantId", item.getVariantId());
         extras.put("productId", item.getProductId());
 
-        sendCustomDenEvent("Action", null, extras);
+        sendEvent("Action", extras);
     }
 
-    public void RemoveFromBasket(String productId, String variantId, int quantity, String basketId) {
-
-        HashMap<String, Object> extras = new HashMap<>();
-        extras.put("eventType", "removeFromBasket");
-        extras.put("productId", productId);
-        extras.put("variantId", variantId);
-        extras.put("quantity", quantity);
-        extras.put("basketId", basketId);
-
-        sendCustomDenEvent("Action", null, extras);
-    }
-
-    public void BasketPage(CardItem[] items, Double totalPrice, String basketId) {
-
-        HashMap<String, Object> extras = new HashMap<>();
-        extras.put("pageType", "basketPage");
-        extras.put("basketId", basketId);
-        extras.put("totalPrice", totalPrice);
-
-        StringBuilder productIds = new StringBuilder();
-        StringBuilder quantities = new StringBuilder();
-        StringBuilder prices = new StringBuilder();
-        StringBuilder currencies = new StringBuilder();
-        StringBuilder variantIds = new StringBuilder();
-
-        if(items != null && items.length > 0) {
-            for (CardItem item:items) {
-                productIds.append(item.getProductId()).append("|");
-                quantities.append(item.getQuantity()).append("|");
-                prices.append(item.getPrice()).append("|");
-                currencies.append(item.getCurrency()).append("|");
-                variantIds.append(item.getVariantId()).append("|");
-            }
-        }
-
-        extras.put("productIds", productIds.toString());
-        extras.put("quantities", quantities.toString());
-        extras.put("prices", prices.toString());
-        extras.put("currencies", currencies.toString());
-        extras.put("variantIds", variantIds.toString());
-
-        sendCustomDenEvent("PV", null, extras);
-    }
-
-    public void OrderSummary(CardItem[] items, String basketId, Double totalPrice, String orderId, String paymentMethod) {
-
-        HashMap<String, Object> extras = new HashMap<>();
-        extras.put("pageType", "orderSummary");
-        extras.put("basketId", basketId);
-        extras.put("totalPrice", totalPrice);
-        extras.put("orderId", orderId);
-        extras.put("paymentMethod", paymentMethod);
-
-        StringBuilder productIds = new StringBuilder();
-        StringBuilder quantities = new StringBuilder();
-        StringBuilder prices = new StringBuilder();
-        StringBuilder currencies = new StringBuilder();
-        StringBuilder variantIds = new StringBuilder();
-
-        if(items != null && items.length > 0) {
-            for (CardItem item:items) {
-                productIds.append(item.getProductId()).append("|");
-                quantities.append(item.getQuantity()).append("|");
-                prices.append(item.getPrice()).append("|");
-                currencies.append(item.getCurrency()).append("|");
-                variantIds.append(item.getVariantId()).append("|");
-            }
-        }
-
-        extras.put("productIds", productIds.toString());
-        extras.put("quantities", quantities.toString());
-        extras.put("prices", prices.toString());
-        extras.put("currencies", currencies.toString());
-        extras.put("variantIds", variantIds.toString());
-
-        sendCustomDenEvent("PV", null, extras);
-    }
-
-    public void sendPageView(Map<String, Object> data) {
+    public void removeFromBasket(String productId, String variantId, int quantity, String basketId) {
         try {
-            sendCustomDenEvent("pageView", "", data);
+            HashMap<String, Object> extras = new HashMap<>();
+            extras.put("eventType", "removeFromBasket");
+            extras.put("productId", productId);
+            extras.put("variantId", variantId);
+            extras.put("quantity", quantity);
+            extras.put("basketId", basketId);
+
+            sendEvent("Action", extras);
         } catch (Exception ignored) { }
     }
 
-    public void sendCustomDenEvent(String eventName, String actionUrl, Map<String, Object> data) {
-        logger.Verbose("sendCustomDenEvent method is called");
+    public void basketPage(CardItem[] items, Double totalPrice, String basketId) {
         try {
+            HashMap<String, Object> extras = new HashMap<>();
+            extras.put("pageType", "basketPage");
+            extras.put("basketId", basketId);
+            extras.put("totalPrice", totalPrice);
 
+            StringBuilder productIds = new StringBuilder();
+            StringBuilder quantities = new StringBuilder();
+            StringBuilder prices = new StringBuilder();
+            StringBuilder currencies = new StringBuilder();
+            StringBuilder variantIds = new StringBuilder();
+
+            if(items != null && items.length > 0) {
+                for (CardItem item:items) {
+                    productIds.append(item.getProductId()).append("|");
+                    quantities.append(item.getQuantity()).append("|");
+                    prices.append(item.getPrice()).append("|");
+                    currencies.append(item.getCurrency()).append("|");
+                    variantIds.append(item.getVariantId()).append("|");
+                }
+            }
+
+            extras.put("productIds", productIds.toString());
+            extras.put("quantities", quantities.toString());
+            extras.put("prices", prices.toString());
+            extras.put("currencies", currencies.toString());
+            extras.put("variantIds", variantIds.toString());
+
+            sendEvent("PV", extras);
+        } catch (Exception ignored) { }
+    }
+
+    public void orderSummary(CardItem[] items, String basketId, Double totalPrice, String orderId, String paymentMethod) {
+        try {
+            HashMap<String, Object> extras = new HashMap<>();
+            extras.put("pageType", "orderSummary");
+            extras.put("totalPrice", totalPrice);
+            extras.put("basketId", basketId);
+            extras.put("orderId", orderId);
+            extras.put("paymentMethod", paymentMethod);
+
+            StringBuilder productIds = new StringBuilder();
+            StringBuilder quantities = new StringBuilder();
+            StringBuilder prices = new StringBuilder();
+            StringBuilder currencies = new StringBuilder();
+            StringBuilder variantIds = new StringBuilder();
+
+            if(items != null && items.length > 0) {
+                for (CardItem item:items) {
+                    productIds.append(item.getProductId()).append("|");
+                    quantities.append(item.getQuantity()).append("|");
+                    prices.append(item.getPrice()).append("|");
+                    currencies.append(item.getCurrency()).append("|");
+                    variantIds.append(item.getVariantId()).append("|");
+                }
+            }
+
+            extras.put("productIds", productIds.toString());
+            extras.put("quantities", quantities.toString());
+            extras.put("prices", prices.toString());
+            extras.put("currencies", currencies.toString());
+            extras.put("variantIds", variantIds.toString());
+
+            sendEvent("PV", extras);
+        } catch (Exception ignored) { }
+    }
+
+    public void sendPageView(Map<String, Object> extras) {
+        try {
+            sendEvent("pageView", extras);
+        } catch (Exception ignored) { }
+    }
+
+    private void sendEvent(String eventName, Map<String, Object> data) {
+        logger.Verbose("sendEvent method is called");
+        try {
             Subscription subscription = DengageManager.getInstance(_context).getSubscription();
             DenEvent event = new DenEvent();
             event.setIntegrationKey(subscription.getIntegrationKey());
-            event.setEventName(eventName);
             event.setSessionId(Session.getSession().getSessionId());
-            event.setPersistentId(Utils.getDeviceId(_context));
+            event.setDeviceId(subscription.getDeviceId());
+            event.setEventName(eventName);
             event.setTestGroup(subscription.getTestGroup());
-            event.setMemberId(subscription.getContactKey());
+            event.setContactKey(subscription.getContactKey());
             event.setParams(data);
 
-            logger.Debug(""+ eventName +" : " + event.toJson());
+            logger.Debug("sendEvent: "+ eventName);
 
             RequestAsync req = new RequestAsync(event);
             req.execute();
@@ -326,11 +337,5 @@ public class DengageEvent {
         } catch (Exception e) {
             logger.Error("sendCustomDenEvent: "+ e.getMessage());
         }
-    }
-
-    public void sendSubscription() {
-        try {
-            sendCustomDenEvent("subscription", "", null);
-        } catch (Exception e) { }
     }
 }
