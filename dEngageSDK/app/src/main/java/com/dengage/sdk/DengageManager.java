@@ -3,6 +3,7 @@ package com.dengage.sdk;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import com.dengage.sdk.models.Event;
@@ -236,7 +237,7 @@ public class DengageManager {
                                 logger.Debug("syncSubscription: " + _subscription.toJson());
                                 _subscription.setTokenSaved(true);
                                 RequestAsync req = new RequestAsync(Constants.subsApiEndpoint, Utils.getUserAgent(_context), _subscription, Subscription.class);
-                                req.execute();
+                                req.executeTask();
                             }
 
                             saveSubscription();
@@ -244,11 +245,11 @@ public class DengageManager {
                     });
 
             AdvertisingIdWorker adIdWorker = new AdvertisingIdWorker();
-            adIdWorker.execute();
+            adIdWorker.executeTask();
 
             if( _subscription.getTokenSaved() ) {
                 RequestAsync req = new RequestAsync(Constants.subsApiEndpoint, Utils.getUserAgent(_context), _subscription, Subscription.class);
-                req.execute();
+                req.executeTask();
                 logger.Debug("syncSubscription: " + _subscription.toJson());
             }
 
@@ -285,11 +286,11 @@ public class DengageManager {
 
             if (!TextUtils.isEmpty(message.getTransactionId())) {
                 RequestAsync req = new RequestAsync(Constants.transOpenApiEndpoint, Utils.getUserAgent(_context), openSignal, Open.class);
-                req.execute();
+                req.executeTask();
             }
             else {
                 RequestAsync req = new RequestAsync(Constants.openApiEndpoint, Utils.getUserAgent(_context), openSignal, Open.class);
-                req.execute();
+                req.executeTask();
             }
 
         } catch (Exception e) {
@@ -313,7 +314,7 @@ public class DengageManager {
             Event event = new Event(_subscription.getIntegrationKey(), tableName, key, data);
             logger.Debug("sendCustomEvent: " + event.toJson());
             RequestAsync req = new RequestAsync(Constants.eventApiEndpoint, Utils.getUserAgent(_context), event, Event.class);
-            req.execute();
+            req.executeTask();
         } catch (Exception e) {
             logger.Error("sendCustomEvent: "+ e.getMessage());
         }
@@ -334,7 +335,7 @@ public class DengageManager {
             Event event = new Event(_subscription.getIntegrationKey(), tableName, getDeviceId(), data);
             logger.Debug("sendDeviceEvent: " + event.toJson());
             RequestAsync req = new RequestAsync(Constants.eventApiEndpoint, Utils.getUserAgent(_context), event, Event.class);
-            req.execute();
+            req.executeTask();
         } catch (Exception e) {
             logger.Error("sendDeviceEvent: "+ e.getMessage());
         }
@@ -412,6 +413,13 @@ public class DengageManager {
                 _subscription.setAdid(adId);
                 saveSubscription();
             }
+        }
+
+        public void executeTask() {
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+                this.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            else
+                this.execute();
         }
     }
 }
