@@ -1,6 +1,7 @@
 package com.dengage.sdk;
 
 import android.os.AsyncTask;
+import android.os.Build;
 
 import com.dengage.sdk.models.ModelBase;
 
@@ -26,5 +27,12 @@ class RequestAsync extends AsyncTask<Void, Void, Void> {
         Request req = new Request();
         req.send(_url, _userAgent, _model, _modelType);
         return null;
+    }
+
+    public void executeTask() {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+            this.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        else
+            this.execute();
     }
 }

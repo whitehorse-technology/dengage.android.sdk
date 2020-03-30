@@ -8,6 +8,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -109,6 +110,8 @@ public class NotificationReceiver extends BroadcastReceiver {
 
     private  void launchActivity(Context context, Intent intent, String uri) {
         Class<? extends Activity> cls = getActivity(context, intent);
+        if(cls == null) return;
+
         Intent activityIntent;
         if (uri != null && !TextUtils.isEmpty(uri)) {
             activityIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
