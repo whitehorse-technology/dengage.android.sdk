@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import com.dengage.sdk.models.CardItem;
 import com.dengage.sdk.models.DenEvent;
+import com.dengage.sdk.models.PageType;
 import com.dengage.sdk.models.Session;
 import com.dengage.sdk.models.Subscription;
 import java.util.HashMap;
@@ -28,16 +29,20 @@ public class DengageEvent {
 
         if(_instance == null) _instance = new DengageEvent(context);
 
-        String launchUrl = "";
         if(intent != null) {
+            String actionUrl = "";
             Bundle extras = intent.getExtras();
             if (extras != null)
-                launchUrl = extras.getString("targetUrl");
+                actionUrl = extras.getString("targetUrl");
+
+            _instance.startSession(actionUrl);
         }
 
-        _instance.startSession(launchUrl);
-
         return _instance;
+    }
+
+    public static DengageEvent getInstance(Context context) {
+        return getInstance(context, null);
     }
 
     public DengageEvent setLogStatus(Boolean status) {
@@ -65,7 +70,7 @@ public class DengageEvent {
         } catch (Exception ignored) { }
     }
 
-    public void startSession(String launchUrl) {
+    public void startSession(String actionUrl) {
         if(sessionStarted) return;
         try {
             Subscription subscription = DengageManager.getInstance(_context).getSubscription();
@@ -77,7 +82,7 @@ public class DengageEvent {
             extras.put("timeZone", Utils.getTimezoneId());
             extras.put("sdkVersion", Utils.getSdkVersion());
             extras.put("referrer", "");
-            extras.put("location", launchUrl);
+            extras.put("location", actionUrl);
             extras.put("userAgent", Utils.getUserAgent(_context));
             extras.put("token", subscription.getToken());
             extras.put("appVersion", subscription.getAppVersion());
@@ -160,10 +165,10 @@ public class DengageEvent {
         } catch (Exception ignored) { }
     }
 
-    public void refinement(Map<String, List<String>> filters, long resultCount) {
+    public void refinement(PageType pageType, Map<String, List<String>> filters, long resultCount) {
         try {
             HashMap<String, Object> extras = new HashMap<>();
-            extras.put("pageType", "searchPage");
+            extras.put("pageType", pageType.toString());
             extras.put("filters", filters);
             extras.put("resultCount", resultCount);
             extras.put("entityType", "products");
@@ -275,7 +280,7 @@ public class DengageEvent {
         } catch (Exception ignored) { }
     }
 
-    public void orderSummary(CardItem[] items, String basketId, Double totalPrice, String orderId, String paymentMethod) {
+    public void orderSummary(CardItem[] items, Double totalPrice, String basketId, String orderId, String paymentMethod) {
         try {
             HashMap<String, Object> extras = new HashMap<>();
             extras.put("pageType", "orderSummary");

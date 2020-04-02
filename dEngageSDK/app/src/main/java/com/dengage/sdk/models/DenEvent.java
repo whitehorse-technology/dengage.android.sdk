@@ -82,7 +82,7 @@ public class DenEvent extends ModelBase {
     @Override
     public String toJson() {
         GsonBuilder builder = new GsonBuilder();
-        builder.serializeNulls();
+        //builder.serializeNulls();
         Gson gson = builder.setExclusionStrategies(new CustomExclusionStrategy()).create();
         JsonElement doc = gson.toJsonTree(this);
         if(this.params != null) {
