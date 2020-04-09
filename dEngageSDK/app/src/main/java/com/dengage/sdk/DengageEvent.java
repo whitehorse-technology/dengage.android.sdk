@@ -35,7 +35,7 @@ public class DengageEvent {
             if (extras != null)
                 actionUrl = extras.getString("targetUrl");
 
-            _instance.startSession(actionUrl);
+            _instance.sessionStart(actionUrl);
         }
 
         return _instance;
@@ -70,7 +70,7 @@ public class DengageEvent {
         } catch (Exception ignored) { }
     }
 
-    public void startSession(String actionUrl) {
+    public void sessionStart(String actionUrl) {
         if(sessionStarted) return;
         try {
             Subscription subscription = DengageManager.getInstance(_context).getSubscription();
@@ -92,7 +92,7 @@ public class DengageEvent {
             extras.put("manufacturer", Utils.getManufacturer());
             extras.put("brand", Utils.getBrand());
             extras.put("deviceId", Utils.getDeviceUniqueId());
-            sendEvent("startSession", extras);
+            sendEvent("sessionStart", extras);
             sessionStarted = true;
         } catch (Exception ignored) {  }
     }
@@ -186,13 +186,14 @@ public class DengageEvent {
         } catch (Exception ignored) { }
     }
 
-    public void loginAction(String memberId, boolean success, String origin) {
+    public void loginAction(String contactKey, boolean success, String origin) {
+        Subscription subscription = DengageManager.getInstance(_context).getSubscription();
+        subscription.setContactKey(contactKey);
 
         HashMap<String, Object> extras = new HashMap<>();
         extras.put("eventType", "loginAction");
         extras.put("origin", origin);
         extras.put("success", success);
-        extras.put("memberId", memberId);
 
         sendEvent("Action", extras);
     }
@@ -206,13 +207,15 @@ public class DengageEvent {
         } catch (Exception ignored) { }
     }
 
-    public void registerAction(String memberId, boolean success, String origin) {
+    public void registerAction(String contactKey, boolean success, String origin) {
         try {
+            Subscription subscription = DengageManager.getInstance(_context).getSubscription();
+            subscription.setContactKey(contactKey);
+
             HashMap<String, Object> extras = new HashMap<>();
             extras.put("eventType", "registerAction");
             extras.put("origin", origin);
             extras.put("success", success);
-            extras.put("memberId", memberId);
 
             sendEvent("Action", extras);
         } catch (Exception ignored) { }
