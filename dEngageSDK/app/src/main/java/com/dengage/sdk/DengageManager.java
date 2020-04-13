@@ -3,8 +3,11 @@ package com.dengage.sdk;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.text.TextUtils;
 import androidx.annotation.NonNull;
+
+import com.dengage.sdk.models.Event;
 import com.dengage.sdk.models.Message;
 import com.dengage.sdk.models.Open;
 import com.dengage.sdk.models.Session;
@@ -21,6 +24,8 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.google.gson.Gson;
+import org.w3c.dom.Text;
+import java.util.Map;
 
 public class DengageManager {
 
@@ -75,7 +80,7 @@ public class DengageManager {
             tokenWorker.execute();
 
             AdvertisingIdWorker adIdWorker = new AdvertisingIdWorker();
-            adIdWorker.execute();
+            adIdWorker.executeTask();
 
         } catch (Exception e) {
             logger.Error("initialization:" + e.getMessage());
@@ -254,7 +259,7 @@ public class DengageManager {
                 DengageEvent.getInstance(_context, null).subscription();
             } else {
                 RequestAsync req = new RequestAsync(_subscription);
-                req.execute();
+                req.executeTask();
             }
         } catch (Exception e) {
             logger.Error("syncSubscription: "+ e.getMessage());
@@ -286,7 +291,7 @@ public class DengageManager {
                 openSignal.setTransactionId(message.getTransactionId());
                 openSignal.setMessageDetails(message.getMessageDetails());
                 RequestAsync req = new RequestAsync(openSignal);
-                req.execute();
+                req.executeTask();
             } else {
                 Open openSignal = new Open();
                 openSignal.setUserAgent(Utils.getUserAgent(_context));
@@ -294,7 +299,7 @@ public class DengageManager {
                 openSignal.setMessageId(message.getMessageId());
                 openSignal.setMessageDetails(message.getMessageDetails());
                 RequestAsync req = new RequestAsync(openSignal);
-                req.execute();
+                req.executeTask();
             }
 
         } catch (Exception e) {
@@ -312,6 +317,48 @@ public class DengageManager {
     public DengageManager setLogStatus(Boolean status) {
         logger.setLogStatus(status);
         return _instance;
+    }
+    /**
+     * Sends a custom event
+     * <p>
+     * Use to hit a custom event report.
+     * </p>
+        * @param tableName The event table name of the schema.
+        * @param key Value of the event key.
+        * @param data Additional key-value data which is correspond table column name-value.
+     */
+    public void sendCustomEvent(String tableName, String key, Map<String,Object> data) {
+        logger.Verbose("sendCustomEvent method is called");
+        try {
+            getSubscription();
+            Event event = new Event(_subscription.getIntegrationKey(), tableName, key, data);
+            logger.Debug("sendCustomEvent: " + event.toJson());
+            RequestAsync req = new RequestAsync(event);
+            req.executeTask();
+        } catch (Exception e) {
+            logger.Error("sendCustomEvent: "+ e.getMessage());
+        }
+    }
+
+    /**
+     * Sends a device event
+     * <p>
+     * Use to hit a device event report.
+     * </p>
+     * @param tableName The event table name of the schema.
+     * @param data Additional key-value data which is correspond table column name-value.
+     */
+    public void sendDeviceEvent(String tableName, Map<String, Object> data) {
+        logger.Verbose("sendDeviceEvent method is called");
+        try {
+            getSubscription();
+            Event event = new Event(_subscription.getIntegrationKey(), tableName, _subscription.getDeviceId(), data);
+            logger.Debug("sendDeviceEvent: " + event.toJson());
+            RequestAsync req = new RequestAsync(event);
+            req.executeTask();
+        } catch (Exception e) {
+            logger.Error("sendDeviceEvent: "+ e.getMessage());
+        }
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -337,8 +384,17 @@ public class DengageManager {
 
         @Override
         protected void onPostExecute(String adId) {
-            _subscription.setAdvertisingId(adId);
-            saveSubscription();
+            if(adId != null && !TextUtils.isEmpty(adId)) {
+                _subscription.setAdvertisingId(adId);
+                saveSubscription();
+            }
+        }
+
+        public void executeTask() {
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+                this.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            else
+                this.execute();
         }
     }
 

@@ -117,6 +117,8 @@ public class NotificationReceiver extends BroadcastReceiver {
 
     private  void launchActivity(Context context, Intent intent, String uri) {
         Class<? extends Activity> cls = getActivity(context, intent);
+        if(cls == null) return;
+
         Intent activityIntent;
         if (uri != null && !TextUtils.isEmpty(uri)) {
             activityIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
@@ -209,16 +211,18 @@ public class NotificationReceiver extends BroadcastReceiver {
             notificationBuilder.setNumber(message.getBadgeCount());
         }
 
-        for (ActionButton button : message.getActionButtons()) {
-            int requestCode = random.nextInt();
-            Intent buttonIntent = new Intent(NotificationReceiver.PUSH_ACTION_CLICK);
-            buttonIntent.putExtra("notificationId", message.getMessageId());
-            buttonIntent.putExtra("id", button.getId());
-            buttonIntent.putExtra("targetUrl", button.getTargetUrl());
-            buttonIntent.setPackage(packageName);
-            PendingIntent btnPendingIntent = PendingIntent.getBroadcast(context, requestCode, buttonIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-            int icon = getResourceId(context, button.getIcon());
-            notificationBuilder.addAction(icon, button.getText(), btnPendingIntent);
+        if(message.getActionButtons() != null && message.getActionButtons().length > 0) {
+            for (ActionButton button : message.getActionButtons()) {
+                int requestCode = random.nextInt();
+                Intent buttonIntent = new Intent(NotificationReceiver.PUSH_ACTION_CLICK);
+                buttonIntent.putExtra("notificationId", message.getMessageId());
+                buttonIntent.putExtra("id", button.getId());
+                buttonIntent.putExtra("targetUrl", button.getTargetUrl());
+                buttonIntent.setPackage(packageName);
+                PendingIntent btnPendingIntent = PendingIntent.getBroadcast(context, requestCode, buttonIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                int icon = getResourceId(context, button.getIcon());
+                notificationBuilder.addAction(icon, button.getText(), btnPendingIntent);
+            }
         }
 
         if(message.getNotificationType() == NotificationType.CAROUSEL) {
