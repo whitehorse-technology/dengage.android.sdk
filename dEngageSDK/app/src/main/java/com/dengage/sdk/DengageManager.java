@@ -252,7 +252,6 @@ public class DengageManager {
      */
     public void syncSubscription() {
         logger.Verbose("syncSubscription method is called");
-
         try {
             boolean cloudSubscription = _subscription.getCloudSubscription();
             if(cloudSubscription) {
@@ -377,7 +376,7 @@ public class DengageManager {
             } catch (GooglePlayServicesRepairableException e) {
                 logger.Error("GooglePlayServicesRepairableException: "+ e.getMessage());
             } catch (Exception e) {
-                logger.Error("Exception: "+e.getMessage());
+                logger.Error("AdvertisingIdWorker Exception: "+e.getMessage());
             }
             return advertisingId;
         }

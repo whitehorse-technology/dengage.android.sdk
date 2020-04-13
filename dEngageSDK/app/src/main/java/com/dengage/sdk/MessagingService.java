@@ -47,6 +47,7 @@ public class MessagingService extends FirebaseMessagingService {
             Context context = getApplicationContext();
             Intent intent = new Intent(NotificationReceiver.PUSH_RECEIVE);
             intent.putExtra("RAW_DATA", json);
+            logger.Verbose("RAW_DATA: "+ json);
             for (Map.Entry<String, String> entry : data.entrySet()) {
                 intent.putExtra(entry.getKey(), entry.getValue());
             }
