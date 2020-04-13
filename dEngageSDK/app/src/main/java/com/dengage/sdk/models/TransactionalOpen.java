@@ -1,15 +1,16 @@
 package com.dengage.sdk.models;
 
-import com.dengage.sdk.models.ModelBase;
-import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
-public class Open extends ModelBase {
+public class TransactionalOpen extends ModelBase {
     @SerializedName("messageId")
     private int messageId;
 
     @SerializedName("messageDetails")
     private String messageDetails;
+
+    @SerializedName("transactionId")
+    private String transactionId;
 
     @SerializedName("userAgent")
     private transient String userAgent = "";
@@ -20,6 +21,14 @@ public class Open extends ModelBase {
 
     public void setUserAgent(String userAgent) {
         this.userAgent = userAgent;
+    }
+
+    public String getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
     }
 
     public int getMessageId() {

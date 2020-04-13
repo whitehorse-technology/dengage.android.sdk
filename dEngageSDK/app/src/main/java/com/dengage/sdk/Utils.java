@@ -1,33 +1,112 @@
 package com.dengage.sdk;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.telephony.TelephonyManager;
+import android.util.DisplayMetrics;
+import android.view.WindowManager;
+
+import com.dengage.sdk.models.Session;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 import java.util.UUID;
 
 class Utils {
 
-    private static String uniqueID = null;
+    private static String installationID = null;
+
+    public static int getScreenWith(Context context) {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        WindowManager manager = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE));
+        if(manager!=null) {
+            manager.getDefaultDisplay().getMetrics(displayMetrics);
+            return displayMetrics.widthPixels;
+        } else {
+            return -1;
+        }
+    }
+
+    public static int getScreenHeight(Context context) {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        WindowManager manager = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE));
+        if(manager!=null) {
+            manager.getDefaultDisplay().getMetrics(displayMetrics);
+            return displayMetrics.heightPixels;
+        } else {
+            return -1;
+        }
+    }
+
+    public static String getAppLanguage(){
+        return Locale.getDefault().getDisplayLanguage();
+    }
+
+    public static String getSystemLanguage() {
+        return Resources.getSystem().getConfiguration().locale.getLanguage();
+    }
+
+    public static int getTimezoneId() {
+        Calendar cal = Calendar.getInstance();
+        TimeZone tz = cal.getTimeZone();
+        return tz.getRawOffset();
+    }
+
+    public static String getSdkVersion() {
+        return com.dengage.sdk.BuildConfig.VERSION_NAME;
+    }
+
+    public static String getOsVersion() {
+        return "Android " + Build.VERSION.RELEASE;
+    }
+
+    public static String getModel() {
+        return Build.MODEL;
+    }
+
+    public static String getManufacturer() {
+        return Build.MANUFACTURER;
+    }
+
+    public static String getBrand() {
+        return Build.BRAND;
+    }
+
+    public static String getDeviceUniqueId() {
+        String m_szDevIDShort = "35" + (Build.BOARD.length() % 10) + (Build.BRAND.length() % 10) + (Build.CPU_ABI.length() % 10) + (Build.DEVICE.length() % 10) + (Build.MANUFACTURER.length() % 10) + (Build.MODEL.length() % 10) + (Build.PRODUCT.length() % 10);
+        String serial;
+        try {
+            serial = android.os.Build.class.getField("SERIAL").get(null).toString();
+            return new UUID(m_szDevIDShort.hashCode(), serial.hashCode()).toString();
+        } catch (Exception exception) {
+            serial = "serial";
+        }
+        return new UUID(m_szDevIDShort.hashCode(), serial.hashCode()).toString();
+    }
 
     synchronized static String getDeviceId(Context context) {
-        if (uniqueID == null) {
+        if (installationID == null) {
             SharedPreferences sharedPrefs = context.getSharedPreferences(Constants.DEN_DEVICE_UNIQUE_ID, Context.MODE_PRIVATE);
-                uniqueID = sharedPrefs.getString(Constants.DEN_DEVICE_UNIQUE_ID, null);
-                if (uniqueID == null) {
-                    uniqueID = UUID.randomUUID().toString();
+            installationID = sharedPrefs.getString(Constants.DEN_DEVICE_UNIQUE_ID, null);
+                if (installationID == null) {
+                    installationID = UUID.randomUUID().toString();
                     SharedPreferences.Editor editor = sharedPrefs.edit();
-                    editor.putString(Constants.DEN_DEVICE_UNIQUE_ID, uniqueID);
+                    editor.putString(Constants.DEN_DEVICE_UNIQUE_ID, installationID);
                     editor.apply();
                 }
         }
-        return uniqueID;
+        return installationID;
     }
 
     static void saveSubscription(Context context, String value) {

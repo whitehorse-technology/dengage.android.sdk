@@ -1,10 +1,15 @@
 package com.dengage.sdk.models;
 
-import android.text.TextUtils;
-
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
 import java.util.Map;
 
 public class DenEvent extends ModelBase {
@@ -15,66 +20,16 @@ public class DenEvent extends ModelBase {
     @SerializedName("sessionId")
     private String sessionId;
 
-    @SerializedName("persistentId")
-    private String persistentId;
+    @SerializedName("udid")
+    private String deviceId;
 
-    @SerializedName("language")
-    private String language;
+    @SerializedName("testGroup")
+    private String testGroup;
 
-    @SerializedName("screenWidth")
-    private int screenWidth;
+    @SerializedName("contactKey")
+    private String contactKey;
 
-    @SerializedName("screenHeight")
-    private int screenHeight;
-
-    @SerializedName("timeZone")
-    private int timeZone;
-
-    @SerializedName("sdkVersion")
-    private String sdkVersion;
-
-    @SerializedName("os")
-    private String os;
-
-    @SerializedName("md")
-    private String model;
-
-    @SerializedName("mn")
-    private String manufacturer;
-
-    @SerializedName("br")
-    private String brand;
-
-    @SerializedName("deviceUniqueId")
-    private String deviceUniqueId;
-
-    @SerializedName("referrer")
-    private String referrer;
-
-    @SerializedName("location")
-    private String location;
-
-    @SerializedName("pushToken")
-    private String pushToken;
-
-    @SerializedName("eventDetails")
-    private Map<String,Object> params;
-
-    public DenEvent(String eventName, String sessionId, String persistentId) {
-
-        if(eventName == null || TextUtils.isEmpty(eventName))
-            throw new IllegalArgumentException("Argument null: eventName");
-
-        if(sessionId == null || TextUtils.isEmpty(sessionId))
-            throw new IllegalArgumentException("Argument null: sessionId");
-
-        if(persistentId == null || TextUtils.isEmpty(persistentId))
-            throw new IllegalArgumentException("Argument null: persistentId");
-
-        this.eventName = eventName;
-        this.sessionId = sessionId;
-        this.persistentId = persistentId;
-    }
+    private transient Map<String,Object> params;
 
     public Map<String, Object> getParams() {
         return params;
@@ -92,12 +47,12 @@ public class DenEvent extends ModelBase {
         this.eventName = eventName;
     }
 
-    public String getPersistentId() {
-        return persistentId;
+    public String getDeviceId() {
+        return deviceId;
     }
 
-    public void setPersistentId(String persistentId) {
-        this.persistentId = persistentId;
+    public void setDeviceId(String persistentId) {
+        this.deviceId = persistentId;
     }
 
     public String getSessionId() {
@@ -108,111 +63,61 @@ public class DenEvent extends ModelBase {
         this.sessionId = sessionId;
     }
 
-    public int getScreenHeight() {
-        return screenHeight;
+    public String getTestGroup() {
+        return testGroup;
     }
 
-    public void setScreenHeight(int screenHeight) {
-        this.screenHeight = screenHeight;
+    public void setTestGroup(String testGroup) {
+        this.testGroup = testGroup;
     }
 
-    public int getScreenWidth() {
-        return screenWidth;
+    public String getContactKey() {
+        return contactKey;
     }
 
-    public void setScreenWidth(int screenWidth) {
-        this.screenWidth = screenWidth;
+    public void setContactKey(String contactKey) {
+        this.contactKey = contactKey;
     }
 
-    public int getTimeZone() {
-        return timeZone;
-    }
-
-    public void setTimeZone(int timeZone) {
-        this.timeZone = timeZone;
-    }
-
-    public String getBrand() {
-        return brand;
-    }
-
-    public void setBrand(String brand) {
-        this.brand = brand;
-    }
-
-    public String getDeviceUniqueId() {
-        return deviceUniqueId;
-    }
-
-    public void setDeviceUniqueId(String deviceUniqueId) {
-        this.deviceUniqueId = deviceUniqueId;
-    }
-
-    public String getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public String getManufacturer() {
-        return manufacturer;
-    }
-
-    public void setManufacturer(String manufacturer) {
-        this.manufacturer = manufacturer;
-    }
-
-    public String getModel() {
-        return model;
-    }
-
-    public void setModel(String model) {
-        this.model = model;
-    }
-
-    public String getOs() {
-        return os;
-    }
-
-    public void setOs(String os) {
-        this.os = os;
-    }
-
-    public String getPushToken() {
-        return pushToken;
-    }
-
-    public void setPushToken(String pushToken) {
-        this.pushToken = pushToken;
-    }
-
-    public String getReferrer() {
-        return referrer;
-    }
-
-    public void setReferrer(String referrer) {
-        this.referrer = referrer;
-    }
-
-    public String getSdkVersion() {
-        return sdkVersion;
-    }
-
-    public void setSdkVersion(String sdkVersion) {
-        this.sdkVersion = sdkVersion;
-    }
-
+    @Override
     public String toJson() {
-        return new Gson().toJson(this);
+        GsonBuilder builder = new GsonBuilder();
+        //builder.serializeNulls();
+        Gson gson = builder.setExclusionStrategies(new CustomExclusionStrategy()).create();
+        JsonElement doc = gson.toJsonTree(this);
+        if(this.params != null) {
+            JsonObject obj = doc.getAsJsonObject();
+            for (Map.Entry<String, Object> param : this.getParams().entrySet()) {
+                if(param.getValue() instanceof Map) {
+                    JsonElement e = gson.toJsonTree(param.getValue(), Map.class);
+                    obj.add(param.getKey(), e);
+                }
+                else if(param.getValue() instanceof Boolean) {
+                    obj.addProperty(param.getKey(), (Boolean)param.getValue());
+                }
+                else if(param.getValue() instanceof Number) {
+                    obj.addProperty(param.getKey(), (Number)param.getValue());
+                }
+                else if(param.getValue() == null) {
+                    obj.add(param.getKey(), JsonNull.INSTANCE);
+                }
+                else {
+                    obj.addProperty(param.getKey(), param.getValue().toString());
+                }
+            }
+        }
+        return gson.toJson(doc);
+    }
+
+    private class CustomExclusionStrategy implements ExclusionStrategy {
+
+        public boolean shouldSkipField(FieldAttributes f) {
+            return f.getName().equals("integrationKey");
+        }
+
+        public boolean shouldSkipClass(Class<?> clazz) {
+            return false;
+        }
+
     }
 }

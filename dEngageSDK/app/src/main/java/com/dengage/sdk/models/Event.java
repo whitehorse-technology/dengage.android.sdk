@@ -8,8 +8,6 @@ import com.google.gson.annotations.SerializedName;
 import java.util.Map;
 
 public class Event extends ModelBase {
-    @SerializedName("integrationKey")
-    private String integrationKey;
 
     @SerializedName("key")
     private String key;
@@ -17,11 +15,21 @@ public class Event extends ModelBase {
     @SerializedName("eventTable")
     private String eventTable;
 
+    @SerializedName("userAgent")
+    private String userAgent;
+
     @SerializedName("eventDetails")
     private Map<String,Object> eventDetails;
 
-
     private transient  Gson gson = new Gson();
+
+    public String getUserAgent() {
+        return userAgent;
+    }
+
+    public void setUserAgent(String userAgent) {
+        this.userAgent = userAgent;
+    }
 
     public Event(String integrationKey, String eventTable, String key, Map<String,Object> details) {
 
@@ -37,7 +45,7 @@ public class Event extends ModelBase {
         if(details == null)
             throw new IllegalArgumentException("Argument null: details ");
 
-        this.integrationKey = integrationKey;
+        super.integrationKey = integrationKey;
         this.key = key;
         this.eventTable = eventTable;
         this.eventDetails = details;

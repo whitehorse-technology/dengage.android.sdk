@@ -2,53 +2,30 @@ package com.dengage.sdk.models;
 
 import android.text.TextUtils;
 
-import com.dengage.sdk.models.Location;
-import com.dengage.sdk.models.ModelBase;
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Subscription extends ModelBase {
 
+    @SerializedName("token")
+    private String token = "";
+
     @SerializedName("appVersion")
     private String appVersion = "";
-
-    @SerializedName("os")
-    private transient  String os = "";
-
-    @SerializedName("osVersion")
-    private transient  String osVersion = "";
-
-    @SerializedName("deviceType")
-    private transient  String deviceType = "";
-
-    @SerializedName("deviceName")
-    private transient  String deviceName = "";
-
-    @SerializedName("local")
-    private transient  String local = "";
 
     @SerializedName("sdkVersion")
     private String sdkVersion = "";
 
     @SerializedName("udid")
-    private String udid = "";
+    private String deviceId = "";
 
     @SerializedName("advertisingId")
-    private String adid = "";
-
-    @SerializedName("twitterId")
-    private transient  String twitterId = "";
-
-    @SerializedName("facebookId")
-    private transient  String facebookId = "";
-
-    @SerializedName("gsm")
-    private transient  String gsm = "";
-
-    @SerializedName("email")
-    private transient  String email = "";
+    private String advertisingId = "";
 
     @SerializedName("carrierId")
     private String carrierId = "";
@@ -59,53 +36,54 @@ public class Subscription extends ModelBase {
     @SerializedName("permission")
     private Boolean permission = true;
 
-    @SerializedName("location")
-    private transient Location location;
+    @SerializedName("trackingPermission")
+    private boolean trackingPermission = true;
 
-    @SerializedName("extra")
-    private transient Map<String, Object> extra = new HashMap<>();
+    @SerializedName("tokenType")
+    private String tokenType = "A";
 
-    @SerializedName("tokenSaved")
-    private boolean tokenSaved = false;
+    @SerializedName("webSubscription")
+    private String webSubscription = null;
 
-    public void add(String key, Object value) {
-        extra.put(key, value);
+    @SerializedName("cloudSubscription")
+    private boolean cloudSubscription = false;
+
+    @SerializedName("testGroup")
+    private String testGroup = "";
+
+    @SerializedName("userAgent")
+    private transient String userAgent = "";
+
+    public String getUserAgent() {
+        return userAgent;
     }
 
-    public void addAll(Map<String, Object> extras) {
-        extra.putAll(extras);
+    public void setUserAgent(String userAgent) {
+        this.userAgent = userAgent;
     }
 
-    public void removeAll() {
-        this.extra.clear();
+    public String getToken() {
+        return this.token;
     }
 
-    public boolean isValid() {
-        return !TextUtils.isEmpty(getToken()) & !TextUtils.isEmpty(getIntegrationKey()) & !TextUtils.isEmpty(getUdid());
+    public void setToken(String token) {
+        this.token = token;
     }
 
-    public Boolean getTokenSaved() {
-        return this.tokenSaved;
+    public String getDeviceId() {
+        return this.deviceId;
     }
 
-    public void setTokenSaved(Boolean value) {
-        this.tokenSaved = value;
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
     }
 
-    public String getUdid() {
-        return this.udid;
+    public String getAdvertisingId() {
+        return this.advertisingId;
     }
 
-    public void setUdid(String udid) {
-        this.udid = udid;
-    }
-
-    public String getAdid() {
-        return this.adid;
-    }
-
-    public void setAdid(String adid) {
-        this.adid = adid;
+    public void setAdvertisingId(String advertisingId) {
+        this.advertisingId = advertisingId;
     }
 
     public String getContactKey() {
@@ -136,103 +114,56 @@ public class Subscription extends ModelBase {
         return appVersion;
     }
 
-    public String getOs() {
-        return os;
-    }
-
-    public void setOs(String os) {
-        this.os = os;
-    }
-
-    public String getOsVersion() {
-        return osVersion;
-    }
-
-    public void setOsVersion(String osVersion) {
-        this.osVersion = osVersion;
-    }
-
-    public String getDeviceType() {
-        return deviceType;
-    }
-
-    public void setDeviceType(String deviceType) {
-        this.deviceType = deviceType;
-    }
-
-    public String getDeviceName() {
-        return deviceName;
-    }
-
-    public void setDeviceName(String deviceName) {
-        this.deviceName = deviceName;
-    }
-
-    public String getLocal() {
-        return local;
-    }
-
-    public void setLocal(String local) {
-        this.local = local;
+    public void setAppVersion(String appVersion) {
+        this.appVersion = appVersion;
     }
 
     public String getSdkVersion() {
         return sdkVersion;
     }
 
-    public Location getLocation() {
-        return location;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getTwitterId() {
-        return twitterId;
-    }
-
-    public String getFacebookId() {
-        return facebookId;
-    }
-
-    public String getGsm() {
-        return gsm;
-    }
-
-    public Map<String, Object> getExtra() {
-        return extra;
-    }
-
     public void setSdkVersion(String sdkVersion) {
         this.sdkVersion = sdkVersion;
     }
 
-    public void setAppVersion(String appVersion) {
-        this.appVersion = appVersion;
+    public boolean getCloudSubscription() {
+        return cloudSubscription;
     }
 
-    public void setTwitterId(String twitterId) {
-        this.twitterId = twitterId;
+    public void setCloudSubscription(boolean cloudSubscription) {
+        this.cloudSubscription = cloudSubscription;
     }
 
-    public void setFacebookId(String facebookId) {
-        this.facebookId = facebookId;
+    public String getTestGroup() {
+        return testGroup;
     }
 
-    public void setGsm(String gsm) {
-        this.gsm = gsm;
+    public void setTestGroup(String testGroup) {
+        this.testGroup = testGroup;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public String getTokenType() {
+        return tokenType;
     }
 
-    public void setLocation(Location location) {
-        this.location = location;
+    public void setTokenType(String tokenType) {
+        this.tokenType = tokenType;
     }
 
-    public void setExtra(Map<String, Object> extra) {
-        this.extra = extra;
+    public String getWebSubscription() {
+        return webSubscription;
     }
+
+    public void setWebSubscription(String webSubscription) {
+        this.webSubscription = webSubscription;
+    }
+
+    public boolean getTrackingPermission() {
+        return trackingPermission;
+    }
+
+    public void setTrackingPermission(boolean trackingPermission) {
+        this.trackingPermission = trackingPermission;
+    }
+
 }

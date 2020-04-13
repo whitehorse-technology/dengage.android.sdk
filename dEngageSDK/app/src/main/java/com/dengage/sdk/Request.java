@@ -1,84 +1,120 @@
 package com.dengage.sdk;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
+import android.util.Base64;
 
-import com.dengage.sdk.models.ModelBase;
-import com.google.gson.Gson;
-import androidx.annotation.NonNull;
+import com.dengage.sdk.models.DenEvent;
+import com.dengage.sdk.models.Event;
+import com.dengage.sdk.models.Open;
+import com.dengage.sdk.models.Session;
+import com.dengage.sdk.models.Subscription;
+import com.dengage.sdk.models.TransactionalOpen;
+
 import java.io.BufferedOutputStream;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.ref.WeakReference;
-import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
+import java.net.URLEncoder;
+import java.util.HashMap;
 
 class Request  {
 
     private Logger logger = Logger.getInstance();
 
-    boolean send(String url, String userAgent, ModelBase model, @NonNull Type modelType) {
-        logger.Verbose("sendReuqest to: "+ url);
-
-        final int connectionTimeout = 15000;
-        final int readTimeout = 10000;
-
-        HttpURLConnection conn = null;
-        OutputStream os = null;
-        int responseCode = 0;
-        String responseMessage = "";
+    void sendSubscription(Subscription model) {
         try {
+            String url = Constants.SUBS_API_ENDPOINT;
+            String json = model.toJson();
+            String userAgent = model.getUserAgent();
+            logger.Verbose("sendSubscription: " + url + " with the json: "+ json);
+            sendRequest(url, userAgent, json, "application/json");
+        } catch (Exception e) {
+            logger.Error("sendSubscription: "+ e.getMessage());
+        }
+    }
 
+    void sendOpen(Open model) {
+        try {
+            String url = Constants.OPEN_API_ENDPOINT;
+            String json = model.toJson();
+            String userAgent = model.getUserAgent();
+            logger.Verbose("sendOpen: " + url + " with the json: "+ json);
+            sendRequest(url, userAgent, json, "application/json");
+        } catch (Exception e) {
+            logger.Error("sendSubscription: "+ e.getMessage());
+        }
+    }
+
+    void sendTransactionalOpen(TransactionalOpen model) {
+        try {
+            String url = Constants.TRANS_OPEN_API_ENDPOINT;
+            String json = model.toJson();
+            String userAgent = model.getUserAgent();
+            logger.Verbose("sendTransactionalOpen: " + url + " with the json: "+ json);
+            sendRequest(url, userAgent, json, "application/json");
+        } catch (Exception e) {
+            logger.Error("sendSubscription: "+ e.getMessage());
+        }
+    }
+
+    void sendEvent(Event model) {
+        try {
+            String url = Constants.EVENT_API_ENDPOINT;
+            String json = model.toJson();
+            String userAgent = model.getUserAgent();
+            logger.Verbose("sendEvent: " + url + " with the json: "+ json);
+            sendRequest(url, userAgent, json, "application/json");
+        } catch (Exception e) {
+            logger.Error("sendEvent: "+ e.getMessage());
+        }
+    }
+
+    void sendEvent(DenEvent model) {
+        try {
+            String url = Constants.EC_API_ENDPOINT + "/"+ model.integrationKey;
+            logger.Verbose("sendEvent: " + url);
+            String json = model.toJson();
+            logger.Verbose("sendEvent: " + json);
+            String data = URLEncoder.encode(json, "utf-8");
+            logger.Verbose("sendEvent: " + data);
+            String postData = Base64.encodeToString(data.getBytes(), Base64.DEFAULT).replaceAll("(\\s|\\r\\n|\\r|\\n)", "");
+            logger.Verbose("sendEvent: " + postData);
+
+            sendRequest(url, "", postData, "text/plain");
+
+        } catch (Exception e) {
+            logger.Error("sendEvent: "+ e.getMessage());
+        }
+    }
+
+    private void sendRequest(String url, String userAgent, String data, String contentType) {
+        try {
             URL uri = new URL(url);
-            Gson gson = new Gson();
-            String message = gson.toJson(model, modelType);
-            logger.Verbose("sendReuqest body: " + message);
-            conn = (HttpURLConnection) uri.openConnection();
+            HttpURLConnection conn = (HttpURLConnection) uri.openConnection();
+            int readTimeout = 10000;
             conn.setReadTimeout(readTimeout);
+            int connectionTimeout = 15000;
             conn.setConnectTimeout(connectionTimeout);
             conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", contentType);
+            conn.setRequestProperty("Cache-Control", "no-cache");
+            conn.setRequestProperty("User-Agent", userAgent);
+            conn.setFixedLengthStreamingMode(data.getBytes().length);
             conn.setDoInput(true);
             conn.setDoOutput(true);
-            conn.setFixedLengthStreamingMode(message.getBytes().length);
-            conn.setRequestProperty("Content-Type", "application/json;charset=utf-8");
-            conn.setRequestProperty("Accept","application/json");
-            conn.setRequestProperty("User-Agent", userAgent);
             conn.connect();
-            os = new BufferedOutputStream(conn.getOutputStream());
-            os.write(message.getBytes());
+            OutputStream os = new BufferedOutputStream(conn.getOutputStream());
+            os.write(data.getBytes());
             os.flush();
-            responseCode = conn.getResponseCode();
-            responseMessage = conn.getResponseMessage();
-        } catch (Exception e) {
-            logger.Error( "sendRequest: "+ e.getMessage());
-        } finally {
-            try {
-                if (os != null) {
-                    os.close();
-                }
-            } catch (Exception e) {
-                logger.Error( "sendRequest finally: "+ e.getMessage());
-            }
-            if (conn != null) {
-                conn.disconnect();
-            }
-        }
-
-        logger.Verbose("Response Message: "+ responseMessage);
-        logger.Verbose("Response Message: "+ responseCode);
-
-        try {
-
+            int responseCode = conn.getResponseCode();
+            String responseMessage = conn.getResponseMessage();
+            os.close();
+            conn.disconnect();
+            logger.Verbose("The remote server response: "+ responseCode);
+            logger.Verbose(responseMessage);
             if(responseCode <= 199 || responseCode >= 300)
                 throw new Exception("The remote server returned an error with the status code: "+ responseCode);
-
-        } catch(Exception e) {
-            logger.Error(e.getMessage());
+        } catch (Exception e) {
+            logger.Error( "sendRequest: "+ e.getMessage());
         }
-
-        return responseCode > 199 && responseCode < 300;
     }
 }

@@ -15,7 +15,6 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
@@ -23,7 +22,6 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.text.TextUtils;
 import androidx.core.app.NotificationCompat;
-
 import com.dengage.sdk.models.ActionButton;
 import com.dengage.sdk.models.Message;
 import com.dengage.sdk.models.NotificationType;
@@ -75,10 +73,12 @@ public class NotificationReceiver extends BroadcastReceiver {
     protected void onPushOpen(Context context, Intent intent) {
         logger.Verbose("onPushOpen method is called.");
 
+        DengageManager manager = DengageManager.getInstance(context);
+
         String uri = null;
         Bundle extras = intent.getExtras();
         if (extras != null) {
-            DengageManager.getInstance(context).sendOpenEvent(new Message(extras));
+            manager.sendOpenEvent(new Message(extras));
             uri = extras.getString("targetUrl");
         } else {
             logger.Error("No extra data for open.");
@@ -96,12 +96,20 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         String uri = null;
         Bundle extras = intent.getExtras();
+        int notificationId = 0;
         if (extras != null) {
-            // send action click event to dengage.
             uri = extras.getString("targetUrl");
+            notificationId = extras.getInt("notificationId");
         } else {
             logger.Debug("No extra data for action.");
         }
+
+        NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        if(manager != null) {
+            manager.cancel(Constants.NOTIFICATION_TAG, notificationId);
+        }
+
+        launchActivity(context, intent, uri);
     }
 
     protected void onCarouselItemClick(Context context, Intent intent) {
@@ -161,7 +169,7 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         String channelId = null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel notificationChannel = getNotificationChannel(context, intent);
+            NotificationChannel notificationChannel = getNotificationChannel();
             createNotificationChannel(context, notificationChannel);
             channelId = notificationChannel.getId();
         }
@@ -175,7 +183,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                 .setDeleteIntent(pDeleteIntent)
                 .setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_ALL)
-                .setSmallIcon(getSmallIconId(context, intent));
+                .setSmallIcon(getSmallIconId(context));
 
         if(!TextUtils.isEmpty(message.getTitle())) {
             notificationBuilder.setContentTitle(message.getTitle());
@@ -208,6 +216,7 @@ public class NotificationReceiver extends BroadcastReceiver {
             for (ActionButton button : message.getActionButtons()) {
                 int requestCode = random.nextInt();
                 Intent buttonIntent = new Intent(NotificationReceiver.PUSH_ACTION_CLICK);
+                buttonIntent.putExtra("notificationId", message.getMessageId());
                 buttonIntent.putExtra("id", button.getId());
                 buttonIntent.putExtra("targetUrl", button.getTargetUrl());
                 buttonIntent.setPackage(packageName);
@@ -216,7 +225,6 @@ public class NotificationReceiver extends BroadcastReceiver {
                 notificationBuilder.addAction(icon, button.getText(), btnPendingIntent);
             }
         }
-
 
         if(message.getNotificationType() == NotificationType.CAROUSEL) {
             generateCarouselNotification(context, message, notificationBuilder);
@@ -228,10 +236,10 @@ public class NotificationReceiver extends BroadcastReceiver {
     }
 
     protected void generateTextNotification(Context context, Message pushMessage, NotificationCompat.Builder notificationBuilder) {
-        NotificationManager mNotificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager manager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
         Notification notification = notificationBuilder.build();
-        if (mNotificationManager != null) {
-            mNotificationManager.notify(pushMessage.getMessageId(), notification);
+        if (manager != null) {
+            manager.notify(Constants.LOG_TAG, pushMessage.getMessageId(), notification);
         }
     }
 
@@ -253,10 +261,10 @@ public class NotificationReceiver extends BroadcastReceiver {
             notificationBuilder.setStyle(style);
         }
 
-        NotificationManager mNotificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager manager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
         Notification notification = notificationBuilder.build();
-        if (mNotificationManager != null) {
-            mNotificationManager.notify(pushMessage.getMessageId(), notification);
+        if (manager != null) {
+            manager.notify(Constants.NOTIFICATION_TAG, pushMessage.getMessageId(), notification);
         }
     }
 
@@ -295,7 +303,7 @@ public class NotificationReceiver extends BroadcastReceiver {
     }
 
     @TargetApi(Build.VERSION_CODES.O)
-    protected NotificationChannel getNotificationChannel(Context context, Intent intent) {
+    protected NotificationChannel getNotificationChannel() {
         NotificationChannel channel = new NotificationChannel(Constants.CHANNEL_ID, Constants.CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
         channel.setDescription(Constants.CHANNEL_DESCRIPTION);
         return channel;
@@ -304,10 +312,12 @@ public class NotificationReceiver extends BroadcastReceiver {
     @TargetApi(Build.VERSION_CODES.O)
     protected void createNotificationChannel(Context context, NotificationChannel notificationChannel) {
         NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        nm.createNotificationChannel(notificationChannel);
+        if (nm != null) {
+            nm.createNotificationChannel(notificationChannel);
+        }
     }
 
-    protected int getSmallIconId(Context context, Intent intent) {
+    protected int getSmallIconId(Context context) {
         try {
             PackageManager packageManager = context.getPackageManager();
             ApplicationInfo applicationInfo = packageManager.getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
