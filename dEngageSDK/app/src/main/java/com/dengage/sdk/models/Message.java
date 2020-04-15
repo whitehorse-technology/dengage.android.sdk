@@ -192,6 +192,10 @@ public class Message {
         return carouselContent;
     }
 
+    public void setCarouselContent(CarouselItem[] carouselContent) {
+        this.carouselContent = carouselContent;
+    }
+
     public ActionButton[] getActionButtons() {
         return actionButtons;
     }
@@ -202,5 +206,9 @@ public class Message {
 
     public String toJson() {
         return new Gson().toJson(this);
+    }
+
+    public static Message fromJson(String json) {
+        return new Gson().fromJson(json, Message.class);
     }
 }
