@@ -240,7 +240,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         String uri = null;
         Bundle extras = intent.getExtras();
         if (extras != null) {
-            manager.sendOpenEvent(new Message(extras));
+            manager.sendOpenEvent("", "", new Message(extras));
             uri = extras.getString("targetUrl");
         } else {
             logger.Error("No extra data for open.");
@@ -256,10 +256,15 @@ public class NotificationReceiver extends BroadcastReceiver {
     protected void onActionClick(Context context, Intent intent) {
         logger.Verbose("onActionClick method is called.");
 
+        DengageManager manager = DengageManager.getInstance(context);
+
         String uri = null;
+        String id = "";
         String rawJson = "";
         Bundle extras = intent.getExtras();
         if (extras != null) {
+            id = extras.getString("id", "");
+            manager.sendOpenEvent(id, "", new Message(extras));
             uri = extras.getString("targetUrl");
             rawJson = extras.getString("RAW_DATA");
         } else {
@@ -278,11 +283,16 @@ public class NotificationReceiver extends BroadcastReceiver {
     protected void onItemClick(Context context, Intent intent) {
         logger.Verbose("onItemClick method is called.");
 
+        DengageManager manager = DengageManager.getInstance(context);
+
         String navigation = "";
         String uri = null;
         String rawJson = "";
+        String id = "";
         Bundle extras = intent.getExtras();
         if (extras != null) {
+            id = extras.getString("id", "");
+            manager.sendOpenEvent("", id, new Message(extras));
             navigation = extras.getString("navigation");
             uri = extras.getString("targetUrl");
             rawJson = extras.getString("RAW_DATA");

@@ -272,7 +272,7 @@ public class DengageManager {
      * </p>
      * @param message The dEngage message object.
      */
-    public void sendOpenEvent(Message message) {
+    public void sendOpenEvent(String actionId, String itemId, Message message) {
         logger.Verbose("sendOpenEvent method is called");
         try {
             getSubscription();
@@ -289,6 +289,8 @@ public class DengageManager {
                 openSignal.setMessageId(message.getMessageId());
                 openSignal.setTransactionId(message.getTransactionId());
                 openSignal.setMessageDetails(message.getMessageDetails());
+                openSignal.setActionId(actionId);
+                openSignal.setItemId(itemId);
                 RequestAsync req = new RequestAsync(openSignal);
                 req.executeTask();
             } else {
@@ -297,6 +299,8 @@ public class DengageManager {
                 openSignal.setIntegrationKey(_subscription.getIntegrationKey());
                 openSignal.setMessageId(message.getMessageId());
                 openSignal.setMessageDetails(message.getMessageDetails());
+                openSignal.setActionId(actionId);
+                openSignal.setItemId(itemId);
                 RequestAsync req = new RequestAsync(openSignal);
                 req.executeTask();
             }
