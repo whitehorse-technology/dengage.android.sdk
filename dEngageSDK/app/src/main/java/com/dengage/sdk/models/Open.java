@@ -6,8 +6,8 @@ import com.google.gson.annotations.SerializedName;
 
 public class Open extends ModelBase {
 
-    @SerializedName("actionId")
-    private String actionId;
+    @SerializedName("buttonId")
+    private String buttonId;
 
     @SerializedName("itemId")
     private String itemId;
@@ -45,12 +45,12 @@ public class Open extends ModelBase {
         this.messageDetails = messageDetails;
     }
 
-    public String getActionId() {
-        return actionId;
+    public String getButtonId() {
+        return buttonId;
     }
 
-    public void setActionId(String actionId) {
-        this.actionId = actionId;
+    public void setButtonId(String buttonId) {
+        this.buttonId = buttonId;
     }
 
     public String getItemId() {

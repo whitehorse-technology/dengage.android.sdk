@@ -33,6 +33,7 @@ import com.dengage.sdk.models.NotificationType;
 import org.w3c.dom.Text;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.Random;
 
@@ -262,20 +263,22 @@ public class NotificationReceiver extends BroadcastReceiver {
         String id = "";
         String rawJson = "";
         Bundle extras = intent.getExtras();
+        Message message = new Message(extras);
+
         if (extras != null) {
-            id = extras.getString("id", "");
-            manager.sendOpenEvent(id, "", new Message(extras));
-            uri = extras.getString("targetUrl");
             rawJson = extras.getString("RAW_DATA");
+            if(!TextUtils.isEmpty(rawJson))
+                message = Message.fromJson(rawJson);
+
+            id = extras.getString("id", "");
+            manager.sendOpenEvent(id, "", message);
+
+            uri = extras.getString("targetUrl");
         } else {
             logger.Debug("No extra data for action.");
         }
 
-        Message changeMessage = new Message(intent.getExtras());
-        if(!TextUtils.isEmpty(rawJson))
-            changeMessage = Message.fromJson(rawJson);
-
-        clearNotification(context, changeMessage);
+        clearNotification(context, message);
 
         launchActivity(context, intent, uri);
     }
@@ -289,28 +292,37 @@ public class NotificationReceiver extends BroadcastReceiver {
         String uri = null;
         String rawJson = "";
         String id = "";
+        int current = -1;
         Bundle extras = intent.getExtras();
         if (extras != null) {
             id = extras.getString("id", "");
-            manager.sendOpenEvent("", id, new Message(extras));
             navigation = extras.getString("navigation");
             uri = extras.getString("targetUrl");
+            current = extras.getInt("current");
             rawJson = extras.getString("RAW_DATA");
         } else {
             logger.Debug("No extra data for action.");
         }
 
-        Message changeMessage = new Message(intent.getExtras());
+        Message message = new Message(intent.getExtras());
         if(!TextUtils.isEmpty(rawJson))
-            changeMessage = Message.fromJson(rawJson);
+            message = Message.fromJson(rawJson);
+
+        logger.Debug("Current Item Index: "+ current);
+        if(current  > -1) {
+            CarouselItem item = message.getCarouselContent()[current];
+            uri = item.getTargetUrl();
+            logger.Debug("Current URI: "+ uri);
+        }
 
         if(navigation.equals("")) {
-            clearNotification(context, changeMessage);
+            manager.sendOpenEvent("", id, new Message(extras));
+            clearNotification(context, message);
             launchActivity(context, intent, uri);
         } else if(navigation.equals("left")) {
-            onCarouselReRender(context, intent, changeMessage);
+            onCarouselReRender(context, intent, message);
         } else if(navigation.equals("right")) {
-            onCarouselReRender(context, intent, changeMessage);
+            onCarouselReRender(context, intent, message);
         }
     }
 
@@ -369,7 +381,8 @@ public class NotificationReceiver extends BroadcastReceiver {
     }
 
     protected void clearNotification(Context context, Message message) {
-        logger.Verbose("Clearing notification: "+ message.getMessageId());
+        logger.Verbose("Clearing notification ID: "+ message.getMessageId());
+        logger.Verbose("Clearing notification TAG: "+ message.getMessageSource());
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         if(manager != null) {
             manager.cancel(message.getMessageSource(), message.getMessageId());
