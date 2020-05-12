@@ -20,20 +20,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.text.TextUtils;
-import android.widget.RemoteViews;
-
 import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
-
 import com.dengage.sdk.models.ActionButton;
 import com.dengage.sdk.models.CarouselItem;
 import com.dengage.sdk.models.Message;
 import com.dengage.sdk.models.NotificationType;
-
-import org.w3c.dom.Text;
-
-import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.Random;
 
@@ -161,21 +152,6 @@ public class NotificationReceiver extends BroadcastReceiver {
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setSmallIcon(getSmallIconId(context));
 
-        if(!TextUtils.isEmpty(message.getTitle())) {
-            notificationBuilder.setContentTitle(message.getTitle());
-        } else {
-            String label = Utils.getAppLabel(context, "");
-            notificationBuilder.setContentTitle(label);
-        }
-
-        if(!TextUtils.isEmpty(message.getSubText())) {
-            notificationBuilder.setSubText(message.getSubText());
-        }
-
-        if(!TextUtils.isEmpty(message.getMessage())) {
-            notificationBuilder.setContentText(message.getMessage());
-        }
-
         if(!TextUtils.isEmpty(message.getSound())){
             notificationBuilder.setSound(Utils.getSound(context, message.getSound()));
         } else {
@@ -198,6 +174,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                 buttonIntent.setPackage(packageName);
                 PendingIntent btnPendingIntent = PendingIntent.getBroadcast(context, requestCode, buttonIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                 int icon = getResourceId(context, button.getIcon());
+                logger.Verbose("icon: "+ icon);
                 notificationBuilder.addAction(icon, button.getText(), btnPendingIntent);
             }
         }
@@ -213,9 +190,25 @@ public class NotificationReceiver extends BroadcastReceiver {
                 style = new NotificationCompat.BigPictureStyle()
                         .bigPicture(image)
                         .bigLargeIcon(null)
-                        .setSummaryText(message.getMessage());
+                        .setSummaryText(message.getMessage())
+                        .setBigContentTitle(message.getTitle());
             }
             notificationBuilder.setStyle(style);
+        } else {
+            if(!TextUtils.isEmpty(message.getTitle())) {
+                notificationBuilder.setContentTitle(message.getTitle());
+            } else {
+                String label = Utils.getAppLabel(context, "");
+                notificationBuilder.setContentTitle(label);
+            }
+
+            if(!TextUtils.isEmpty(message.getSubText())) {
+                notificationBuilder.setSubText(message.getSubText());
+            }
+
+            if(!TextUtils.isEmpty(message.getMessage())) {
+                notificationBuilder.setContentText(message.getMessage());
+            }
         }
 
         NotificationManager manager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -408,14 +401,17 @@ public class NotificationReceiver extends BroadcastReceiver {
         try {
             PackageManager packageManager = context.getPackageManager();
             ApplicationInfo applicationInfo = packageManager.getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
+            logger.Verbose("Application icon: "+ applicationInfo.icon);
             return applicationInfo.icon;
         } catch (PackageManager.NameNotFoundException e) {
+            logger.Verbose("Application Icon Not Found");
             return -1;
         }
     }
 
     public int getResourceId(Context context, String resourceName) {
-        if(TextUtils.isEmpty(resourceName)) return -1;
+        logger.Verbose("resourceName: "+ resourceName);
+        if(TextUtils.isEmpty(resourceName)) return 0;
         try {
             return context.getResources().getIdentifier(resourceName, "drawable", context.getPackageName());
         } catch (Exception e) {
@@ -423,7 +419,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                 return android.R.drawable.class.getField(resourceName).getInt(null);
             } catch (Throwable ignored) {}
             e.printStackTrace();
-            return -1;
+            return 0;
         }
     }
 
