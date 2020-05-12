@@ -307,4 +307,15 @@ public class Utils {
         return inSampleSize;
     }
 
+    public static boolean isInteger(String s)
+    {
+        try
+        {
+            Integer.parseInt(s);
+            return true;
+        } catch (NumberFormatException ex)
+        {
+            return false;
+        }
+    }
 }

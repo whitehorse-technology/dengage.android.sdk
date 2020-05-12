@@ -412,11 +412,17 @@ public class NotificationReceiver extends BroadcastReceiver {
     public int getResourceId(Context context, String resourceName) {
         logger.Verbose("resourceName: "+ resourceName);
         if(TextUtils.isEmpty(resourceName)) return 0;
+        if(Utils.isInteger(resourceName)) return 0;
+
         try {
-            return context.getResources().getIdentifier(resourceName, "drawable", context.getPackageName());
+            int resourceId = context.getResources().getIdentifier(resourceName, "drawable", context.getPackageName());
+            logger.Verbose("ResourceId: "+ resourceId);
+            return resourceId;
         } catch (Exception e) {
             try {
-                return android.R.drawable.class.getField(resourceName).getInt(null);
+                int defaultResourceId = android.R.drawable.class.getField(resourceName).getInt(null);
+                logger.Verbose("defaultResourceId: "+ defaultResourceId);
+                return defaultResourceId;
             } catch (Throwable ignored) {}
             e.printStackTrace();
             return 0;
@@ -434,4 +440,5 @@ public class NotificationReceiver extends BroadcastReceiver {
             return null;
         }
     }
+
 }
