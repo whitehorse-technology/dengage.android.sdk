@@ -8,7 +8,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -23,6 +22,7 @@ import android.os.StrictMode;
 import android.text.TextUtils;
 import androidx.core.app.NotificationCompat;
 import com.dengage.sdk.models.ActionButton;
+import com.dengage.sdk.models.CarouselItem;
 import com.dengage.sdk.models.Message;
 import com.dengage.sdk.models.NotificationType;
 import java.net.URL;
@@ -32,33 +32,26 @@ public class NotificationReceiver extends BroadcastReceiver {
 
     private static Logger logger = Logger.getInstance();
 
-    public static final String PUSH_RECEIVE = "com.dengage.push.intent.RECEIVE";
-    public static final String PUSH_OPEN = "com.dengage.push.intent.OPEN";
-    public static final String PUSH_DELETE = "com.dengage.push.intent.DELETE";
-    public static final String PUSH_ACTION_CLICK = "com.dengage.push.intent.ACTION_CLICK";
-    public static final String CAROUSEL_ITEM_CLICK = "com.dengage.push.intent.CAROUSEL_ITEM_CLICK";
-
     @Override
     public void onReceive(Context context, Intent intent) {
         logger.Verbose("onReceive method is called.");
-
         String intentAction = intent.getAction();
         if (intentAction != null) {
             switch (intentAction) {
-                case PUSH_RECEIVE:
+                case Constants.PUSH_RECEIVE_EVENT:
                     onPushReceive(context, intent);
                     break;
-                case PUSH_OPEN:
+                case Constants.PUSH_OPEN_EVENT:
                     onPushOpen(context, intent);
                     break;
-                case PUSH_DELETE:
+                case Constants.PUSH_DELETE_EVENT:
                     onPushDismiss(context, intent);
                     break;
-                case PUSH_ACTION_CLICK:
+                case Constants.PUSH_ACTION_CLICK_EVENT:
                     onActionClick(context, intent);
                     break;
-                case CAROUSEL_ITEM_CLICK:
-                    onCarouselItemClick(context, intent);
+                case Constants.PUSH_ITEM_CLICK_EVENT:
+                    onItemClick(context, intent);
                     break;
             }
         }
@@ -66,54 +59,10 @@ public class NotificationReceiver extends BroadcastReceiver {
 
     protected void onPushReceive(Context context, Intent intent) {
         logger.Verbose("onPushReceive method is called.");
-
-        generateNotification(context, intent);
-    }
-
-    protected void onPushOpen(Context context, Intent intent) {
-        logger.Verbose("onPushOpen method is called.");
-
-        DengageManager manager = DengageManager.getInstance(context);
-
-        String uri = null;
         Bundle extras = intent.getExtras();
-        if (extras != null) {
-            manager.sendOpenEvent(new Message(extras));
-            uri = extras.getString("targetUrl");
-        } else {
-            logger.Error("No extra data for open.");
-        }
+        if(extras == null) return;
 
-        launchActivity(context, intent, uri);
-    }
-
-    protected void onPushDismiss(Context context, Intent intent) {
-        logger.Verbose("onPushDismiss method is called.");
-    }
-
-    protected void onActionClick(Context context, Intent intent) {
-        logger.Verbose("onActionClick method is called.");
-
-        String uri = null;
-        Bundle extras = intent.getExtras();
-        int notificationId = 0;
-        if (extras != null) {
-            uri = extras.getString("targetUrl");
-            notificationId = extras.getInt("notificationId");
-        } else {
-            logger.Debug("No extra data for action.");
-        }
-
-        NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        if(manager != null) {
-            manager.cancel(Constants.NOTIFICATION_TAG, notificationId);
-        }
-
-        launchActivity(context, intent, uri);
-    }
-
-    protected void onCarouselItemClick(Context context, Intent intent) {
-        logger.Verbose("onCarouselItemClick method is called.");
+        onRenderStart(context, intent);
     }
 
     private  void launchActivity(Context context, Intent intent, String uri) {
@@ -147,12 +96,30 @@ public class NotificationReceiver extends BroadcastReceiver {
         stackBuilder.startActivities();
     }
 
-    protected void generateNotification(Context context, Intent intent) {
+    private void onRenderStart(final Context context, final Intent intent) {
+        final Message message = new Message(intent.getExtras());
+        if(message.getNotificationType() == NotificationType.CAROUSEL) {
+            if (message.getCarouselContent() != null && message.getCarouselContent().length > 0) {
+                ImageDownloader basicDownloader = new ImageDownloader(context, message.getCarouselContent(),
+                        new ImageDownloader.OnDownloadsCompletedListener() {
+                            @Override
+                            public void onComplete(CarouselItem[] items) {
+                                message.setCarouselContent(items);
+                                intent.putExtra("RAW_DATA", message.toJson());
+                                onCarouselRender(context, intent, message);
+                            }
+                        });
+                basicDownloader.startAllDownloads();
+            }
+        } else if(message.getNotificationType() == NotificationType.RICH) {
+            onRender(context, intent, message);
+        } else {
+            onRender(context, intent, message);
+        }
+    }
 
+    protected void onRender (Context context, Intent intent, Message message) {
         Bundle extras = intent.getExtras();
-        if(extras == null) return;
-
-        Message message = new Message(extras);
 
         Random random = new Random();
         int contentIntentRequestCode = random.nextInt();
@@ -185,21 +152,6 @@ public class NotificationReceiver extends BroadcastReceiver {
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setSmallIcon(getSmallIconId(context));
 
-        if(!TextUtils.isEmpty(message.getTitle())) {
-            notificationBuilder.setContentTitle(message.getTitle());
-        } else {
-            String label = Utils.getAppLabel(context, "");
-            notificationBuilder.setContentTitle(label);
-        }
-
-        if(!TextUtils.isEmpty(message.getSubText())) {
-            notificationBuilder.setSubText(message.getSubText());
-        }
-
-        if(!TextUtils.isEmpty(message.getMessage())) {
-            notificationBuilder.setContentText(message.getMessage());
-        }
-
         if(!TextUtils.isEmpty(message.getSound())){
             notificationBuilder.setSound(Utils.getSound(context, message.getSound()));
         } else {
@@ -215,61 +167,156 @@ public class NotificationReceiver extends BroadcastReceiver {
         if(message.getActionButtons() != null && message.getActionButtons().length > 0) {
             for (ActionButton button : message.getActionButtons()) {
                 int requestCode = random.nextInt();
-                Intent buttonIntent = new Intent(NotificationReceiver.PUSH_ACTION_CLICK);
-                buttonIntent.putExtra("notificationId", message.getMessageId());
+                Intent buttonIntent = new Intent(Constants.PUSH_ACTION_CLICK_EVENT);
                 buttonIntent.putExtra("id", button.getId());
                 buttonIntent.putExtra("targetUrl", button.getTargetUrl());
+                buttonIntent.putExtra("RAW_DATA", message.toJson());
                 buttonIntent.setPackage(packageName);
                 PendingIntent btnPendingIntent = PendingIntent.getBroadcast(context, requestCode, buttonIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                 int icon = getResourceId(context, button.getIcon());
+                logger.Verbose("icon: "+ icon);
                 notificationBuilder.addAction(icon, button.getText(), btnPendingIntent);
             }
         }
 
-        if(message.getNotificationType() == NotificationType.CAROUSEL) {
-            generateCarouselNotification(context, message, notificationBuilder);
-        } else if(message.getNotificationType() == NotificationType.RICH) {
-            generateRichNotification(context, message, notificationBuilder);
-        } else {
-            generateTextNotification(context, message, notificationBuilder);
-        }
-    }
-
-    protected void generateTextNotification(Context context, Message pushMessage, NotificationCompat.Builder notificationBuilder) {
-        NotificationManager manager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
-        Notification notification = notificationBuilder.build();
-        if (manager != null) {
-            manager.notify(Constants.LOG_TAG, pushMessage.getMessageId(), notification);
-        }
-    }
-
-    protected void generateRichNotification(Context context, Message pushMessage, NotificationCompat.Builder notificationBuilder) {
-
-        if(!TextUtils.isEmpty(pushMessage.getMediaUrl())) {
+        if(message.getNotificationType() == NotificationType.RICH) {
             NotificationCompat.Style style;
-            Bitmap image = getBitmapFromUrl(pushMessage.getMediaUrl());
-            if(image == null) {
+            Bitmap image = getBitmapFromUrl(message.getMediaUrl());
+            if (image == null) {
                 style = new NotificationCompat.BigTextStyle()
-                        .bigText(pushMessage.getMessage());
+                        .bigText(message.getMessage());
             } else {
                 notificationBuilder.setLargeIcon(image);
                 style = new NotificationCompat.BigPictureStyle()
                         .bigPicture(image)
                         .bigLargeIcon(null)
-                        .setSummaryText(pushMessage.getMessage());
+                        .setSummaryText(message.getMessage())
+                        .setBigContentTitle(message.getTitle());
             }
             notificationBuilder.setStyle(style);
+        } else {
+            if(!TextUtils.isEmpty(message.getTitle())) {
+                notificationBuilder.setContentTitle(message.getTitle());
+            } else {
+                String label = Utils.getAppLabel(context, "");
+                notificationBuilder.setContentTitle(label);
+            }
+
+            if(!TextUtils.isEmpty(message.getSubText())) {
+                notificationBuilder.setSubText(message.getSubText());
+            }
+
+            if(!TextUtils.isEmpty(message.getMessage())) {
+                notificationBuilder.setContentText(message.getMessage());
+            }
         }
 
         NotificationManager manager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
         Notification notification = notificationBuilder.build();
         if (manager != null) {
-            manager.notify(Constants.NOTIFICATION_TAG, pushMessage.getMessageId(), notification);
+            manager.notify(message.getMessageSource(), message.getMessageId(), notification);
         }
     }
 
-    protected void generateCarouselNotification(Context context, Message pushMessage, NotificationCompat.Builder notificationBuilder) {
+    protected void onCarouselRender(Context context, Intent intent, Message message) {
 
+    }
+
+    protected void onCarouselReRender(Context context, Intent intent, Message message) {
+
+    }
+
+    protected void onPushOpen(Context context, Intent intent) {
+        logger.Verbose("onPushOpen method is called.");
+
+        DengageManager manager = DengageManager.getInstance(context);
+
+        String uri = null;
+        Bundle extras = intent.getExtras();
+        if (extras != null) {
+            manager.sendOpenEvent("", "", new Message(extras));
+            uri = extras.getString("targetUrl");
+        } else {
+            logger.Error("No extra data for open.");
+        }
+
+        launchActivity(context, intent, uri);
+    }
+
+    protected void onPushDismiss(Context context, Intent intent) {
+        logger.Verbose("onPushDismiss method is called.");
+    }
+
+    protected void onActionClick(Context context, Intent intent) {
+        logger.Verbose("onActionClick method is called.");
+
+        DengageManager manager = DengageManager.getInstance(context);
+
+        String uri = null;
+        String id = "";
+        String rawJson = "";
+        Bundle extras = intent.getExtras();
+        Message message = new Message(extras);
+
+        if (extras != null) {
+            rawJson = extras.getString("RAW_DATA");
+            if(!TextUtils.isEmpty(rawJson))
+                message = Message.fromJson(rawJson);
+
+            id = extras.getString("id", "");
+            manager.sendOpenEvent(id, "", message);
+
+            uri = extras.getString("targetUrl");
+        } else {
+            logger.Debug("No extra data for action.");
+        }
+
+        clearNotification(context, message);
+
+        launchActivity(context, intent, uri);
+    }
+
+    protected void onItemClick(Context context, Intent intent) {
+        logger.Verbose("onItemClick method is called.");
+
+        DengageManager manager = DengageManager.getInstance(context);
+
+        String navigation = "";
+        String uri = null;
+        String rawJson = "";
+        String id = "";
+        int current = -1;
+        Bundle extras = intent.getExtras();
+        if (extras != null) {
+            id = extras.getString("id", "");
+            navigation = extras.getString("navigation");
+            uri = extras.getString("targetUrl");
+            current = extras.getInt("current");
+            rawJson = extras.getString("RAW_DATA");
+        } else {
+            logger.Debug("No extra data for action.");
+        }
+
+        Message message = new Message(intent.getExtras());
+        if(!TextUtils.isEmpty(rawJson))
+            message = Message.fromJson(rawJson);
+
+        logger.Debug("Current Item Index: "+ current);
+        if(current  > -1) {
+            CarouselItem item = message.getCarouselContent()[current];
+            uri = item.getTargetUrl();
+            logger.Debug("Current URI: "+ uri);
+        }
+
+        if(navigation.equals("")) {
+            manager.sendOpenEvent("", id, new Message(extras));
+            clearNotification(context, message);
+            launchActivity(context, intent, uri);
+        } else if(navigation.equals("left")) {
+            onCarouselReRender(context, intent, message);
+        } else if(navigation.equals("right")) {
+            onCarouselReRender(context, intent, message);
+        }
     }
 
     protected Class<? extends Activity> getActivity(Context context, Intent intent) {
@@ -289,17 +336,50 @@ public class NotificationReceiver extends BroadcastReceiver {
     }
 
     protected Intent getContentIntent(Bundle extras, String packageName) {
-        Intent contentIntent = new Intent(NotificationReceiver.PUSH_OPEN);
+        Intent contentIntent = new Intent(Constants.PUSH_OPEN_EVENT);
         contentIntent.putExtras(extras);
         contentIntent.setPackage(packageName);
         return contentIntent;
     }
 
     protected Intent getDeleteIntent(Bundle extras, String packageName) {
-        Intent contentIntent = new Intent(NotificationReceiver.PUSH_DELETE);
+        Intent contentIntent = new Intent(Constants.PUSH_DELETE_EVENT);
         contentIntent.putExtras(extras);
         contentIntent.setPackage(packageName);
         return contentIntent;
+    }
+
+    protected Intent getItemClickIntent(Bundle extras, String packageName) {
+        Intent itemIntent = new Intent(Constants.PUSH_ITEM_CLICK_EVENT);
+        itemIntent.putExtras(extras);
+        itemIntent.putExtra("navigation", "");
+        itemIntent.setPackage(packageName);
+        return itemIntent;
+    }
+
+    protected Intent getLeftItemIntent(Bundle extras, String packageName) {
+        Intent itemIntent = new Intent(Constants.PUSH_ITEM_CLICK_EVENT);
+        itemIntent.putExtras(extras);
+        itemIntent.putExtra("navigation", "left");
+        itemIntent.setPackage(packageName);
+        return itemIntent;
+    }
+
+    protected Intent getRightItemIntent(Bundle extras, String packageName) {
+        Intent itemIntent = new Intent(Constants.PUSH_ITEM_CLICK_EVENT);
+        itemIntent.putExtras(extras);
+        itemIntent.putExtra("navigation", "right");
+        itemIntent.setPackage(packageName);
+        return itemIntent;
+    }
+
+    protected void clearNotification(Context context, Message message) {
+        logger.Verbose("Clearing notification ID: "+ message.getMessageId());
+        logger.Verbose("Clearing notification TAG: "+ message.getMessageSource());
+        NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        if(manager != null) {
+            manager.cancel(message.getMessageSource(), message.getMessageId());
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.O)
@@ -321,22 +401,31 @@ public class NotificationReceiver extends BroadcastReceiver {
         try {
             PackageManager packageManager = context.getPackageManager();
             ApplicationInfo applicationInfo = packageManager.getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
+            logger.Verbose("Application icon: "+ applicationInfo.icon);
             return applicationInfo.icon;
         } catch (PackageManager.NameNotFoundException e) {
+            logger.Verbose("Application Icon Not Found");
             return -1;
         }
     }
 
     public int getResourceId(Context context, String resourceName) {
-        if(TextUtils.isEmpty(resourceName)) return -1;
+        logger.Verbose("resourceName: "+ resourceName);
+        if(TextUtils.isEmpty(resourceName)) return 0;
+        if(Utils.isInteger(resourceName)) return 0;
+
         try {
-            return context.getResources().getIdentifier(resourceName, "drawable", context.getPackageName());
+            int resourceId = context.getResources().getIdentifier(resourceName, "drawable", context.getPackageName());
+            logger.Verbose("ResourceId: "+ resourceId);
+            return resourceId;
         } catch (Exception e) {
             try {
-                return android.R.drawable.class.getField(resourceName).getInt(null);
+                int defaultResourceId = android.R.drawable.class.getField(resourceName).getInt(null);
+                logger.Verbose("defaultResourceId: "+ defaultResourceId);
+                return defaultResourceId;
             } catch (Throwable ignored) {}
             e.printStackTrace();
-            return -1;
+            return 0;
         }
     }
 
@@ -351,4 +440,5 @@ public class NotificationReceiver extends BroadcastReceiver {
             return null;
         }
     }
+
 }

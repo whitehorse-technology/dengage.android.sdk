@@ -42,10 +42,10 @@ public class MessagingService extends FirebaseMessagingService {
     }
 
     private void sendBroadcast(String json, Map<String, String> data) {
-        logger.Verbose("generateNotification method is called.");
+        logger.Verbose("sendBroadcast method is called.");
         try {
             Context context = getApplicationContext();
-            Intent intent = new Intent(NotificationReceiver.PUSH_RECEIVE);
+            Intent intent = new Intent(Constants.PUSH_RECEIVE_EVENT);
             intent.putExtra("RAW_DATA", json);
             logger.Verbose("RAW_DATA: "+ json);
             for (Map.Entry<String, String> entry : data.entrySet()) {
@@ -54,7 +54,7 @@ public class MessagingService extends FirebaseMessagingService {
             intent.setPackage(context.getPackageName());
             context.sendBroadcast(intent);
         } catch (Exception e) {
-            logger.Error("generateNotification: " + e.getMessage());
+            logger.Error("sendBroadcast: " + e.getMessage());
         }
     }
 }

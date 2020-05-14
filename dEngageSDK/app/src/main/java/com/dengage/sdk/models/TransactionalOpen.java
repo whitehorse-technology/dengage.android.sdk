@@ -3,6 +3,13 @@ package com.dengage.sdk.models;
 import com.google.gson.annotations.SerializedName;
 
 public class TransactionalOpen extends ModelBase {
+
+    @SerializedName("buttonId")
+    private String buttonId;
+
+    @SerializedName("itemId")
+    private String itemId;
+
     @SerializedName("messageId")
     private int messageId;
 
@@ -45,5 +52,21 @@ public class TransactionalOpen extends ModelBase {
 
     public void setMessageDetails(String messageDetails) {
         this.messageDetails = messageDetails;
+    }
+
+    public String getButtonId() {
+        return buttonId;
+    }
+
+    public void setButtonId(String actionId) {
+        this.buttonId = actionId;
+    }
+
+    public String getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(String itemId) {
+        this.itemId = itemId;
     }
 }

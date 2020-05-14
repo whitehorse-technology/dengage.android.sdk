@@ -14,4 +14,13 @@ class Constants {
     static final String EVENT_API_ENDPOINT          = "https://event.dengage.com/api/event";
     static final String TRANS_OPEN_API_ENDPOINT     = "https://push.dengage.com/api/transactional/mobile/open";
     static final String EC_API_ENDPOINT             = "https://ec.dengage.com";
+
+    static final String CAROUSAL_IMAGE_BEGINNING = "CarousalImage";
+
+    static final String PUSH_ITEM_CLICK_EVENT = "com.dengage.push.intent.ITEM_CLICK";
+    static final String PUSH_RECEIVE_EVENT = "com.dengage.push.intent.RECEIVE";
+    static final String PUSH_OPEN_EVENT = "com.dengage.push.intent.OPEN";
+    static final String PUSH_DELETE_EVENT = "com.dengage.push.intent.DELETE";
+    static final String PUSH_ACTION_CLICK_EVENT = "com.dengage.push.intent.ACTION_CLICK";
+
 }
