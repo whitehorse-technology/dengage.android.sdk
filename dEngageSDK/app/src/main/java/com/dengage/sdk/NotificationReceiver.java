@@ -97,6 +97,7 @@ public class NotificationReceiver extends BroadcastReceiver {
     }
 
     private void onRenderStart(final Context context, final Intent intent) {
+        logger.Verbose("onRenderStart method is called.");
         final Message message = new Message(intent.getExtras());
         if(message.getNotificationType() == NotificationType.CAROUSEL) {
             if (message.getCarouselContent() != null && message.getCarouselContent().length > 0) {
@@ -152,6 +153,21 @@ public class NotificationReceiver extends BroadcastReceiver {
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setSmallIcon(getSmallIconId(context));
 
+        if(!TextUtils.isEmpty(message.getTitle())) {
+            notificationBuilder.setContentTitle(message.getTitle());
+        } else {
+            String label = Utils.getAppLabel(context, "");
+            notificationBuilder.setContentTitle(label);
+        }
+
+        if(!TextUtils.isEmpty(message.getSubText())) {
+            notificationBuilder.setSubText(message.getSubText());
+        }
+
+        if(!TextUtils.isEmpty(message.getMessage())) {
+            notificationBuilder.setContentText(message.getMessage());
+        }
+
         if(!TextUtils.isEmpty(message.getSound())){
             notificationBuilder.setSound(Utils.getSound(context, message.getSound()));
         } else {
@@ -174,7 +190,6 @@ public class NotificationReceiver extends BroadcastReceiver {
                 buttonIntent.setPackage(packageName);
                 PendingIntent btnPendingIntent = PendingIntent.getBroadcast(context, requestCode, buttonIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                 int icon = getResourceId(context, button.getIcon());
-                logger.Verbose("icon: "+ icon);
                 notificationBuilder.addAction(icon, button.getText(), btnPendingIntent);
             }
         }
@@ -182,32 +197,11 @@ public class NotificationReceiver extends BroadcastReceiver {
         if(message.getNotificationType() == NotificationType.RICH) {
             NotificationCompat.Style style;
             Bitmap image = getBitmapFromUrl(message.getMediaUrl());
-            if (image == null) {
-                style = new NotificationCompat.BigTextStyle()
-                        .bigText(message.getMessage());
-            } else {
+            if (image != null) {
                 notificationBuilder.setLargeIcon(image);
                 style = new NotificationCompat.BigPictureStyle()
-                        .bigPicture(image)
-                        .bigLargeIcon(null)
-                        .setSummaryText(message.getMessage())
-                        .setBigContentTitle(message.getTitle());
-            }
-            notificationBuilder.setStyle(style);
-        } else {
-            if(!TextUtils.isEmpty(message.getTitle())) {
-                notificationBuilder.setContentTitle(message.getTitle());
-            } else {
-                String label = Utils.getAppLabel(context, "");
-                notificationBuilder.setContentTitle(label);
-            }
-
-            if(!TextUtils.isEmpty(message.getSubText())) {
-                notificationBuilder.setSubText(message.getSubText());
-            }
-
-            if(!TextUtils.isEmpty(message.getMessage())) {
-                notificationBuilder.setContentText(message.getMessage());
+                        .bigPicture(image);
+                notificationBuilder.setStyle(style);
             }
         }
 
@@ -410,18 +404,15 @@ public class NotificationReceiver extends BroadcastReceiver {
     }
 
     public int getResourceId(Context context, String resourceName) {
-        logger.Verbose("resourceName: "+ resourceName);
         if(TextUtils.isEmpty(resourceName)) return 0;
         if(Utils.isInteger(resourceName)) return 0;
 
         try {
             int resourceId = context.getResources().getIdentifier(resourceName, "drawable", context.getPackageName());
-            logger.Verbose("ResourceId: "+ resourceId);
             return resourceId;
         } catch (Exception e) {
             try {
                 int defaultResourceId = android.R.drawable.class.getField(resourceName).getInt(null);
-                logger.Verbose("defaultResourceId: "+ defaultResourceId);
                 return defaultResourceId;
             } catch (Throwable ignored) {}
             e.printStackTrace();
