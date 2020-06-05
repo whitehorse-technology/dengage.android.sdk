@@ -253,6 +253,7 @@ public class Utils {
         // path to /data/data/yourapp/app_data/imageDir
         //File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
         File directory = context.getCacheDir();
+        
         // Create imageDir
         File mypath = new File(directory, fileName + ".jpg");
 
