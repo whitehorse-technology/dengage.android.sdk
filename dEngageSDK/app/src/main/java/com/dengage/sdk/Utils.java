@@ -293,7 +293,7 @@ public class Utils {
 
     public static Boolean removeFileFromStorage(String path, String fileName) {
         File f = new File(path, fileName + ".jpg");
-        Boolean result = false;
+        boolean result;
         if(f.exists()) result = f.delete();
         else result = false;
         return result;
