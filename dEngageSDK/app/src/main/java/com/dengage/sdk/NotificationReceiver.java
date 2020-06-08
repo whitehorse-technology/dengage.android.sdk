@@ -119,7 +119,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         }
     }
 
-    protected void onRender (Context context, Intent intent, Message message) {
+    protected void onRender(Context context, Intent intent, Message message) {
         Bundle extras = intent.getExtras();
 
         Random random = new Random();
@@ -239,6 +239,9 @@ public class NotificationReceiver extends BroadcastReceiver {
 
     protected void onPushDismiss(Context context, Intent intent) {
         logger.Verbose("onPushDismiss method is called.");
+        Bundle extras = intent.getExtras();
+        Message message = new Message(extras);
+        clearNotification(context, message);
     }
 
     protected void onActionClick(Context context, Intent intent) {
