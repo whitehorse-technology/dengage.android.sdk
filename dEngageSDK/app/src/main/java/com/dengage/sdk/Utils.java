@@ -293,7 +293,10 @@ public class Utils {
 
     public static Boolean removeFileFromStorage(String path, String fileName) {
         File f = new File(path, fileName + ".jpg");
-        return f.delete();
+        Boolean result = false;
+        if(f.exists()) result = f.delete();
+        else result = false;
+        return result;
     }
 
     public static int calculateInSampleSize(final int width, final int height, int reqWidth, int reqHeight) {
