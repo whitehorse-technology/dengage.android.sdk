@@ -227,12 +227,19 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         String uri = null;
         Bundle extras = intent.getExtras();
+        Message message = new Message(extras);
+        String rawJson = "";
         if (extras != null) {
             manager.sendOpenEvent("", "", new Message(extras));
             uri = extras.getString("targetUrl");
+            rawJson = extras.getString("RAW_DATA");
+            if(!TextUtils.isEmpty(rawJson))
+                message = Message.fromJson(rawJson);
         } else {
             logger.Error("No extra data for open.");
         }
+
+        clearNotification(context, message);
 
         launchActivity(context, intent, uri);
     }
@@ -241,6 +248,13 @@ public class NotificationReceiver extends BroadcastReceiver {
         logger.Verbose("onPushDismiss method is called.");
         Bundle extras = intent.getExtras();
         Message message = new Message(extras);
+        String rawJson = "";
+        if(extras != null){
+            rawJson = extras.getString("RAW_DATA");
+            if(!TextUtils.isEmpty(rawJson))
+                message = Message.fromJson(rawJson);
+        }
+
         clearNotification(context, message);
     }
 
