@@ -253,7 +253,7 @@ public class Utils {
         // path to /data/data/yourapp/app_data/imageDir
         //File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
         File directory = context.getCacheDir();
-        
+
         // Create imageDir
         File mypath = new File(directory, fileName + ".jpg");
 
@@ -289,6 +289,11 @@ public class Utils {
             e.printStackTrace();
         }
         return b;
+    }
+
+    public static Boolean removeFileFromStorage(String path, String fileName) {
+        File f = new File(path, fileName + ".jpg");
+        return f.delete();
     }
 
     public static int calculateInSampleSize(final int width, final int height, int reqWidth, int reqHeight) {
