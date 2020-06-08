@@ -370,6 +370,11 @@ public class NotificationReceiver extends BroadcastReceiver {
     protected void clearNotification(Context context, Message message) {
         logger.Verbose("Clearing notification ID: "+ message.getMessageId());
         logger.Verbose("Clearing notification TAG: "+ message.getMessageSource());
+
+        for (CarouselItem item: message.getCarouselContent()) {
+            Utils.removeFileFromStorage(item.getMediaFileLocation(), item.getMediaFileName());
+        }
+
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         if(manager != null) {
             manager.cancel(message.getMessageSource(), message.getMessageId());
