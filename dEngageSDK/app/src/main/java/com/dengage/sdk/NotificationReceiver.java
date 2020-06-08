@@ -119,7 +119,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         }
     }
 
-    protected void onRender (Context context, Intent intent, Message message) {
+    protected void onRender(Context context, Intent intent, Message message) {
         Bundle extras = intent.getExtras();
 
         Random random = new Random();
@@ -227,18 +227,35 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         String uri = null;
         Bundle extras = intent.getExtras();
+        Message message = new Message(extras);
+        String rawJson = "";
         if (extras != null) {
             manager.sendOpenEvent("", "", new Message(extras));
             uri = extras.getString("targetUrl");
+            rawJson = extras.getString("RAW_DATA");
+            if(!TextUtils.isEmpty(rawJson))
+                message = Message.fromJson(rawJson);
         } else {
             logger.Error("No extra data for open.");
         }
+
+        clearNotification(context, message);
 
         launchActivity(context, intent, uri);
     }
 
     protected void onPushDismiss(Context context, Intent intent) {
         logger.Verbose("onPushDismiss method is called.");
+        Bundle extras = intent.getExtras();
+        Message message = new Message(extras);
+        String rawJson = "";
+        if(extras != null){
+            rawJson = extras.getString("RAW_DATA");
+            if(!TextUtils.isEmpty(rawJson))
+                message = Message.fromJson(rawJson);
+        }
+
+        clearNotification(context, message);
     }
 
     protected void onActionClick(Context context, Intent intent) {
