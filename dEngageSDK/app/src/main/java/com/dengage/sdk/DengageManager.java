@@ -6,16 +6,11 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.text.TextUtils;
 import androidx.annotation.NonNull;
-
 import com.dengage.sdk.models.Event;
 import com.dengage.sdk.models.Message;
 import com.dengage.sdk.models.Open;
-import com.dengage.sdk.models.Session;
 import com.dengage.sdk.models.Subscription;
 import com.dengage.sdk.models.TransactionalOpen;
-import com.google.android.gms.ads.identifier.AdvertisingIdClient;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -24,7 +19,8 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.google.gson.Gson;
-import org.w3c.dom.Text;
+import com.huawei.agconnect.config.AGConnectServicesConfig;
+import com.huawei.hms.aaid.HmsInstanceId;
 import java.util.Map;
 
 public class DengageManager {
@@ -74,13 +70,30 @@ public class DengageManager {
         try {
             if(_context == null) throw new Exception("_context is null.");
 
-            FirebaseApp.initializeApp(_context);
+            try {
+                Class.forName("com.huawei.hms.aaid.HmsInstanceId");
+                // Huawei
+                HmsTokenWorker hmsTokenWorker = new HmsTokenWorker();
+                hmsTokenWorker.executeTask();
+                HmsAdIdWorker hmsAdIdWorker = new HmsAdIdWorker();
+                hmsAdIdWorker.executeTask();
+            } catch (Exception e) {
+                logger.Error("HmsInstanceId not found: "+ e.getMessage());
+            }
 
-            FirebaseTokenWorker tokenWorker = new FirebaseTokenWorker();
-            tokenWorker.execute();
+            try {
+                Class.forName("com.google.firebase.iid.FirebaseInstanceId");
+                // Firebase
+                FirebaseApp.initializeApp(_context);
+                GmsTokenWorker gmsTokenWorker = new GmsTokenWorker();
+                gmsTokenWorker.executeTask();
+                GmsAdIdWorker gmsAdIdWorker = new GmsAdIdWorker();
+                gmsAdIdWorker.executeTask();
+            } catch (Exception e) {
+                logger.Error("FirebaseInstanceId not found: "+ e.getMessage());
+            }
 
-            AdvertisingIdWorker adIdWorker = new AdvertisingIdWorker();
-            adIdWorker.executeTask();
+
 
         } catch (Exception e) {
             logger.Error("initialization:" + e.getMessage());
@@ -253,13 +266,8 @@ public class DengageManager {
     public void syncSubscription() {
         logger.Verbose("syncSubscription method is called");
         try {
-            boolean cloudSubscription = _subscription.getCloudSubscription();
-            if(cloudSubscription) {
-                DengageEvent.getInstance(_context, null).subscription();
-            } else {
-                RequestAsync req = new RequestAsync(_subscription);
-                req.executeTask();
-            }
+            RequestAsync req = new RequestAsync(_subscription);
+            req.executeTask();
         } catch (Exception e) {
             logger.Error("syncSubscription: "+ e.getMessage());
         }
@@ -367,23 +375,78 @@ public class DengageManager {
         }
     }
 
-    @SuppressLint("StaticFieldLeak")
-    private class AdvertisingIdWorker extends AsyncTask<Void, String, String> {
+    private class GmsAdIdWorker extends AsyncTask<Void, String, String> {
         @Override
         protected String doInBackground(Void... params) {
-            logger.Debug("Getting advertising ID");
-            AdvertisingIdClient.Info adInfo;
+            logger.Debug("Getting GMS advertising ID");
+            com.google.android.gms.ads.identifier.AdvertisingIdClient.Info adInfo;
             String advertisingId = "";
             try {
-                adInfo = AdvertisingIdClient.getAdvertisingIdInfo(_context);
+                adInfo = com.google.android.gms.ads.identifier.AdvertisingIdClient.getAdvertisingIdInfo(_context);
                 if (!adInfo.isLimitAdTrackingEnabled())
                     advertisingId = adInfo.getId();
-            } catch (GooglePlayServicesNotAvailableException e) {
-                logger.Error("GooglePlayServicesNotAvailableException: "+ e.getMessage());
-            } catch (GooglePlayServicesRepairableException e) {
-                logger.Error("GooglePlayServicesRepairableException: "+ e.getMessage());
             } catch (Exception e) {
-                logger.Error("AdvertisingIdWorker Exception: "+e.getMessage());
+                logger.Error("GmsAdIdWorker Exception: "+e.getMessage());
+            }
+            return advertisingId;
+        }
+
+        @Override
+        protected void onPostExecute(String adId) {
+            logger.Verbose("GmsAdIdWorker executed: "+ adId);
+            if(adId != null && !TextUtils.isEmpty(adId)) {
+                _subscription.setAdvertisingId(adId);
+                saveSubscription();
+            }
+        }
+
+        public void executeTask() {
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+                this.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            else
+                this.execute();
+        }
+    }
+
+    private class GmsTokenWorker  {
+
+        void executeTask() {
+            try {
+                FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            logger.Error("Firebase InstanceId Failed: " + task.getException().getMessage());
+                            return;
+                        }
+
+                        if(task.getResult() != null) {
+                            String token = task.getResult().getToken();
+                            logger.Debug("GMS Token retrieved: " + token);
+                            _subscription.setToken(token);
+                            saveSubscription();
+                        }
+                    }
+                });
+            } catch (Exception e) {
+                logger.Error("GmsTokenWorker Exception: "+e.getMessage());
+            }
+        }
+    }
+
+    private class HmsAdIdWorker extends AsyncTask<Void, String, String> {
+        @Override
+        protected String doInBackground(Void... params) {
+            logger.Debug("Getting HMS advertising ID");
+            String advertisingId = "";
+            try {
+                com.huawei.hms.ads.identifier.AdvertisingIdClient.Info adInfo
+                = com.huawei.hms.ads.identifier.AdvertisingIdClient.
+                getAdvertisingIdInfo(_context);
+                if (!adInfo.isLimitAdTrackingEnabled())
+                    advertisingId = adInfo.getId();
+            }  catch (Exception e) {
+                logger.Error("HmsAdIdWorker Exception: "+e.getMessage());
             }
             return advertisingId;
         }
@@ -404,40 +467,33 @@ public class DengageManager {
         }
     }
 
-    private class FirebaseTokenWorker  {
+    private class HmsTokenWorker extends AsyncTask<Void, String, String> {
+        @Override
+        protected String doInBackground(Void... params) {
+            logger.Debug("Getting Hms Token");
+            String token = "";
+            try {
+                String appId = AGConnectServicesConfig.fromContext(_context).getString("client/app_id");
+                token = HmsInstanceId.getInstance(_context).getToken(appId, "HCM");
+            } catch (Exception e) {
+                logger.Error("HmsTokenWorker Exception: "+ e.getMessage());
+            }
+            return token;
+        }
 
-        void execute() {
+        @Override
+        protected void onPostExecute(String token) {
+            if(token != null && !TextUtils.isEmpty(token)) {
+                _subscription.setToken(token);
+                saveSubscription();
+            }
+        }
 
-            FirebaseInstanceId.getInstance().getInstanceId()
-            .addOnCanceledListener(new OnCanceledListener() {
-                @Override
-                public void onCanceled() {
-                    logger.Verbose("Token retrieving canceled");
-                }
-            })
-            .addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    logger.Error("Token retrieving failed: " + e.getMessage());
-                }
-            })
-            .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-                @Override
-                public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                    if (!task.isSuccessful()) {
-                        logger.Error("Firebase InstanceId Failed: " + task.getException().getMessage());
-                        return;
-                    }
-
-                    if(task.getResult() != null) {
-                        String token = task.getResult().getToken();
-                        logger.Debug("Token retrieved: " + token);
-                        _subscription.setToken(token);
-                        saveSubscription();
-                    }
-                }
-            });
-
+        public void executeTask() {
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+                this.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            else
+                this.execute();
         }
     }
 }

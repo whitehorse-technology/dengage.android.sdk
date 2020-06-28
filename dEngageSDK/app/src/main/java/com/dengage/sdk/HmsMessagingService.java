@@ -2,14 +2,15 @@ package com.dengage.sdk;
 
 import android.content.Context;
 import android.content.Intent;
+import android.text.TextUtils;
 
 import com.dengage.sdk.models.Message;
-import com.google.firebase.messaging.FirebaseMessagingService;
-import com.google.firebase.messaging.RemoteMessage;
+import com.huawei.hms.push.HmsMessageService;
+import com.huawei.hms.push.RemoteMessage;
+
 import java.util.Map;
 
-
-public class MessagingService extends FirebaseMessagingService {
+public class HmsMessagingService extends HmsMessageService {
 
     private Logger logger = Logger.getInstance();
 
@@ -17,7 +18,12 @@ public class MessagingService extends FirebaseMessagingService {
     public void onNewToken(String token) {
         try {
             logger.Debug("On new token : " + token);
-            DengageManager.getInstance(getApplicationContext()).subscribe(token);
+            if(!TextUtils.isEmpty(token))
+            {
+                logger.Debug("Send subscribe");
+                DengageManager.getInstance(getApplicationContext()).subscribe(token);
+            }
+
         } catch (Exception e) {
             logger.Error("onNewToken: "+ e.getMessage());
         }
@@ -28,7 +34,7 @@ public class MessagingService extends FirebaseMessagingService {
         super.onMessageReceived(remoteMessage);
         logger.Verbose("onMessageReceived method is called.");
 
-        Map<String, String> data = remoteMessage.getData();
+        Map<String, String> data = remoteMessage.getDataOfMap();
         if( (data != null && data.size() > 0)) {
             Message pushMessage = new Message(data);
             String json = pushMessage.toJson();
