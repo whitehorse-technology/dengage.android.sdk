@@ -13,8 +13,8 @@ public class MainActivity extends Activity {
         Context context = getApplicationContext();
         final DengageManager manager = DengageManager .getInstance(context)
                 .setLogStatus(true)
-                .setIntegrationKey("YOUR_INTEGRATION_KEY")
-                .useCloudSubscription(false)
+                .setFirebaseIntegrationKey("YOUR_INTEGRATION_KEY")
+                .setHuaweiIntegrationKey("YOUR_INTEGRATION_KEY")
                 .init();
     }
 }
