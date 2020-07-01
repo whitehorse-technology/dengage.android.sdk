@@ -15,6 +15,12 @@ public class Subscription extends ModelBase {
     @SerializedName("token")
     private String token = "";
 
+    @SerializedName("firebaseIntegrationKey")
+    private transient String firebaseIntegrationKey = "";
+
+    @SerializedName("huaweiIntegrationKey")
+    private transient String huaweiIntegrationKey = "";
+
     @SerializedName("appVersion")
     private String appVersion = "";
 
@@ -44,9 +50,6 @@ public class Subscription extends ModelBase {
 
     @SerializedName("webSubscription")
     private String webSubscription = null;
-
-    @SerializedName("cloudSubscription")
-    private boolean cloudSubscription = false;
 
     @SerializedName("testGroup")
     private String testGroup = "";
@@ -126,14 +129,6 @@ public class Subscription extends ModelBase {
         this.sdkVersion = sdkVersion;
     }
 
-    public boolean getCloudSubscription() {
-        return cloudSubscription;
-    }
-
-    public void setCloudSubscription(boolean cloudSubscription) {
-        this.cloudSubscription = cloudSubscription;
-    }
-
     public String getTestGroup() {
         return testGroup;
     }
@@ -166,4 +161,19 @@ public class Subscription extends ModelBase {
         this.trackingPermission = trackingPermission;
     }
 
+    public void setFirebaseIntegrationKey(String firebaseIntegrationKey) {
+        this.firebaseIntegrationKey = firebaseIntegrationKey;
+    }
+
+    public void setHuaweiIntegrationKey(String huaweiIntegrationKey) {
+        this.huaweiIntegrationKey = huaweiIntegrationKey;
+    }
+
+    public String getFirebaseIntegrationKey() {
+        return firebaseIntegrationKey;
+    }
+
+    public String getHuaweiIntegrationKey() {
+        return huaweiIntegrationKey;
+    }
 }

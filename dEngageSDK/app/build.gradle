@@ -1,4 +1,3 @@
-//apply plugin: 'com.android.application'
 apply plugin: 'com.android.library'
 
 android {
@@ -8,7 +7,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 29
         versionCode 1
-        versionName "2.0.1"
+        versionName "2.1.0"
         //applicationId "com.dengage.sdk"
     }
 
@@ -33,15 +32,15 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.google.firebase:firebase-core:17.0.1'
     implementation 'com.google.firebase:firebase-messaging:19.0.1'
+    implementation 'com.huawei.hms:push:4.0.3.301'
+    implementation 'com.huawei.hms:ads-identifier:3.4.28.305'
     implementation 'com.google.code.gson:gson:2.8.6'
+    implementation files('libs/com.dengage.sdk.jar')
 }
 
 repositories {
     mavenCentral()
 }
-
-//apply plugin: 'com.google.gms.google-services'
-

@@ -317,8 +317,7 @@ public class Utils {
         return inSampleSize;
     }
 
-    public static boolean isInteger(String s)
-    {
+    public static boolean isInteger(String s) {
         try
         {
             Integer.parseInt(s);
@@ -328,4 +327,5 @@ public class Utils {
             return false;
         }
     }
+
 }
