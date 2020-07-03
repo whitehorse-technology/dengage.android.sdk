@@ -109,6 +109,7 @@ public class DengageManager {
 
     private void initFirebase() {
         _subscription.setIntegrationKey(_subscription.getFirebaseIntegrationKey());
+        saveSubscription();
         FirebaseApp.initializeApp(_context);
         GmsTokenWorker gmsTokenWorker = new GmsTokenWorker();
         gmsTokenWorker.executeTask();
