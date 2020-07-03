@@ -100,6 +100,7 @@ public class DengageManager {
 
     private void initHuawei() {
         _subscription.setIntegrationKey(_subscription.getHuaweiIntegrationKey());
+        saveSubscription();
         HmsTokenWorker hmsTokenWorker = new HmsTokenWorker();
         hmsTokenWorker.executeTask();
         HmsAdIdWorker hmsAdIdWorker = new HmsAdIdWorker();
