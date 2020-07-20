@@ -16,6 +16,7 @@ import android.graphics.drawable.Drawable;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
@@ -328,4 +329,13 @@ public class Utils {
         }
     }
 
+    public static String getMetaData(Context context, String name) {
+        try {
+            ApplicationInfo ai = context.getPackageManager().getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
+            Bundle bundle = ai.metaData;
+            return bundle.getString(name);
+        } catch (PackageManager.NameNotFoundException e) {
+            return "";
+        }
+    }
 }

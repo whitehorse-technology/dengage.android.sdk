@@ -3,14 +3,18 @@ package com.dengage.sdk;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
+
+import androidx.annotation.NonNull;
+
 import com.dengage.sdk.models.Event;
 import com.dengage.sdk.models.Session;
 import com.dengage.sdk.models.Subscription;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
 
 public class DengageEvent {
 
@@ -19,30 +23,33 @@ public class DengageEvent {
     private Logger logger = Logger.getInstance();
     private Context _context;
     private boolean sessionStarted = false;
+    private static String apiEndpoint = null;
 
     private DengageEvent(Context context) {
         this._context = context;
+
+        if(apiEndpoint == null) {
+            String endpoint = Utils.getMetaData(_context, "den_event_api_endpoint");
+            if (TextUtils.isEmpty(endpoint))
+                apiEndpoint = Constants.EVENT_API_ENDPOINT;
+        }
     }
 
-    public static DengageEvent getInstance(Context context, Intent intent) {
+    public static DengageEvent getInstance(Context context, @NonNull String referer) {
 
         if(_instance == null) _instance = new DengageEvent(context);
 
-        String referrer = "";
-
-        if(intent != null) {
-            Bundle extras = intent.getExtras();
-            if (extras != null)
-                referrer = extras.getString("targetUrl");
+        if(!TextUtils.isEmpty(referer)) {
+            _instance.sessionStart(referer);
+        } else {
+            _instance.sessionStart("");
         }
-
-        _instance.sessionStart(referrer);
 
         return _instance;
     }
 
     public static DengageEvent getInstance(Context context) {
-        return getInstance(context, null);
+        return getInstance(context, "");
     }
 
     public DengageEvent setLogStatus(Boolean status) {
@@ -50,18 +57,26 @@ public class DengageEvent {
         return _instance;
     }
 
-    public void sessionStart(String referer) {
+    private void sessionStart(String referer) {
         if(sessionStarted) return;
         try {
 
-            // UTM parsing
             HashMap<String, Object> data = new HashMap<>();
             data.put("referer", referer);
-            data.put("utm_source", "");
-            data.put("utm_medium", "");
-            data.put("utm_campaign", "");
-            data.put("utm_content", "");
-            data.put("utm_term", "");
+
+            try {
+                Uri uri = Uri.parse(referer);
+                if (uri.getQueryParameter("utm_source") != null)
+                    data.put("utm_source", uri.getQueryParameter("utm_source"));
+                if (uri.getQueryParameter("utm_medium") != null)
+                    data.put("utm_medium", uri.getQueryParameter("utm_medium"));
+                if (uri.getQueryParameter("utm_campaign") != null)
+                    data.put("utm_campaign", uri.getQueryParameter("utm_campaign"));
+                if (uri.getQueryParameter("utm_content") != null)
+                    data.put("utm_content", uri.getQueryParameter("utm_content"));
+                if (uri.getQueryParameter("utm_term") != null)
+                    data.put("utm_term", uri.getQueryParameter("utm_term"));
+            } catch (Exception ignored) { }
 
             sendDeviceEvent("session_info", data);
             sessionStarted = true;
@@ -178,7 +193,7 @@ public class DengageEvent {
             data.put("session_id", sessionId);
             Event event = new Event(subscription.getIntegrationKey(), tableName, key, data);
             logger.Debug("sendCustomEvent: " + event.toJson());
-            RequestAsync req = new RequestAsync(event);
+            RequestAsync req = new RequestAsync(apiEndpoint, event);
             req.executeTask();
         } catch (Exception e) {
             logger.Error("sendCustomEvent: "+ e.getMessage());

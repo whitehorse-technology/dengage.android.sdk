@@ -1,11 +1,7 @@
 package com.dengage.sdk;
 
-import android.util.Base64;
-
-import com.dengage.sdk.models.DenEvent;
 import com.dengage.sdk.models.Event;
 import com.dengage.sdk.models.Open;
-import com.dengage.sdk.models.Session;
 import com.dengage.sdk.models.Subscription;
 import com.dengage.sdk.models.TransactionalOpen;
 
@@ -13,8 +9,6 @@ import java.io.BufferedOutputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.util.HashMap;
 
 class Request  {
 
@@ -22,7 +16,7 @@ class Request  {
 
     void sendSubscription(Subscription model) {
         try {
-            String url = Constants.SUBS_API_ENDPOINT;
+            String url = Constants.SUBSCRIPTION_API_ENDPOINT;
             String json = model.toJson();
             String userAgent = model.getUserAgent();
             logger.Verbose("sendSubscription: " + url + " with the json: "+ json);
@@ -46,7 +40,7 @@ class Request  {
 
     void sendTransactionalOpen(TransactionalOpen model) {
         try {
-            String url = Constants.TRANS_OPEN_API_ENDPOINT;
+            String url = Constants.TRANSACTIONAL_OPEN_API_ENDPOINT;
             String json = model.toJson();
             String userAgent = model.getUserAgent();
             logger.Verbose("sendTransactionalOpen: " + url + " with the json: "+ json);
@@ -56,31 +50,12 @@ class Request  {
         }
     }
 
-    void sendEvent(Event model) {
+    void sendEvent(String url, Event model) {
         try {
-            String url = Constants.EVENT_API_ENDPOINT;
             String json = model.toJson();
             String userAgent = model.getUserAgent();
             logger.Verbose("sendEvent: " + url + " with the json: "+ json);
             sendRequest(url, userAgent, json, "application/json");
-        } catch (Exception e) {
-            logger.Error("sendEvent: "+ e.getMessage());
-        }
-    }
-
-    void sendEvent(DenEvent model) {
-        try {
-            String url = Constants.EC_API_ENDPOINT + "/"+ model.integrationKey;
-            logger.Verbose("sendEvent: " + url);
-            String json = model.toJson();
-            logger.Verbose("sendEvent: " + json);
-            String data = URLEncoder.encode(json, "utf-8");
-            logger.Verbose("sendEvent: " + data);
-            String postData = Base64.encodeToString(data.getBytes(), Base64.DEFAULT).replaceAll("(\\s|\\r\\n|\\r|\\n)", "");
-            logger.Verbose("sendEvent: " + postData);
-
-            sendRequest(url, "", postData, "text/plain");
-
         } catch (Exception e) {
             logger.Error("sendEvent: "+ e.getMessage());
         }

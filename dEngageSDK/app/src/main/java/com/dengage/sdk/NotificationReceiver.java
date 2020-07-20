@@ -225,6 +225,7 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         DengageManager manager = DengageManager.getInstance(context);
 
+
         String uri = null;
         Bundle extras = intent.getExtras();
         Message message = new Message(extras);
@@ -232,6 +233,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         if (extras != null) {
             manager.sendOpenEvent("", "", new Message(extras));
             uri = extras.getString("targetUrl");
+            DengageEvent.getInstance(context);
             rawJson = extras.getString("RAW_DATA");
             if(!TextUtils.isEmpty(rawJson))
                 message = Message.fromJson(rawJson);
@@ -262,6 +264,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         logger.Verbose("onActionClick method is called.");
 
         DengageManager manager = DengageManager.getInstance(context);
+        DengageEvent event = DengageEvent.getInstance(context);
 
         String uri = null;
         String id = "";
@@ -276,8 +279,8 @@ public class NotificationReceiver extends BroadcastReceiver {
 
             id = extras.getString("id", "");
             manager.sendOpenEvent(id, "", message);
-
             uri = extras.getString("targetUrl");
+            event.sessionStart(uri);
         } else {
             logger.Debug("No extra data for action.");
         }
@@ -291,6 +294,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         logger.Verbose("onItemClick method is called.");
 
         DengageManager manager = DengageManager.getInstance(context);
+        DengageEvent event = DengageEvent.getInstance(context);
 
         String navigation = "";
         String uri = null;
@@ -321,6 +325,7 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         if(navigation.equals("")) {
             manager.sendOpenEvent("", id, new Message(extras));
+            event.sessionStart(uri);
             clearNotification(context, message);
             launchActivity(context, intent, uri);
         } else if(navigation.equals("left")) {
