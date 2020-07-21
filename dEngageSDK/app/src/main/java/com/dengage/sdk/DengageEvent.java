@@ -12,6 +12,8 @@ import androidx.annotation.NonNull;
 import com.dengage.sdk.models.Event;
 import com.dengage.sdk.models.Session;
 import com.dengage.sdk.models.Subscription;
+
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -57,7 +59,7 @@ public class DengageEvent {
         return _instance;
     }
 
-    private void sessionStart(String referer) {
+    public void sessionStart(String referer) {
         if(sessionStarted) return;
         try {
 
@@ -76,6 +78,29 @@ public class DengageEvent {
                     data.put("utm_content", uri.getQueryParameter("utm_content"));
                 if (uri.getQueryParameter("utm_term") != null)
                     data.put("utm_term", uri.getQueryParameter("utm_term"));
+            } catch (Exception ignored) { }
+
+            try {
+
+                Subscription subscription = DengageManager.getInstance(_context).getSubscription();
+
+                Calendar cal1 = Calendar.getInstance();
+                cal1.set(Calendar.HOUR, subscription.getCampaignDuration() * 24);
+                Calendar cal2 = Calendar.getInstance();
+
+                if(subscription.getCampaignDate() != null)
+                    cal2.setTime(subscription.getCampaignDate());
+
+                long diff = cal1.getTime().getTime() - cal2.getTime().getTime();
+
+                if(!TextUtils.isEmpty(subscription.getCampaignId())
+                        && !TextUtils.isEmpty(subscription.getSendId())
+                        && diff > 0
+                ) {
+                    data.put("camp_id", subscription.getCampaignId());
+                    data.put("send_id", subscription.getSendId());
+                }
+
             } catch (Exception ignored) { }
 
             sendDeviceEvent("session_info", data);
@@ -142,6 +167,25 @@ public class DengageEvent {
         cartEventParams.put("event_type",  "order");
         cartEventParams.put("event_id",  eventId);
         sendDeviceEvent("shopping_cart_events", cartEventParams);
+
+        Subscription subscription = DengageManager.getInstance(_context).getSubscription();
+
+        Calendar cal1 = Calendar.getInstance();
+        cal1.set(Calendar.HOUR, subscription.getCampaignDuration() * 24);
+        Calendar cal2 = Calendar.getInstance();
+
+        if(subscription.getCampaignDate() != null)
+            cal2.setTime(subscription.getCampaignDate());
+
+        long diff = cal1.getTime().getTime() - cal2.getTime().getTime();
+
+        if(!TextUtils.isEmpty(subscription.getCampaignId())
+                && !TextUtils.isEmpty(subscription.getSendId())
+                && diff > 0
+        ) {
+            data.put("camp_id", subscription.getCampaignId());
+            data.put("send_id", subscription.getSendId());
+        }
 
         if(copyData.containsKey("cartItems") && copyData.containsKey("order_id")) {
             Object[] items = (Object[])copyData.get("cartItems");

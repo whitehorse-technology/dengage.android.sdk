@@ -26,6 +26,7 @@ import com.dengage.sdk.models.CarouselItem;
 import com.dengage.sdk.models.Message;
 import com.dengage.sdk.models.NotificationType;
 import java.net.URL;
+import java.util.Calendar;
 import java.util.Random;
 
 public class NotificationReceiver extends BroadcastReceiver {
@@ -225,18 +226,34 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         DengageManager manager = DengageManager.getInstance(context);
 
-
+        String campaignId = "";
+        String sendId = "";
         String uri = null;
         Bundle extras = intent.getExtras();
         Message message = new Message(extras);
         String rawJson = "";
+
         if (extras != null) {
             manager.sendOpenEvent("", "", new Message(extras));
             uri = extras.getString("targetUrl");
             DengageEvent.getInstance(context);
             rawJson = extras.getString("RAW_DATA");
+
             if(!TextUtils.isEmpty(rawJson))
                 message = Message.fromJson(rawJson);
+
+            campaignId = extras.getString("dnCampId");
+            sendId = extras.getString("dnSendId");
+
+            if(campaignId != null && !TextUtils.isEmpty(campaignId))
+                manager.getSubscription().setCampaignId(campaignId);
+
+            if(sendId != null && !TextUtils.isEmpty(sendId))
+                manager.getSubscription().setSendId(sendId);
+
+            manager.getSubscription().setCampaignDate(Calendar.getInstance().getTime());
+            manager.saveSubscription();
+
         } else {
             logger.Error("No extra data for open.");
         }
@@ -268,6 +285,8 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         String uri = null;
         String id = "";
+        String campaignId = "";
+        String sendId = "";
         String rawJson = "";
         Bundle extras = intent.getExtras();
         Message message = new Message(extras);
@@ -280,6 +299,19 @@ public class NotificationReceiver extends BroadcastReceiver {
             id = extras.getString("id", "");
             manager.sendOpenEvent(id, "", message);
             uri = extras.getString("targetUrl");
+
+            campaignId = extras.getString("dnCampId");
+            sendId = extras.getString("dnSendId");
+
+            if(campaignId != null && !TextUtils.isEmpty(campaignId))
+                manager.getSubscription().setCampaignId(campaignId);
+
+            if(sendId != null && !TextUtils.isEmpty(sendId))
+                manager.getSubscription().setSendId(sendId);
+
+            manager.getSubscription().setCampaignDate(Calendar.getInstance().getTime());
+            manager.saveSubscription();
+
             event.sessionStart(uri);
         } else {
             logger.Debug("No extra data for action.");
@@ -300,8 +332,11 @@ public class NotificationReceiver extends BroadcastReceiver {
         String uri = null;
         String rawJson = "";
         String id = "";
+        String campaignId = "";
+        String sendId = "";
         int current = -1;
         Bundle extras = intent.getExtras();
+
         if (extras != null) {
             id = extras.getString("id", "");
             navigation = extras.getString("navigation");
@@ -324,10 +359,26 @@ public class NotificationReceiver extends BroadcastReceiver {
         }
 
         if(navigation.equals("")) {
+
+            campaignId = extras.getString("dnCampId");
+            sendId = extras.getString("dnSendId");
+
+            if(campaignId != null && !TextUtils.isEmpty(campaignId))
+                manager.getSubscription().setCampaignId(campaignId);
+
+            if(sendId != null && !TextUtils.isEmpty(sendId))
+                manager.getSubscription().setSendId(sendId);
+
+            manager.getSubscription().setCampaignDate(Calendar.getInstance().getTime());
+            manager.saveSubscription();
+
             manager.sendOpenEvent("", id, new Message(extras));
+
             event.sessionStart(uri);
+
             clearNotification(context, message);
             launchActivity(context, intent, uri);
+
         } else if(navigation.equals("left")) {
             onCarouselReRender(context, intent, message);
         } else if(navigation.equals("right")) {

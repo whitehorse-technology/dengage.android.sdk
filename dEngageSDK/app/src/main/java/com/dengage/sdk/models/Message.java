@@ -49,6 +49,12 @@ public class Message {
     @SerializedName("sound")
     private String sound = "";
 
+    @SerializedName("dnCampId")
+    private String campaignId = "";
+
+    @SerializedName("dnSendId")
+    private String sendId = "";
+
     @SerializedName("notificationType")
     private NotificationType notificationType = NotificationType.RICH;
 
@@ -182,6 +188,22 @@ public class Message {
 
     public String getSound() {
         return this.sound;
+    }
+
+    public String getSendId() {
+        return sendId;
+    }
+
+    public void setSendId(String sendId) {
+        this.sendId = sendId;
+    }
+
+    public String getCampaignId() {
+        return campaignId;
+    }
+
+    public void setCampaignId(String campaignId) {
+        this.campaignId = campaignId;
     }
 
     public CustomParam[] getCustomParams() {

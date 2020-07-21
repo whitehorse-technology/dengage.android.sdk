@@ -2,11 +2,15 @@ package com.dengage.sdk.models;
 
 import android.text.TextUtils;
 
+import com.dengage.sdk.Constants;
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,6 +60,18 @@ public class Subscription extends ModelBase {
 
     @SerializedName("userAgent")
     private transient String userAgent = "";
+
+    @SerializedName("dnCampId")
+    private String campaignId = "";
+
+    @SerializedName("dnSendId")
+    private String sendId = "";
+
+    @SerializedName("dnCampDate")
+    private Date campaignDate = null;
+
+    @SerializedName("dnCampaignDuration")
+    private int campaignDuration = Constants.DEFAULT_CAMP_ATTR_DURATION;
 
     public String getUserAgent() {
         return userAgent;
@@ -175,5 +191,37 @@ public class Subscription extends ModelBase {
 
     public String getHuaweiIntegrationKey() {
         return huaweiIntegrationKey;
+    }
+
+    public String getCampaignId() {
+        return campaignId;
+    }
+
+    public void setCampaignId(String campaignId) {
+        this.campaignId = campaignId;
+    }
+
+    public String getSendId() {
+        return sendId;
+    }
+
+    public void setSendId(String sendId) {
+        this.sendId = sendId;
+    }
+
+    public Date getCampaignDate() {
+        return campaignDate;
+    }
+
+    public void setCampaignDate(Date campaignDate) {
+        this.campaignDate = campaignDate;
+    }
+
+    public int getCampaignDuration() {
+        return campaignDuration;
+    }
+
+    public void setCampaignDuration(int campaignDuration) {
+        this.campaignDuration = campaignDuration;
     }
 }

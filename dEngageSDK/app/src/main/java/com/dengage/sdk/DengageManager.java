@@ -68,20 +68,20 @@ public class DengageManager {
      * @return DengageManager
      * </p>
      */
-    public DengageManager init() {
+    public DengageManager init(int campaignDuration) {
         try {
             if(_context == null) throw new Exception("_context is null.");
 
             if(isGooglePlayServicesAvailable() && isHuaweiMobileServicesAvailable())
             {
                 logger.Verbose("Google Play Services and Huawei Mobile Service are available. Firebase services will be used.");
-                initFirebase();
+                initFirebase(campaignDuration);
             }
             else if (isHuaweiMobileServicesAvailable()) {
                 logger.Verbose("Huawei Mobile Services is available.");
-                initHuawei();
+                initHuawei(campaignDuration);
             } else if(isGooglePlayServicesAvailable()) {
-                initFirebase();
+                initFirebase(campaignDuration);
             }
 
         } catch (Exception e) {
@@ -90,15 +90,35 @@ public class DengageManager {
         return _instance;
     }
 
+    public DengageManager init() {
+        try {
+             init(Constants.DEFAULT_CAMP_ATTR_DURATION);
+        } catch (Exception e) {
+            logger.Error("initialization:" + e.getMessage());
+        }
+        return _instance;
+    }
+
     public boolean isGooglePlayServicesAvailable() {
-        return GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(_context) == com.google.android.gms.common.ConnectionResult.SUCCESS;
+        try {
+            Class.forName("com.google.android.gms.common.GoogleApiAvailability");
+            return GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(_context) == com.google.android.gms.common.ConnectionResult.SUCCESS;
+        } catch (Exception ignored) {
+            return false;
+        }
     }
 
     public boolean isHuaweiMobileServicesAvailable() {
-        return HuaweiApiAvailability.getInstance().isHuaweiMobileServicesAvailable(_context) == com.huawei.hms.api.ConnectionResult.SUCCESS;
+        try {
+            Class.forName("com.huawei.hms.api.HuaweiApiAvailability");
+            return HuaweiApiAvailability.getInstance().isHuaweiMobileServicesAvailable(_context) == com.huawei.hms.api.ConnectionResult.SUCCESS;
+        } catch (Exception ignored) {
+            return false;
+        }
     }
 
-    private void initHuawei() {
+    private void initHuawei(int campaignDuration) {
+        _subscription.setCampaignDuration(campaignDuration);
         _subscription.setIntegrationKey(_subscription.getHuaweiIntegrationKey());
         saveSubscription();
         HmsTokenWorker hmsTokenWorker = new HmsTokenWorker();
@@ -107,7 +127,8 @@ public class DengageManager {
         hmsAdIdWorker.executeTask();
     }
 
-    private void initFirebase() {
+    private void initFirebase(int campaignDuration) {
+        _subscription.setCampaignDuration(campaignDuration);
         _subscription.setIntegrationKey(_subscription.getFirebaseIntegrationKey());
         saveSubscription();
         FirebaseApp.initializeApp(_context);
@@ -215,7 +236,7 @@ public class DengageManager {
     }
 
 
-    private void buildSubscription() {
+    public void buildSubscription() {
         try {
             if (Utils.hasSubscription(_context)) {
                  _subscription = new Gson().fromJson(Utils.getSubscription(_context), Subscription.class);
@@ -228,7 +249,7 @@ public class DengageManager {
         }
     }
 
-    private void saveSubscription() {
+    public void saveSubscription() {
         logger.Verbose("saveSubscription method is called");
         try {
 
