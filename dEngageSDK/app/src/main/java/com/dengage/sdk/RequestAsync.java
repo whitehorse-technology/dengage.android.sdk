@@ -18,7 +18,8 @@ class RequestAsync extends AsyncTask<Void, Void, Void> {
         this.model = model;
     }
 
-    RequestAsync(String url, ModelBase model) {
+    RequestAsync
+            (String url, ModelBase model) {
         this.model = model;
         this.url = url;
     }

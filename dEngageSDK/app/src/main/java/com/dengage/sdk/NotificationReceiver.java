@@ -224,35 +224,26 @@ public class NotificationReceiver extends BroadcastReceiver {
     protected void onPushOpen(Context context, Intent intent) {
         logger.Verbose("onPushOpen method is called.");
 
-        DengageManager manager = DengageManager.getInstance(context);
-
-        String campaignId = "";
-        String sendId = "";
-        String uri = null;
         Bundle extras = intent.getExtras();
         Message message = new Message(extras);
-        String rawJson = "";
+
+        DengageManager manager = DengageManager.getInstance(context);
+        DengageEvent.getInstance(context);
+
+        // set on message scope
+        setCampaignProps(manager, message);
+
+        String uri = null;
 
         if (extras != null) {
-            manager.sendOpenEvent("", "", new Message(extras));
-            uri = extras.getString("targetUrl");
-            DengageEvent.getInstance(context);
-            rawJson = extras.getString("RAW_DATA");
 
+            String rawJson = extras.getString("RAW_DATA");
             if(!TextUtils.isEmpty(rawJson))
                 message = Message.fromJson(rawJson);
 
-            campaignId = extras.getString("dnCampId");
-            sendId = extras.getString("dnSendId");
+            uri = extras.getString("targetUrl");
 
-            if(campaignId != null && !TextUtils.isEmpty(campaignId))
-                manager.getSubscription().setCampaignId(campaignId);
-
-            if(sendId != null && !TextUtils.isEmpty(sendId))
-                manager.getSubscription().setSendId(sendId);
-
-            manager.getSubscription().setCampaignDate(Calendar.getInstance().getTime());
-            manager.saveSubscription();
+            manager.sendOpenEvent("", "", message);
 
         } else {
             logger.Error("No extra data for open.");
@@ -265,11 +256,12 @@ public class NotificationReceiver extends BroadcastReceiver {
 
     protected void onPushDismiss(Context context, Intent intent) {
         logger.Verbose("onPushDismiss method is called.");
+
         Bundle extras = intent.getExtras();
         Message message = new Message(extras);
-        String rawJson = "";
-        if(extras != null){
-            rawJson = extras.getString("RAW_DATA");
+
+        if(extras != null) {
+            String rawJson = extras.getString("RAW_DATA");
             if(!TextUtils.isEmpty(rawJson))
                 message = Message.fromJson(rawJson);
         }
@@ -280,37 +272,26 @@ public class NotificationReceiver extends BroadcastReceiver {
     protected void onActionClick(Context context, Intent intent) {
         logger.Verbose("onActionClick method is called.");
 
-        DengageManager manager = DengageManager.getInstance(context);
-        DengageEvent event = DengageEvent.getInstance(context);
-
-        String uri = null;
-        String id = "";
-        String campaignId = "";
-        String sendId = "";
-        String rawJson = "";
         Bundle extras = intent.getExtras();
         Message message = new Message(extras);
 
+        DengageManager manager = DengageManager.getInstance(context);
+        DengageEvent event = DengageEvent.getInstance(context);
+
+        // set on message scope
+        setCampaignProps(manager, message);
+
+        String uri = null;
+
         if (extras != null) {
-            rawJson = extras.getString("RAW_DATA");
+            String rawJson = extras.getString("RAW_DATA");
             if(!TextUtils.isEmpty(rawJson))
                 message = Message.fromJson(rawJson);
 
-            id = extras.getString("id", "");
+            String id = extras.getString("id", "");
             manager.sendOpenEvent(id, "", message);
+
             uri = extras.getString("targetUrl");
-
-            campaignId = extras.getString("dnCampId");
-            sendId = extras.getString("dnSendId");
-
-            if(campaignId != null && !TextUtils.isEmpty(campaignId))
-                manager.getSubscription().setCampaignId(campaignId);
-
-            if(sendId != null && !TextUtils.isEmpty(sendId))
-                manager.getSubscription().setSendId(sendId);
-
-            manager.getSubscription().setCampaignDate(Calendar.getInstance().getTime());
-            manager.saveSubscription();
 
             event.sessionStart(uri);
         } else {
@@ -332,8 +313,6 @@ public class NotificationReceiver extends BroadcastReceiver {
         String uri = null;
         String rawJson = "";
         String id = "";
-        String campaignId = "";
-        String sendId = "";
         int current = -1;
         Bundle extras = intent.getExtras();
 
@@ -360,17 +339,8 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         if(navigation.equals("")) {
 
-            campaignId = extras.getString("dnCampId");
-            sendId = extras.getString("dnSendId");
-
-            if(campaignId != null && !TextUtils.isEmpty(campaignId))
-                manager.getSubscription().setCampaignId(campaignId);
-
-            if(sendId != null && !TextUtils.isEmpty(sendId))
-                manager.getSubscription().setSendId(sendId);
-
-            manager.getSubscription().setCampaignDate(Calendar.getInstance().getTime());
-            manager.saveSubscription();
+            // set on message scope
+            setCampaignProps(manager, message);
 
             manager.sendOpenEvent("", id, new Message(extras));
 
@@ -454,6 +424,17 @@ public class NotificationReceiver extends BroadcastReceiver {
         if(manager != null) {
             manager.cancel(message.getMessageSource(), message.getMessageId());
         }
+    }
+
+    private void setCampaignProps(DengageManager manager, Message message) {
+        if(message.getDengageCampId() > 0)
+            manager.getSubscription().setDengageCampId(message.getDengageCampId());
+
+        if(message.getDengageSendId() > 0)
+            manager.getSubscription().setDengageSendId(message.getDengageSendId());
+
+        manager.getSubscription().setCampaignDate(Calendar.getInstance().getTime());
+        manager.saveSubscription();
     }
 
     @TargetApi(Build.VERSION_CODES.O)

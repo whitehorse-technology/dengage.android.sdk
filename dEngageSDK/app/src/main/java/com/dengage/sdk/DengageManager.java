@@ -23,6 +23,8 @@ import com.huawei.agconnect.config.AGConnectServicesConfig;
 import com.huawei.hms.aaid.HmsInstanceId;
 import com.huawei.hms.api.HuaweiApiAvailability;
 
+import org.json.JSONObject;
+
 import java.util.Map;
 
 public class DengageManager {
@@ -524,10 +526,13 @@ public class DengageManager {
 
     public void onMessageReceived(Map<String, String> data) {
         logger.Verbose("onMessageReceived method is called.");
+        logger.Verbose("Raw Message: "+ new JSONObject(data).toString());
+
         if( (data != null && data.size() > 0)) {
             Message pushMessage = new Message(data);
             String json = pushMessage.toJson();
             logger.Verbose("Message Json: "+ json);
+
             String source = pushMessage.getMessageSource();
             if (Constants.MESSAGE_SOURCE.equals(source)) {
                 logger.Debug("There is a message that received from dEngage");

@@ -25,16 +25,9 @@ public class DengageEvent {
     private Logger logger = Logger.getInstance();
     private Context _context;
     private boolean sessionStarted = false;
-    private static String apiEndpoint = null;
 
     private DengageEvent(Context context) {
         this._context = context;
-
-        if(apiEndpoint == null) {
-            String endpoint = Utils.getMetaData(_context, "den_event_api_endpoint");
-            if (TextUtils.isEmpty(endpoint))
-                apiEndpoint = Constants.EVENT_API_ENDPOINT;
-        }
     }
 
     public static DengageEvent getInstance(Context context, @NonNull String referer) {
@@ -93,12 +86,12 @@ public class DengageEvent {
 
                 long diff = cal1.getTime().getTime() - cal2.getTime().getTime();
 
-                if(!TextUtils.isEmpty(subscription.getCampaignId())
-                        && !TextUtils.isEmpty(subscription.getSendId())
+                if(subscription.getDengageCampId() > 0
+                        && subscription.getDengageSendId() > 0
                         && diff > 0
                 ) {
-                    data.put("camp_id", subscription.getCampaignId());
-                    data.put("send_id", subscription.getSendId());
+                    data.put("camp_id", subscription.getDengageCampId());
+                    data.put("send_id", subscription.getDengageSendId());
                 }
 
             } catch (Exception ignored) { }
@@ -179,12 +172,12 @@ public class DengageEvent {
 
         long diff = cal1.getTime().getTime() - cal2.getTime().getTime();
 
-        if(!TextUtils.isEmpty(subscription.getCampaignId())
-                && !TextUtils.isEmpty(subscription.getSendId())
+        if(subscription.getDengageCampId() > 0
+                && subscription.getDengageSendId() > 0
                 && diff > 0
         ) {
-            data.put("camp_id", subscription.getCampaignId());
-            data.put("send_id", subscription.getSendId());
+            data.put("camp_id", subscription.getDengageCampId());
+            data.put("send_id", subscription.getDengageSendId());
         }
 
         if(copyData.containsKey("cartItems") && copyData.containsKey("order_id")) {
@@ -234,10 +227,13 @@ public class DengageEvent {
         try {
             Subscription subscription = DengageManager.getInstance(_context).getSubscription();
             String sessionId = Session.getSession().getSessionId();
+            String endpoint = Utils.getMetaData(_context, "den_event_api_endpoint");
+            if (TextUtils.isEmpty(endpoint))
+                endpoint = Constants.EVENT_API_ENDPOINT;
             data.put("session_id", sessionId);
             Event event = new Event(subscription.getIntegrationKey(), tableName, key, data);
             logger.Debug("sendCustomEvent: " + event.toJson());
-            RequestAsync req = new RequestAsync(apiEndpoint, event);
+            RequestAsync req = new RequestAsync(endpoint, event);
             req.executeTask();
         } catch (Exception e) {
             logger.Error("sendCustomEvent: "+ e.getMessage());

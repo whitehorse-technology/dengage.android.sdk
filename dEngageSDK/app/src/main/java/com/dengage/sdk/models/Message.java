@@ -49,11 +49,11 @@ public class Message {
     @SerializedName("sound")
     private String sound = "";
 
-    @SerializedName("dnCampId")
-    private String campaignId = "";
+    @SerializedName("dengageCampId")
+    private int dengageCampId = 0;
 
-    @SerializedName("dnSendId")
-    private String sendId = "";
+    @SerializedName("dengageSendId")
+    private int dengageSendId = 0;
 
     @SerializedName("notificationType")
     private NotificationType notificationType = NotificationType.RICH;
@@ -91,6 +91,12 @@ public class Message {
 
         if (bundle.get("messageId") != null && !TextUtils.isEmpty(bundle.get("messageId")))
             messageId = Integer.parseInt(bundle.get("messageId"));
+
+        if (bundle.get("dengageCampId") != null && !TextUtils.isEmpty(bundle.get("dengageCampId")))
+            dengageCampId = Integer.parseInt(bundle.get("dengageCampId"));
+
+        if (bundle.get("dengageSendId") != null && !TextUtils.isEmpty(bundle.get("dengageSendId")))
+            dengageSendId = Integer.parseInt(bundle.get("dengageSendId"));
 
         if (bundle.get("messageSource") != null && !TextUtils.isEmpty(bundle.get("messageSource")))
             messageSource = bundle.get("messageSource");
@@ -190,20 +196,12 @@ public class Message {
         return this.sound;
     }
 
-    public String getSendId() {
-        return sendId;
+    public int getDengageSendId() {
+        return dengageSendId;
     }
 
-    public void setSendId(String sendId) {
-        this.sendId = sendId;
-    }
-
-    public String getCampaignId() {
-        return campaignId;
-    }
-
-    public void setCampaignId(String campaignId) {
-        this.campaignId = campaignId;
+    public int getDengageCampId() {
+        return dengageCampId;
     }
 
     public CustomParam[] getCustomParams() {
