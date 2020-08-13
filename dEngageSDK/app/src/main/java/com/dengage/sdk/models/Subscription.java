@@ -61,18 +61,6 @@ public class Subscription extends ModelBase {
     @SerializedName("userAgent")
     private transient String userAgent = "";
 
-    @SerializedName("dengageCampId")
-    private int dengageCampId = 0;
-
-    @SerializedName("dengageSendId")
-    private int dengageSendId = 0;
-
-    @SerializedName("dengageCampDate")
-    private Date campaignDate = null;
-
-    @SerializedName("campaignDuration")
-    private int campaignDuration = Constants.DEFAULT_CAMP_ATTR_DURATION;
-
     public String getUserAgent() {
         return userAgent;
     }
@@ -191,37 +179,5 @@ public class Subscription extends ModelBase {
 
     public String getHuaweiIntegrationKey() {
         return huaweiIntegrationKey;
-    }
-
-    public int getDengageCampId() {
-        return dengageCampId;
-    }
-
-    public void setDengageCampId(int dengageCampId) {
-        this.dengageCampId = dengageCampId;
-    }
-
-    public int getDengageSendId() {
-        return dengageSendId;
-    }
-
-    public void setDengageSendId(int dengageSendId) {
-        this.dengageSendId = dengageSendId;
-    }
-
-    public Date getCampaignDate() {
-        return campaignDate;
-    }
-
-    public void setCampaignDate(Date campaignDate) {
-        this.campaignDate = campaignDate;
-    }
-
-    public int getCampaignDuration() {
-        return campaignDuration;
-    }
-
-    public void setCampaignDuration(int campaignDuration) {
-        this.campaignDuration = campaignDuration;
     }
 }

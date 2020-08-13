@@ -16,6 +16,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -23,8 +24,15 @@ import android.text.TextUtils;
 import androidx.core.app.NotificationCompat;
 import com.dengage.sdk.models.ActionButton;
 import com.dengage.sdk.models.CarouselItem;
+import com.dengage.sdk.models.Event;
 import com.dengage.sdk.models.Message;
+import com.dengage.sdk.models.ModelBase;
 import com.dengage.sdk.models.NotificationType;
+import com.dengage.sdk.models.Open;
+import com.dengage.sdk.models.Subscription;
+import com.dengage.sdk.models.TransactionalOpen;
+
+import java.io.IOException;
 import java.net.URL;
 import java.util.Calendar;
 import java.util.Random;
@@ -228,10 +236,6 @@ public class NotificationReceiver extends BroadcastReceiver {
         Message message = new Message(extras);
 
         DengageManager manager = DengageManager.getInstance(context);
-        DengageEvent.getInstance(context);
-
-        // set on message scope
-        setCampaignProps(manager, message);
 
         String uri = null;
 
@@ -242,6 +246,8 @@ public class NotificationReceiver extends BroadcastReceiver {
                 message = Message.fromJson(rawJson);
 
             uri = extras.getString("targetUrl");
+
+            DengageEvent.getInstance(context, uri, message.getDengageCampId(), message.getDengageSendId());
 
             manager.sendOpenEvent("", "", message);
 
@@ -276,10 +282,6 @@ public class NotificationReceiver extends BroadcastReceiver {
         Message message = new Message(extras);
 
         DengageManager manager = DengageManager.getInstance(context);
-        DengageEvent event = DengageEvent.getInstance(context);
-
-        // set on message scope
-        setCampaignProps(manager, message);
 
         String uri = null;
 
@@ -293,7 +295,7 @@ public class NotificationReceiver extends BroadcastReceiver {
 
             uri = extras.getString("targetUrl");
 
-            event.sessionStart(uri);
+            DengageEvent.getInstance(context, uri, message.getDengageCampId(), message.getDengageSendId());
         } else {
             logger.Debug("No extra data for action.");
         }
@@ -307,7 +309,6 @@ public class NotificationReceiver extends BroadcastReceiver {
         logger.Verbose("onItemClick method is called.");
 
         DengageManager manager = DengageManager.getInstance(context);
-        DengageEvent event = DengageEvent.getInstance(context);
 
         String navigation = "";
         String uri = null;
@@ -339,12 +340,9 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         if(navigation.equals("")) {
 
-            // set on message scope
-            setCampaignProps(manager, message);
+            DengageEvent.getInstance(context, uri, message.getDengageCampId(), message.getDengageSendId());
 
             manager.sendOpenEvent("", id, new Message(extras));
-
-            event.sessionStart(uri);
 
             clearNotification(context, message);
             launchActivity(context, intent, uri);
@@ -426,17 +424,6 @@ public class NotificationReceiver extends BroadcastReceiver {
         }
     }
 
-    private void setCampaignProps(DengageManager manager, Message message) {
-        if(message.getDengageCampId() > 0)
-            manager.getSubscription().setDengageCampId(message.getDengageCampId());
-
-        if(message.getDengageSendId() > 0)
-            manager.getSubscription().setDengageSendId(message.getDengageSendId());
-
-        manager.getSubscription().setCampaignDate(Calendar.getInstance().getTime());
-        manager.saveSubscription();
-    }
-
     @TargetApi(Build.VERSION_CODES.O)
     protected NotificationChannel getNotificationChannel() {
         NotificationChannel channel = new NotificationChannel(Constants.CHANNEL_ID, Constants.CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
@@ -492,5 +479,7 @@ public class NotificationReceiver extends BroadcastReceiver {
             return null;
         }
     }
+
+
 
 }

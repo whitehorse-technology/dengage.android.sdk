@@ -19,5 +19,6 @@ public class Constants {
     public static final String PUSH_OPEN_EVENT = "com.dengage.push.intent.OPEN";
     public static final String PUSH_DELETE_EVENT = "com.dengage.push.intent.DELETE";
     public static final String PUSH_ACTION_CLICK_EVENT = "com.dengage.push.intent.ACTION_CLICK";
-    public static final int DEFAULT_CAMP_ATTR_DURATION = 7;
+    public static final String FIREBASE_TOKEN_TYPE            = "A";
+    public static final String HUAWEI_TOKEN_TYPE            = "H";
 }

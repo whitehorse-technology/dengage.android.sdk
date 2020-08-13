@@ -70,31 +70,22 @@ public class DengageManager {
      * @return DengageManager
      * </p>
      */
-    public DengageManager init(int campaignDuration) {
+    public DengageManager init() {
         try {
             if(_context == null) throw new Exception("_context is null.");
 
             if(isGooglePlayServicesAvailable() && isHuaweiMobileServicesAvailable())
             {
                 logger.Verbose("Google Play Services and Huawei Mobile Service are available. Firebase services will be used.");
-                initFirebase(campaignDuration);
+                initFirebase();
             }
             else if (isHuaweiMobileServicesAvailable()) {
                 logger.Verbose("Huawei Mobile Services is available.");
-                initHuawei(campaignDuration);
+                initHuawei();
             } else if(isGooglePlayServicesAvailable()) {
-                initFirebase(campaignDuration);
+                initFirebase();
             }
 
-        } catch (Exception e) {
-            logger.Error("initialization:" + e.getMessage());
-        }
-        return _instance;
-    }
-
-    public DengageManager init() {
-        try {
-             init(Constants.DEFAULT_CAMP_ATTR_DURATION);
         } catch (Exception e) {
             logger.Error("initialization:" + e.getMessage());
         }
@@ -119,8 +110,8 @@ public class DengageManager {
         }
     }
 
-    private void initHuawei(int campaignDuration) {
-        _subscription.setCampaignDuration(campaignDuration);
+    private void initHuawei() {
+        _subscription.setTokenType(Constants.FIREBASE_TOKEN_TYPE);
         _subscription.setIntegrationKey(_subscription.getHuaweiIntegrationKey());
         saveSubscription();
         HmsTokenWorker hmsTokenWorker = new HmsTokenWorker();
@@ -129,8 +120,8 @@ public class DengageManager {
         hmsAdIdWorker.executeTask();
     }
 
-    private void initFirebase(int campaignDuration) {
-        _subscription.setCampaignDuration(campaignDuration);
+    private void initFirebase() {
+        _subscription.setTokenType(Constants.HUAWEI_TOKEN_TYPE);
         _subscription.setIntegrationKey(_subscription.getFirebaseIntegrationKey());
         saveSubscription();
         FirebaseApp.initializeApp(_context);
@@ -273,7 +264,7 @@ public class DengageManager {
     /**
      * Sync user information with dEngage.
      * <p>
-     * Use to send the latest information to dEngage. If you set any property or perform a logout, you are advised to call this method.
+     * Use to s     end the latest information to dEngage. If you set any property or perform a logout, you are advised to call this method.
      * </p>
      */
     public void syncSubscription() {

@@ -41,6 +41,19 @@ class ImageDownloader {
         this.numberOfImages = items.size();
     }
 
+    ImageDownloader(Context context, String imageUrl, @NonNull OnDownloadsCompletedListener onDownloadsCompletedListener) {
+        ArrayList<CarouselItem> items = new ArrayList<>();
+        if (!TextUtils.isEmpty(imageUrl)) {
+            CarouselItem c = new CarouselItem();
+            c.setMediaUrl(imageUrl);
+            items.add(c);
+        }
+        this.carousalItems = items;
+        this.context = context;
+        this.onDownloadsCompletedListener = onDownloadsCompletedListener;
+        this.numberOfImages = items.size();
+    }
+
     private OnImageLoaderListener mImageLoaderListener = new OnImageLoaderListener() {
         @Override
         public void onError(ImageError error) {

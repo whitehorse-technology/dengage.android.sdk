@@ -30,21 +30,17 @@ public class DengageEvent {
         this._context = context;
     }
 
-    public static DengageEvent getInstance(Context context, @NonNull String referer) {
+    public static DengageEvent getInstance(Context context, String referer, int campId, int sendId) {
 
         if(_instance == null) _instance = new DengageEvent(context);
 
-        if(!TextUtils.isEmpty(referer)) {
-            _instance.sessionStart(referer);
-        } else {
-            _instance.sessionStart("");
-        }
+        _instance.sessionStart(referer, campId, sendId);
 
         return _instance;
     }
 
     public static DengageEvent getInstance(Context context) {
-        return getInstance(context, "");
+        return getInstance(context, "", 0, 0);
     }
 
     public DengageEvent setLogStatus(Boolean status) {
@@ -52,7 +48,7 @@ public class DengageEvent {
         return _instance;
     }
 
-    public void sessionStart(String referer) {
+    public void sessionStart(String referer, int campId, int sendId) {
         if(sessionStarted) return;
         try {
 
@@ -73,28 +69,10 @@ public class DengageEvent {
                     data.put("utm_term", uri.getQueryParameter("utm_term"));
             } catch (Exception ignored) { }
 
-            try {
-
-                Subscription subscription = DengageManager.getInstance(_context).getSubscription();
-
-                Calendar cal1 = Calendar.getInstance();
-                cal1.set(Calendar.HOUR, subscription.getCampaignDuration() * 24);
-                Calendar cal2 = Calendar.getInstance();
-
-                if(subscription.getCampaignDate() != null)
-                    cal2.setTime(subscription.getCampaignDate());
-
-                long diff = cal1.getTime().getTime() - cal2.getTime().getTime();
-
-                if(subscription.getDengageCampId() > 0
-                        && subscription.getDengageSendId() > 0
-                        && diff > 0
-                ) {
-                    data.put("camp_id", subscription.getDengageCampId());
-                    data.put("send_id", subscription.getDengageSendId());
-                }
-
-            } catch (Exception ignored) { }
+            if(campId > 0)
+                data.put("camp_id", campId);
+            if(sendId > 0)
+                data.put("send_id", sendId);
 
             sendDeviceEvent("session_info", data);
             sessionStarted = true;
@@ -113,27 +91,27 @@ public class DengageEvent {
     public void sendCartEvents(Map<String, Object> data, String eventType) {
         try {
             Map<String, Object> copyData = new HashMap<>(data);
-            data.remove("cartItems");
+            copyData.remove("cartItems");
             String eventId = UUID.randomUUID().toString();
 
-            if (!data.containsKey("event_type"))
-                data.remove("event_type");
-            if (!data.containsKey("event_id"))
-                data.remove("event_id");
+            if (!copyData.containsKey("event_type"))
+                copyData.remove("event_type");
+            if (!copyData.containsKey("event_id"))
+                copyData.remove("event_id");
 
-            data.put("event_type", eventType);
-            data.put("event_id", eventId);
+            copyData.put("event_type", eventType);
+            copyData.put("event_id", eventId);
 
-            sendDeviceEvent("shopping_cart_events", data);
-            if(copyData.containsKey("cartItems")) {
-                Object[] items = (Object[])copyData.get("cartItems");
+            sendDeviceEvent("shopping_cart_events", copyData);
+
+            if(data.containsKey("cartItems")) {
+                Object[] items = (Object[])data.get("cartItems");
                 for (Object obj : items) {
                     if(obj instanceof HashMap) {
                         HashMap<String, Object> product = (HashMap<String, Object>)obj;
                         product.put("event_id", eventId);
                         sendDeviceEvent("shopping_cart_events_detail", product);
                     }
-
                 }
             }
 
@@ -150,10 +128,42 @@ public class DengageEvent {
 
     public void beginCheckout(Map<String, Object> data) { sendCartEvents(data, "begin_checkout"); }
 
+    public void cancelOrder(Map<String, Object> data) {
+        Map<String, Object> copyData = new HashMap<>(data);
+        copyData.remove("cartItems");
+
+        if(copyData.containsKey("event_type"))
+            copyData.remove("event_type");
+
+        copyData.put("event_type",  "cancel");
+
+        if(copyData.containsKey("total_amount"))
+            copyData.put("total_amount",  0);
+
+        sendDeviceEvent("order_events", copyData);
+
+        if(data.containsKey("cartItems")) {
+            Object[] items = (Object[])data.get("cartItems");
+            for (Object obj : items) {
+                if(obj instanceof HashMap) {
+                    HashMap<String, Object> product = (HashMap<String, Object>) obj;
+                    if(copyData.containsKey("order_id"))
+                        product.put("order_id", copyData.get("order_id").toString());
+                    sendDeviceEvent("order_events_details", product);
+                }
+            }
+        }
+    }
+
     public void order(Map<String, Object> data) {
         Map<String, Object> copyData = new HashMap<>(data);
-        data.remove("cartItems");
-        sendDeviceEvent("order_events", data);
+        copyData.remove("cartItems");
+
+        if(!copyData.containsKey("event_type"))
+            copyData.remove("event_type");
+        copyData.put("event_type",  "order");
+
+        sendDeviceEvent("order_events", copyData);
 
         String eventId = UUID.randomUUID().toString();
         HashMap<String, Object> cartEventParams = new HashMap<>();
@@ -161,31 +171,13 @@ public class DengageEvent {
         cartEventParams.put("event_id",  eventId);
         sendDeviceEvent("shopping_cart_events", cartEventParams);
 
-        Subscription subscription = DengageManager.getInstance(_context).getSubscription();
-
-        Calendar cal1 = Calendar.getInstance();
-        cal1.set(Calendar.HOUR, subscription.getCampaignDuration() * 24);
-        Calendar cal2 = Calendar.getInstance();
-
-        if(subscription.getCampaignDate() != null)
-            cal2.setTime(subscription.getCampaignDate());
-
-        long diff = cal1.getTime().getTime() - cal2.getTime().getTime();
-
-        if(subscription.getDengageCampId() > 0
-                && subscription.getDengageSendId() > 0
-                && diff > 0
-        ) {
-            data.put("camp_id", subscription.getDengageCampId());
-            data.put("send_id", subscription.getDengageSendId());
-        }
-
-        if(copyData.containsKey("cartItems") && copyData.containsKey("order_id")) {
-            Object[] items = (Object[])copyData.get("cartItems");
+        if(data.containsKey("cartItems")) {
+            Object[] items = (Object[])data.get("cartItems");
             for (Object obj : items) {
                 if(obj instanceof HashMap) {
                     HashMap<String, Object> product = (HashMap<String, Object>) obj;
-                    product.put("order_id", copyData.get("order_id").toString());
+                    if(copyData.containsKey("order_id"))
+                        product.put("order_id", copyData.get("order_id").toString());
                     sendDeviceEvent("order_events_details", product);
                 }
             }
@@ -197,14 +189,21 @@ public class DengageEvent {
     public void sendWishListEvents(Map<String, Object> data, String eventType) {
         try {
             Map<String, Object> copyData = new HashMap<>(data);
-            data.remove("cartItems");
+            copyData.remove("cartItems");
             String eventId = UUID.randomUUID().toString();
-            data.put("event_type", eventType);
-            data.put("event_id", eventId);
-            sendDeviceEvent("wishlist_events", data);
 
-            if (copyData.containsKey("cartItems")) {
-                Object[] items = (Object[])copyData.get("cartItems");
+            if (!copyData.containsKey("event_type"))
+                copyData.remove("event_type");
+            if (!copyData.containsKey("event_id"))
+                copyData.remove("event_id");
+
+            copyData.put("event_type", eventType);
+            copyData.put("event_id", eventId);
+
+            sendDeviceEvent("wishlist_events", copyData);
+
+            if (data.containsKey("cartItems")) {
+                Object[] items = (Object[])data.get("cartItems");
                 for (Object obj : items) {
                     if (obj instanceof HashMap) {
                         HashMap<String, Object> item = (HashMap<String, Object>) obj;
