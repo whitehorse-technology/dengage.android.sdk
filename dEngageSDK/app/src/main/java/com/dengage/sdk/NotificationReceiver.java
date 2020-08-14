@@ -109,26 +109,38 @@ public class NotificationReceiver extends BroadcastReceiver {
         logger.Verbose("onRenderStart method is called.");
         final Message message = new Message(intent.getExtras());
         if(message.getNotificationType() == NotificationType.CAROUSEL) {
-            if (message.getCarouselContent() != null && message.getCarouselContent().length > 0) {
-                ImageDownloader basicDownloader = new ImageDownloader(context, message.getCarouselContent(),
-                        new ImageDownloader.OnDownloadsCompletedListener() {
-                            @Override
-                            public void onComplete(CarouselItem[] items) {
-                                message.setCarouselContent(items);
-                                intent.putExtra("RAW_DATA", message.toJson());
-                                onCarouselRender(context, intent, message);
-                            }
-                        });
-                basicDownloader.startAllDownloads();
-            }
+            logger.Verbose("This is a carousel notification");
+            new CarouselDownloader(context, message.getCarouselContent(),
+                    new CarouselDownloader.OnDownloadsCompletedListener() {
+                        @Override
+                        public void onComplete(CarouselItem[] items) {
+                            message.setCarouselContent(items);
+                            intent.putExtra("RAW_DATA", message.toJson());
+                            onCarouselNotificationRender(context, intent, message);
+                        }
+                    }).start();
         } else if(message.getNotificationType() == NotificationType.RICH) {
-            onRender(context, intent, message);
+            logger.Verbose("This is a rich notification");
+            new ImageDownloader(message.getMediaUrl(), new ImageDownloader.OnImageLoaderListener() {
+                @Override
+                public void onError(ImageDownloader.ImageError error) {
+                    logger.Error("Image Download Error: "+ error.getMessage());
+                }
+                @Override
+                public void onComplete(Bitmap bitmap) {
+                    logger.Verbose("Image downloaded.");
+                    NotificationCompat.Builder notificationBuilder = getNotificationBuilder(context, intent, message);
+                    onRichNotificationRender(context, intent, message, bitmap, notificationBuilder);
+                }
+            }).start();
         } else {
-            onRender(context, intent, message);
+            logger.Verbose("This is a text notification");
+            NotificationCompat.Builder notificationBuilder = getNotificationBuilder(context, intent, message);
+            onTextNotificationRender(context, intent, message, notificationBuilder);
         }
     }
 
-    protected void onRender(Context context, Intent intent, Message message) {
+    private NotificationCompat.Builder getNotificationBuilder(Context context, Intent intent, Message message) {
         Bundle extras = intent.getExtras();
 
         Random random = new Random();
@@ -202,16 +214,17 @@ public class NotificationReceiver extends BroadcastReceiver {
                 notificationBuilder.addAction(icon, button.getText(), btnPendingIntent);
             }
         }
+        return notificationBuilder;
+    }
 
-        if(message.getNotificationType() == NotificationType.RICH) {
-            NotificationCompat.Style style;
-            Bitmap image = getBitmapFromUrl(message.getMediaUrl());
-            if (image != null) {
-                notificationBuilder.setLargeIcon(image);
-                style = new NotificationCompat.BigPictureStyle()
-                        .bigPicture(image);
-                notificationBuilder.setStyle(style);
-            }
+    protected void onRichNotificationRender(Context context, Intent intent, Message message, Bitmap bitmap, NotificationCompat.Builder notificationBuilder) {
+
+        NotificationCompat.Style style;
+        if (bitmap != null) {
+            notificationBuilder.setLargeIcon(bitmap);
+            style = new NotificationCompat.BigPictureStyle()
+                    .bigPicture(bitmap);
+            notificationBuilder.setStyle(style);
         }
 
         NotificationManager manager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -221,11 +234,19 @@ public class NotificationReceiver extends BroadcastReceiver {
         }
     }
 
-    protected void onCarouselRender(Context context, Intent intent, Message message) {
+    protected void onTextNotificationRender(Context context, Intent intent, Message message, NotificationCompat.Builder notificationBuilder) {
+        NotificationManager manager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+        Notification notification = notificationBuilder.build();
+        if (manager != null) {
+            manager.notify(message.getMessageSource(), message.getMessageId(), notification);
+        }
+    }
+
+    protected void onCarouselNotificationRender(Context context, Intent intent, Message message) {
 
     }
 
-    protected void onCarouselReRender(Context context, Intent intent, Message message) {
+    protected void onCarouselNotificationReRender(Context context, Intent intent, Message message) {
 
     }
 
@@ -246,8 +267,6 @@ public class NotificationReceiver extends BroadcastReceiver {
                 message = Message.fromJson(rawJson);
 
             uri = extras.getString("targetUrl");
-
-            DengageEvent.getInstance(context, uri, message.getDengageCampId(), message.getDengageSendId());
 
             manager.sendOpenEvent("", "", message);
 
@@ -295,7 +314,6 @@ public class NotificationReceiver extends BroadcastReceiver {
 
             uri = extras.getString("targetUrl");
 
-            DengageEvent.getInstance(context, uri, message.getDengageCampId(), message.getDengageSendId());
         } else {
             logger.Debug("No extra data for action.");
         }
@@ -340,17 +358,15 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         if(navigation.equals("")) {
 
-            DengageEvent.getInstance(context, uri, message.getDengageCampId(), message.getDengageSendId());
-
             manager.sendOpenEvent("", id, new Message(extras));
 
             clearNotification(context, message);
             launchActivity(context, intent, uri);
 
         } else if(navigation.equals("left")) {
-            onCarouselReRender(context, intent, message);
+            onCarouselNotificationRender(context, intent, message);
         } else if(navigation.equals("right")) {
-            onCarouselReRender(context, intent, message);
+            onCarouselNotificationRender(context, intent, message);
         }
     }
 
@@ -479,7 +495,4 @@ public class NotificationReceiver extends BroadcastReceiver {
             return null;
         }
     }
-
-
-
 }

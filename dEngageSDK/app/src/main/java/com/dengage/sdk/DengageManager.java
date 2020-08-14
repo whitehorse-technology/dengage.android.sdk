@@ -318,6 +318,9 @@ public class DengageManager {
                 openSignal.setItemId(itemId);
                 RequestAsync req = new RequestAsync(openSignal);
                 req.executeTask();
+
+                // send session start
+                DengageEvent.getInstance(this._context, message.getTargetUrl(), message.getCampaignId(), message.getSendId());
             }
 
         } catch (Exception e) {

@@ -2,18 +2,11 @@ package com.dengage.sdk;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
-import android.os.Bundle;
 import android.text.TextUtils;
-
-import androidx.annotation.NonNull;
-
 import com.dengage.sdk.models.Event;
 import com.dengage.sdk.models.Session;
 import com.dengage.sdk.models.Subscription;
-
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -49,7 +42,7 @@ public class DengageEvent {
     }
 
     public void sessionStart(String referer, int campId, int sendId) {
-        if(sessionStarted) return;
+        if(sessionStarted && (campId <= 0 && sendId <= 0)) return;
         try {
 
             HashMap<String, Object> data = new HashMap<>();
