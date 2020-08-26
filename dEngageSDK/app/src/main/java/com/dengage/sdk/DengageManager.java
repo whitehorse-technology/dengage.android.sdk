@@ -320,7 +320,7 @@ public class DengageManager {
                 req.executeTask();
 
                 // send session start
-                DengageEvent.getInstance(this._context, message.getTargetUrl(), message.getCampaignId(), message.getSendId());
+                DengageEvent.getInstance(this._context, message.getTargetUrl());
             }
 
         } catch (Exception e) {

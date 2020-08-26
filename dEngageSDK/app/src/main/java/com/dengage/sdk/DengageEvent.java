@@ -23,17 +23,17 @@ public class DengageEvent {
         this._context = context;
     }
 
-    public static DengageEvent getInstance(Context context, String referer, int campId, int sendId) {
+    public static DengageEvent getInstance(Context context, String referer) {
 
         if(_instance == null) _instance = new DengageEvent(context);
 
-        _instance.sessionStart(referer, campId, sendId);
+        _instance.sessionStart(referer);
 
         return _instance;
     }
 
     public static DengageEvent getInstance(Context context) {
-        return getInstance(context, "", 0, 0);
+        return getInstance(context, "");
     }
 
     public DengageEvent setLogStatus(Boolean status) {
@@ -41,15 +41,15 @@ public class DengageEvent {
         return _instance;
     }
 
-    public void sessionStart(String referer, int campId, int sendId) {
-        if(sessionStarted && (campId <= 0 && sendId <= 0)) return;
+    public void sessionStart(String referer) {
+        if(sessionStarted) return;
         try {
 
             HashMap<String, Object> data = new HashMap<>();
             data.put("referer", referer);
 
             try {
-                Uri uri = Uri.parse( );
+                Uri uri = Uri.parse(referer);
                 if (uri.getQueryParameter("utm_source") != null)
                     data.put("utm_source", uri.getQueryParameter("utm_source"));
                 if (uri.getQueryParameter("utm_medium") != null)
@@ -60,12 +60,16 @@ public class DengageEvent {
                     data.put("utm_content", uri.getQueryParameter("utm_content"));
                 if (uri.getQueryParameter("utm_term") != null)
                     data.put("utm_term", uri.getQueryParameter("utm_term"));
-            } catch (Exception ignored) { }
+                if (uri.getQueryParameter("gclid") != null)
+                    data.put("gclid", uri.getQueryParameter("gclid"));
+                if (uri.getQueryParameter("dn_channel") != null)
+                    data.put("channel", uri.getQueryParameter("dn_channel"));
+                if (uri.getQueryParameter("dn_channel") != null)
+                    data.put("send_id", uri.getQueryParameter("dn_send_id"));
+                if (uri.getQueryParameter("dn_camp_id") != null)
+                    data.put("camp_id", uri.getQueryParameter("dn_camp_id"));
 
-            if(campId > 0)
-                data.put("camp_id", campId);
-            if(sendId > 0)
-                data.put("send_id", sendId);
+            } catch (Exception ignored) { }
 
             sendDeviceEvent("session_info", data);
             sessionStarted = true;
