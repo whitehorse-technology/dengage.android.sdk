@@ -49,7 +49,7 @@ public class DengageEvent {
             data.put("referer", referer);
 
             try {
-                Uri uri = Uri.parse(referer);
+                Uri uri = Uri.parse( );
                 if (uri.getQueryParameter("utm_source") != null)
                     data.put("utm_source", uri.getQueryParameter("utm_source"));
                 if (uri.getQueryParameter("utm_medium") != null)
@@ -142,7 +142,7 @@ public class DengageEvent {
                     HashMap<String, Object> product = (HashMap<String, Object>) obj;
                     if(copyData.containsKey("order_id"))
                         product.put("order_id", copyData.get("order_id").toString());
-                    sendDeviceEvent("order_events_details", product);
+                    sendDeviceEvent("order_events_detail", product);
                 }
             }
         }
@@ -171,7 +171,7 @@ public class DengageEvent {
                     HashMap<String, Object> product = (HashMap<String, Object>) obj;
                     if(copyData.containsKey("order_id"))
                         product.put("order_id", copyData.get("order_id").toString());
-                    sendDeviceEvent("order_events_details", product);
+                    sendDeviceEvent("order_events_detail", product);
                 }
             }
         }

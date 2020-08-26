@@ -116,7 +116,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                         public void onComplete(CarouselItem[] items) {
                             message.setCarouselContent(items);
                             intent.putExtra("RAW_DATA", message.toJson());
-                            onCarouselNotificationRender(context, intent, message);
+                            onCarouselRender(context, intent, message);
                         }
                     }).start();
         } else if(message.getNotificationType() == NotificationType.RICH) {
@@ -242,11 +242,11 @@ public class NotificationReceiver extends BroadcastReceiver {
         }
     }
 
-    protected void onCarouselNotificationRender(Context context, Intent intent, Message message) {
+    protected void onCarouselRender(Context context, Intent intent, Message message) {
 
     }
 
-    protected void onCarouselNotificationReRender(Context context, Intent intent, Message message) {
+    protected void onCarouselReRender(Context context, Intent intent, Message message) {
 
     }
 
@@ -364,9 +364,9 @@ public class NotificationReceiver extends BroadcastReceiver {
             launchActivity(context, intent, uri);
 
         } else if(navigation.equals("left")) {
-            onCarouselNotificationRender(context, intent, message);
+            onCarouselRender(context, intent, message);
         } else if(navigation.equals("right")) {
-            onCarouselNotificationRender(context, intent, message);
+            onCarouselRender(context, intent, message);
         }
     }
 
