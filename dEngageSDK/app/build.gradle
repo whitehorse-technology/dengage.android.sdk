@@ -38,7 +38,6 @@ dependencies {
     implementation 'com.huawei.hms:push:4.0.3.301'
     implementation 'com.huawei.hms:ads-identifier:3.4.28.305'
     implementation 'com.google.code.gson:gson:2.8.6'
-    implementation files('libs/com.dengage.sdk.jar')
 }
 
 repositories {
