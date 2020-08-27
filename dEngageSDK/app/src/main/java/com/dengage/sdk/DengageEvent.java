@@ -186,7 +186,7 @@ public class DengageEvent {
     public void sendWishListEvents(Map<String, Object> data, String eventType) {
         try {
             Map<String, Object> copyData = new HashMap<>(data);
-            copyData.remove("cartItems");
+            copyData.remove("items");
             String eventId = UUID.randomUUID().toString();
 
             if (!copyData.containsKey("event_type"))
@@ -199,8 +199,8 @@ public class DengageEvent {
 
             sendDeviceEvent("wishlist_events", copyData);
 
-            if (data.containsKey("cartItems")) {
-                Object[] items = (Object[])data.get("cartItems");
+            if (data.containsKey("items")) {
+                Object[] items = (Object[])data.get("items");
                 for (Object obj : items) {
                     if (obj instanceof HashMap) {
                         HashMap<String, Object> item = (HashMap<String, Object>) obj;
