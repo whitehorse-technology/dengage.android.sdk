@@ -63,6 +63,18 @@ public class DengageManager {
         return _instance;
     }
 
+    public DengageManager setDeviceId(String deviceId) {
+        logger.Verbose("setDeviceId method is called");
+        try {
+            _subscription.setDeviceId(deviceId);
+            logger.Debug("deviceId: "+ deviceId);
+            saveSubscription();
+        } catch (Exception e) {
+            logger.Error("setContactKey: "+ e.getMessage());
+        }
+        return _instance;
+    }
+
     /**
      * FirebaseApp Initiator method
      * <p>
@@ -111,7 +123,7 @@ public class DengageManager {
     }
 
     private void initHuawei() {
-        _subscription.setTokenType(Constants.FIREBASE_TOKEN_TYPE);
+        _subscription.setTokenType(Constants.HUAWEI_TOKEN_TYPE);
         _subscription.setIntegrationKey(_subscription.getHuaweiIntegrationKey());
         saveSubscription();
         HmsTokenWorker hmsTokenWorker = new HmsTokenWorker();
@@ -121,7 +133,7 @@ public class DengageManager {
     }
 
     private void initFirebase() {
-        _subscription.setTokenType(Constants.HUAWEI_TOKEN_TYPE);
+        _subscription.setTokenType(Constants.FIREBASE_TOKEN_TYPE);
         _subscription.setIntegrationKey(_subscription.getFirebaseIntegrationKey());
         saveSubscription();
         FirebaseApp.initializeApp(_context);
@@ -246,7 +258,8 @@ public class DengageManager {
         logger.Verbose("saveSubscription method is called");
         try {
 
-            _subscription.setDeviceId(Utils.getDeviceId(_context));
+            if(TextUtils.isEmpty(_subscription.getDeviceId()))
+                _subscription.setDeviceId(Utils.getDeviceId(_context));
             _subscription.setCarrierId(Utils.carrier(_context));
             _subscription.setAppVersion(Utils.appVersion(_context));
             _subscription.setSdkVersion(com.dengage.sdk.BuildConfig.VERSION_NAME);
