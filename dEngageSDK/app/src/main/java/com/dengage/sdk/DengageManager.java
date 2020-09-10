@@ -23,6 +23,8 @@ import com.huawei.agconnect.config.AGConnectServicesConfig;
 import com.huawei.hms.aaid.HmsInstanceId;
 import com.huawei.hms.api.HuaweiApiAvailability;
 
+import org.json.JSONObject;
+
 import java.util.Map;
 
 public class DengageManager {
@@ -61,6 +63,18 @@ public class DengageManager {
         return _instance;
     }
 
+    public DengageManager setDeviceId(String deviceId) {
+        logger.Verbose("setDeviceId method is called");
+        try {
+            _subscription.setDeviceId(deviceId);
+            logger.Debug("deviceId: "+ deviceId);
+            saveSubscription();
+        } catch (Exception e) {
+            logger.Error("setContactKey: "+ e.getMessage());
+        }
+        return _instance;
+    }
+
     /**
      * FirebaseApp Initiator method
      * <p>
@@ -91,14 +105,25 @@ public class DengageManager {
     }
 
     public boolean isGooglePlayServicesAvailable() {
-        return GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(_context) == com.google.android.gms.common.ConnectionResult.SUCCESS;
+        try {
+            Class.forName("com.google.android.gms.common.GoogleApiAvailability");
+            return GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(_context) == com.google.android.gms.common.ConnectionResult.SUCCESS;
+        } catch (Exception ignored) {
+            return false;
+        }
     }
 
     public boolean isHuaweiMobileServicesAvailable() {
-        return HuaweiApiAvailability.getInstance().isHuaweiMobileServicesAvailable(_context) == com.huawei.hms.api.ConnectionResult.SUCCESS;
+        try {
+            Class.forName("com.huawei.hms.api.HuaweiApiAvailability");
+            return HuaweiApiAvailability.getInstance().isHuaweiMobileServicesAvailable(_context) == com.huawei.hms.api.ConnectionResult.SUCCESS;
+        } catch (Exception ignored) {
+            return false;
+        }
     }
 
     private void initHuawei() {
+        _subscription.setTokenType(Constants.HUAWEI_TOKEN_TYPE);
         _subscription.setIntegrationKey(_subscription.getHuaweiIntegrationKey());
         saveSubscription();
         HmsTokenWorker hmsTokenWorker = new HmsTokenWorker();
@@ -108,6 +133,7 @@ public class DengageManager {
     }
 
     private void initFirebase() {
+        _subscription.setTokenType(Constants.FIREBASE_TOKEN_TYPE);
         _subscription.setIntegrationKey(_subscription.getFirebaseIntegrationKey());
         saveSubscription();
         FirebaseApp.initializeApp(_context);
@@ -215,7 +241,7 @@ public class DengageManager {
     }
 
 
-    private void buildSubscription() {
+    public void buildSubscription() {
         try {
             if (Utils.hasSubscription(_context)) {
                  _subscription = new Gson().fromJson(Utils.getSubscription(_context), Subscription.class);
@@ -228,11 +254,12 @@ public class DengageManager {
         }
     }
 
-    private void saveSubscription() {
+    public void saveSubscription() {
         logger.Verbose("saveSubscription method is called");
         try {
 
-            _subscription.setDeviceId(Utils.getDeviceId(_context));
+            if(TextUtils.isEmpty(_subscription.getDeviceId()))
+                _subscription.setDeviceId(Utils.getDeviceId(_context));
             _subscription.setCarrierId(Utils.carrier(_context));
             _subscription.setAppVersion(Utils.appVersion(_context));
             _subscription.setSdkVersion(com.dengage.sdk.BuildConfig.VERSION_NAME);
@@ -250,7 +277,7 @@ public class DengageManager {
     /**
      * Sync user information with dEngage.
      * <p>
-     * Use to send the latest information to dEngage. If you set any property or perform a logout, you are advised to call this method.
+     * Use to s     end the latest information to dEngage. If you set any property or perform a logout, you are advised to call this method.
      * </p>
      */
     public void syncSubscription() {
@@ -304,6 +331,9 @@ public class DengageManager {
                 openSignal.setItemId(itemId);
                 RequestAsync req = new RequestAsync(openSignal);
                 req.executeTask();
+
+                // send session start
+                DengageEvent.getInstance(this._context, message.getTargetUrl());
             }
 
         } catch (Exception e) {
@@ -503,10 +533,13 @@ public class DengageManager {
 
     public void onMessageReceived(Map<String, String> data) {
         logger.Verbose("onMessageReceived method is called.");
+        logger.Verbose("Raw Message: "+ new JSONObject(data).toString());
+
         if( (data != null && data.size() > 0)) {
             Message pushMessage = new Message(data);
             String json = pushMessage.toJson();
             logger.Verbose("Message Json: "+ json);
+
             String source = pushMessage.getMessageSource();
             if (Constants.MESSAGE_SOURCE.equals(source)) {
                 logger.Debug("There is a message that received from dEngage");

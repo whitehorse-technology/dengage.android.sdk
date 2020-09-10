@@ -3,7 +3,6 @@ package com.dengage.sdk;
 import android.os.AsyncTask;
 import android.os.Build;
 
-import com.dengage.sdk.models.DenEvent;
 import com.dengage.sdk.models.Event;
 import com.dengage.sdk.models.ModelBase;
 import com.dengage.sdk.models.Open;
@@ -13,9 +12,16 @@ import com.dengage.sdk.models.TransactionalOpen;
 class RequestAsync extends AsyncTask<Void, Void, Void> {
 
     private ModelBase model;
+    private String url;
 
     RequestAsync(ModelBase model) {
         this.model = model;
+    }
+
+    RequestAsync
+            (String url, ModelBase model) {
+        this.model = model;
+        this.url = url;
     }
 
     @Override
@@ -35,11 +41,7 @@ class RequestAsync extends AsyncTask<Void, Void, Void> {
         }
 
         else if(this.model instanceof Event) {
-            req.sendEvent((Event) this.model);
-        }
-
-        else  if(this.model instanceof DenEvent) {
-            req.sendEvent((DenEvent) this.model);
+            req.sendEvent(url, (Event) this.model);
         }
 
         return null;

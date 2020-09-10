@@ -49,6 +49,12 @@ public class Message {
     @SerializedName("sound")
     private String sound = "";
 
+    @SerializedName("dengageCampId")
+    private int campaignId = 0;
+
+    @SerializedName("dengageSendId")
+    private int sendId = 0;
+
     @SerializedName("notificationType")
     private NotificationType notificationType = NotificationType.RICH;
 
@@ -85,6 +91,12 @@ public class Message {
 
         if (bundle.get("messageId") != null && !TextUtils.isEmpty(bundle.get("messageId")))
             messageId = Integer.parseInt(bundle.get("messageId"));
+
+        if (bundle.get("dengageCampId") != null && !TextUtils.isEmpty(bundle.get("dengageCampId")))
+            campaignId = Integer.parseInt(bundle.get("dengageCampId"));
+
+        if (bundle.get("dengageSendId") != null && !TextUtils.isEmpty(bundle.get("dengageSendId")))
+            sendId = Integer.parseInt(bundle.get("dengageSendId"));
 
         if (bundle.get("messageSource") != null && !TextUtils.isEmpty(bundle.get("messageSource")))
             messageSource = bundle.get("messageSource");
@@ -182,6 +194,14 @@ public class Message {
 
     public String getSound() {
         return this.sound;
+    }
+
+    public int getSendId() {
+        return sendId;
+    }
+
+    public int getCampaignId() {
+        return campaignId;
     }
 
     public CustomParam[] getCustomParams() {

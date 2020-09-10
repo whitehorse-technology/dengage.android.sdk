@@ -6,125 +6,47 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.text.TextUtils;
-import android.util.Log;
+
 import androidx.annotation.NonNull;
-
-import com.dengage.sdk.models.CarouselItem;
-
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
 
 class ImageDownloader {
 
-    private Logger logger = Logger.getInstance();
-    private Context context;
-    private ArrayList<CarouselItem> carousalItems;
-    private OnDownloadsCompletedListener onDownloadsCompletedListener;
-    private int numberOfImages;
-    private static int currentDownloadTaskIndex = 0;
-    private CarouselItem currentItem;
+    private String imageUrl;
+    private OnImageLoaderListener mImageLoaderListener;
 
-    ImageDownloader(Context context, CarouselItem[] carousalItems, @NonNull OnDownloadsCompletedListener onDownloadsCompletedListener) {
-        ArrayList<CarouselItem> items = new ArrayList<>();
-        for (CarouselItem item : carousalItems) {
-            if (!TextUtils.isEmpty(item.getMediaUrl())) {
-                items.add(item);
-            }
-        }
-        this.carousalItems = items;
-        this.context = context;
-        this.onDownloadsCompletedListener = onDownloadsCompletedListener;
-        this.numberOfImages = items.size();
-    }
-
-    private OnImageLoaderListener mImageLoaderListener = new OnImageLoaderListener() {
-        @Override
-        public void onError(ImageError error) {
-            updateDownLoad(null);
-        }
-
-        @Override
-        public void onComplete(String resultPath) {
-            updateDownLoad(resultPath);
-        }
-    };
-
-    private void updateDownLoad(String filePath) {
-        for (int i = (currentDownloadTaskIndex + 1); i < carousalItems.size(); i++) {
-            if (!TextUtils.isEmpty(carousalItems.get(i).getMediaUrl())) {
-                currentDownloadTaskIndex = i;
-                currentItem = carousalItems.get(i);
-                downloadImage(currentItem.getMediaUrl());
-                break;
-            }
-        }
-        --numberOfImages;
-        if (numberOfImages < 1 || currentDownloadTaskIndex > carousalItems.size() - 1) {
-            onDownloadsCompletedListener.onComplete(carousalItems.toArray(new CarouselItem[0]));
-        }
-    }
-
-    void startAllDownloads() {
-        if (carousalItems != null && carousalItems.size() > 0) {
-            for (int i = 0; i < carousalItems.size(); i++) {
-                if (!TextUtils.isEmpty(carousalItems.get(i).getMediaUrl())) {
-                    currentDownloadTaskIndex = i;
-                    currentItem = carousalItems.get(i);
-                    downloadImage(currentItem.getMediaUrl());
-                    break;
-                }
-            }
-        }
+    public ImageDownloader(String imageUrl, @NonNull OnImageLoaderListener mImageLoaderListener) {
+        this.imageUrl = imageUrl;
+        this.mImageLoaderListener = mImageLoaderListener;
     }
 
     public interface OnImageLoaderListener {
-        /**
-         * Invoked if an error has occurred and thus
-         * the download did not complete
-         *
-         * @param error the occurred error
-         */
         void onError(ImageError error);
-
-        /**
-         * Invoked after the image has been successfully downloaded
-         *
-         * @param resultPath the downloaded image
-         */
-        void onComplete(String resultPath);
+        void onComplete(Bitmap bitmap);
     }
 
-    public interface OnDownloadsCompletedListener {
-
-        /**
-         * invoked after all files are downloaded
-         */
-        void onComplete(CarouselItem[] items);
+    public void start() {
+        if(!TextUtils.isEmpty(this.imageUrl)) {
+            download(this.imageUrl);
+        } else {
+            ImageError error = new ImageError("imageUrl is empty!")
+                    .setErrorCode(ImageError.ERROR_GENERAL_EXCEPTION);
+            this.mImageLoaderListener.onError(error);
+        }
     }
 
     @SuppressLint("StaticFieldLeak")
-    private void downloadImage(@NonNull final String imageUrl) {
-
-        new AsyncTask<Void, Integer, String>() {
+    private void download(@NonNull final String imageUrl) {
+        new AsyncTask<String, Bitmap, Bitmap>() {
 
             private ImageError error;
-            private long currentTimeInMillis;
-
 
             @Override
-            protected void onCancelled() {
-                mImageLoaderListener.onError(error);
-            }
-
-            @Override
-            protected String doInBackground(Void... params) {
-                currentTimeInMillis = System.currentTimeMillis();
-                Bitmap bitmap;
-                String imagePath = null;
+            protected Bitmap doInBackground(String... strings) {
+                Bitmap bitmap = null;
                 HttpURLConnection connection = null;
                 InputStream is = null;
                 ByteArrayOutputStream out = null;
@@ -132,12 +54,6 @@ class ImageDownloader {
                     connection = (HttpURLConnection) new URL(imageUrl).openConnection();
                     is = connection.getInputStream();
                     bitmap = BitmapFactory.decodeStream(is);
-                    if (bitmap != null) {
-                        int sampleSize = Utils.calculateInSampleSize(bitmap.getWidth(), bitmap.getHeight(), 250, 250);
-                        Bitmap bit = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() / sampleSize, bitmap.getHeight() / sampleSize, false);
-                        imagePath = Utils.saveBitmapToInternalStorage(context, bit, Constants.CAROUSAL_IMAGE_BEGINNING + currentTimeInMillis);
-                    }
-
                 } catch (Throwable e) {
                     if (!this.isCancelled()) {
                         error = new ImageError(e).setErrorCode(ImageError.ERROR_GENERAL_EXCEPTION);
@@ -157,21 +73,20 @@ class ImageDownloader {
                         e.printStackTrace();
                     }
                 }
-                return imagePath;
+                return bitmap;
             }
 
             @Override
-            protected void onPostExecute(String result) {
+            protected void onCancelled() {
+                mImageLoaderListener.onError(error);
+            }
+
+            @Override
+            protected void onPostExecute(Bitmap result) {
                 if (result == null) {
-                    logger.Debug("factory returned a null result");
                     mImageLoaderListener.onError(new ImageError("downloaded file could not be decoded as bitmap")
                             .setErrorCode(ImageError.ERROR_DECODE_FAILED));
                 } else {
-                    logger.Debug("download complete");
-                    if (currentItem != null) {
-                        currentItem.setMediaFileLocation(result);
-                        currentItem.setMediaFileName(Constants.CAROUSAL_IMAGE_BEGINNING + currentTimeInMillis);
-                    }
                     mImageLoaderListener.onComplete(result);
                 }
                 System.gc();
