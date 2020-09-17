@@ -364,9 +364,9 @@ public class NotificationReceiver extends BroadcastReceiver {
             launchActivity(context, intent, uri);
 
         } else if(navigation.equals("left")) {
-            onCarouselRender(context, intent, message);
+            onCarouselReRender(context, intent, message);
         } else if(navigation.equals("right")) {
-            onCarouselRender(context, intent, message);
+            onCarouselReRender(context, intent, message);
         }
     }
 
