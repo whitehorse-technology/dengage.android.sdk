@@ -14,9 +14,8 @@ class Request  {
 
     private Logger logger = Logger.getInstance();
 
-    void sendSubscription(Subscription model) {
+    void sendSubscription(String url, Subscription model) {
         try {
-            String url = Constants.SUBSCRIPTION_API_ENDPOINT;
             String json = model.toJson();
             String userAgent = model.getUserAgent();
             logger.Verbose("sendSubscription: " + url + " with the json: "+ json);
@@ -26,9 +25,8 @@ class Request  {
         }
     }
 
-    void sendOpen(Open model) {
+    void sendOpen(String url, Open model) {
         try {
-            String url = Constants.OPEN_API_ENDPOINT;
             String json = model.toJson();
             String userAgent = model.getUserAgent();
             logger.Verbose("sendOpen: " + url + " with the json: "+ json);
@@ -38,9 +36,8 @@ class Request  {
         }
     }
 
-    void sendTransactionalOpen(TransactionalOpen model) {
+    void sendTransactionalOpen(String url, TransactionalOpen model) {
         try {
-            String url = Constants.TRANSACTIONAL_OPEN_API_ENDPOINT;
             String json = model.toJson();
             String userAgent = model.getUserAgent();
             logger.Verbose("sendTransactionalOpen: " + url + " with the json: "+ json);

@@ -9,10 +9,12 @@ public class Constants {
     public static final String SUBSCRIPTION_KEY            = "dengage_subscription";
     public static final String MESSAGE_SOURCE              = "DENGAGE";
     public static final String DEN_DEVICE_UNIQUE_ID        = "___DEN_DEVICE_UNIQUE_ID___";
-    public static final String OPEN_API_ENDPOINT           = "https://push.dengage.com/api/mobile/open";
-    public static final String TRANSACTIONAL_OPEN_API_ENDPOINT     = "https://push.dengage.com/api/transactional/mobile/open";
-    public static final String SUBSCRIPTION_API_ENDPOINT           = "https://push.dengage.com/api/device/subscription";
-    public static final String EVENT_API_ENDPOINT          = "https://event.dengage.com/api/event";
+    public static final String DEN_PUSH_API_URI           = "https://push.dengage.com";
+    public static final String DEN_EVENT_API_URI           = "https://event.dengage.com";
+    public static final String OPEN_API_ENDPOINT           = "/api/mobile/open";
+    public static final String TRANSACTIONAL_OPEN_API_ENDPOINT     = "/api/transactional/mobile/open";
+    public static final String SUBSCRIPTION_API_ENDPOINT           = "/api/device/subscription";
+    public static final String EVENT_API_ENDPOINT          = "/api/event";
     public static final String CAROUSAL_IMAGE_BEGINNING = "CarousalImage";
     public static final String PUSH_ITEM_CLICK_EVENT = "com.dengage.push.intent.ITEM_CLICK";
     public static final String PUSH_RECEIVE_EVENT = "com.dengage.push.intent.RECEIVE";
