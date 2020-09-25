@@ -283,7 +283,13 @@ public class DengageManager {
     public void syncSubscription() {
         logger.Verbose("syncSubscription method is called");
         try {
-            RequestAsync req = new RequestAsync(_subscription);
+            String baseApiUri = Utils.getMetaData(_context, "den_push_api_url");
+            if (TextUtils.isEmpty(baseApiUri))
+                baseApiUri = Constants.DEN_PUSH_API_URI;
+
+            baseApiUri += Constants.SUBSCRIPTION_API_ENDPOINT;
+
+            RequestAsync req = new RequestAsync(baseApiUri, _subscription);
             req.executeTask();
         } catch (Exception e) {
             logger.Error("syncSubscription: "+ e.getMessage());
@@ -311,6 +317,13 @@ public class DengageManager {
             if (!Constants.MESSAGE_SOURCE.equals(source))  return;
 
             if (!TextUtils.isEmpty(message.getTransactionId())) {
+
+                String baseApiUri = Utils.getMetaData(_context, "den_push_api_url");
+                if (TextUtils.isEmpty(baseApiUri))
+                    baseApiUri = Constants.DEN_PUSH_API_URI;
+
+                baseApiUri += Constants.TRANSACTIONAL_OPEN_API_ENDPOINT;
+
                 TransactionalOpen openSignal = new TransactionalOpen();
                 openSignal.setUserAgent(Utils.getUserAgent(_context));
                 openSignal.setIntegrationKey(_subscription.getIntegrationKey());
@@ -319,9 +332,16 @@ public class DengageManager {
                 openSignal.setMessageDetails(message.getMessageDetails());
                 openSignal.setButtonId(buttonId);
                 openSignal.setItemId(itemId);
-                RequestAsync req = new RequestAsync(openSignal);
+                RequestAsync req = new RequestAsync(baseApiUri, openSignal);
                 req.executeTask();
             } else {
+
+                String baseApiUri = Utils.getMetaData(_context, "den_push_api_url");
+                if (TextUtils.isEmpty(baseApiUri))
+                    baseApiUri = Constants.DEN_PUSH_API_URI;
+
+                baseApiUri += Constants.OPEN_API_ENDPOINT;
+
                 Open openSignal = new Open();
                 openSignal.setUserAgent(Utils.getUserAgent(_context));
                 openSignal.setIntegrationKey(_subscription.getIntegrationKey());
@@ -329,7 +349,7 @@ public class DengageManager {
                 openSignal.setMessageDetails(message.getMessageDetails());
                 openSignal.setButtonId(buttonId);
                 openSignal.setItemId(itemId);
-                RequestAsync req = new RequestAsync(openSignal);
+                RequestAsync req = new RequestAsync(baseApiUri, openSignal);
                 req.executeTask();
 
                 // send session start
@@ -365,11 +385,7 @@ public class DengageManager {
     public void sendCustomEvent(String tableName, String key, Map<String,Object> data) {
         logger.Verbose("sendCustomEvent method is called");
         try {
-            getSubscription();
-            Event event = new Event(_subscription.getIntegrationKey(), tableName, key, data);
-            logger.Debug("sendCustomEvent: " + event.toJson());
-            RequestAsync req = new RequestAsync(event);
-            req.executeTask();
+            DengageEvent.getInstance(_context).sendCustomEvent(tableName, key, data);
         } catch (Exception e) {
             logger.Error("sendCustomEvent: "+ e.getMessage());
         }
@@ -386,11 +402,7 @@ public class DengageManager {
     public void sendDeviceEvent(String tableName, Map<String, Object> data) {
         logger.Verbose("sendDeviceEvent method is called");
         try {
-            getSubscription();
-            Event event = new Event(_subscription.getIntegrationKey(), tableName, _subscription.getDeviceId(), data);
-            logger.Debug("sendDeviceEvent: " + event.toJson());
-            RequestAsync req = new RequestAsync(event);
-            req.executeTask();
+           DengageEvent.getInstance(_context).sendDeviceEvent(tableName, data);
         } catch (Exception e) {
             logger.Error("sendDeviceEvent: "+ e.getMessage());
         }

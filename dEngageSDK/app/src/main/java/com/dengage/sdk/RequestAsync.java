@@ -29,15 +29,15 @@ class RequestAsync extends AsyncTask<Void, Void, Void> {
         Request req = new Request();
 
         if(this.model instanceof Subscription) {
-            req.sendSubscription((Subscription) this.model);
+            req.sendSubscription(url, (Subscription) this.model);
         }
 
         else if(this.model instanceof Open) {
-            req.sendOpen((Open) this.model);
+            req.sendOpen(url, (Open) this.model);
         }
 
         else if(this.model instanceof TransactionalOpen) {
-            req.sendTransactionalOpen((TransactionalOpen) this.model);
+            req.sendTransactionalOpen(url, (TransactionalOpen) this.model);
         }
 
         else if(this.model instanceof Event) {

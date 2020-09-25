@@ -221,15 +221,20 @@ public class DengageEvent {
     public void sendCustomEvent(String tableName, String key, Map<String, Object> data) {
         logger.Verbose("sendCustomEvent method is called");
         try {
+
+            String baseApiUri = Utils.getMetaData(_context, "den_event_api_url");
+            if (TextUtils.isEmpty(baseApiUri))
+                baseApiUri = Constants.DEN_EVENT_API_URI;
+
+            baseApiUri += Constants.EVENT_API_ENDPOINT;
+
             Subscription subscription = DengageManager.getInstance(_context).getSubscription();
             String sessionId = Session.getSession().getSessionId();
-            String endpoint = Utils.getMetaData(_context, "den_event_api_endpoint");
-            if (TextUtils.isEmpty(endpoint))
-                endpoint = Constants.EVENT_API_ENDPOINT;
+
             data.put("session_id", sessionId);
             Event event = new Event(subscription.getIntegrationKey(), tableName, key, data);
             logger.Debug("sendCustomEvent: " + event.toJson());
-            RequestAsync req = new RequestAsync(endpoint, event);
+            RequestAsync req = new RequestAsync(baseApiUri, event);
             req.executeTask();
         } catch (Exception e) {
             logger.Error("sendCustomEvent: "+ e.getMessage());
