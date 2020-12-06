@@ -1,17 +1,5 @@
 package com.dengage.sdk;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.Intent;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.text.TextUtils;
-import androidx.annotation.NonNull;
-import com.dengage.sdk.models.Event;
-import com.dengage.sdk.models.Message;
-import com.dengage.sdk.models.Open;
-import com.dengage.sdk.models.Subscription;
-import com.dengage.sdk.models.TransactionalOpen;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -19,13 +7,38 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.google.gson.Gson;
+
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.text.TextUtils;
+
+import com.dengage.sdk.models.InboxMessage;
+import com.dengage.sdk.models.Message;
+import com.dengage.sdk.models.Open;
+import com.dengage.sdk.models.Subscription;
+import com.dengage.sdk.models.TransactionalOpen;
 import com.huawei.agconnect.config.AGConnectServicesConfig;
 import com.huawei.hms.aaid.HmsInstanceId;
 import com.huawei.hms.api.HuaweiApiAvailability;
 
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import kotlin.collections.CollectionsKt;
+import kotlin.jvm.functions.Function1;
 
 public class DengageManager {
 
@@ -46,16 +59,17 @@ public class DengageManager {
      * Singleton Object
      * <p>
      * Use to create dEngage MobileManager.
+     *
      * @return DengageManager
      * </p>
      */
     public static DengageManager getInstance(Context context) {
 
-        if(context == null) {
+        if (context == null) {
             throw new IllegalArgumentException("Argument null: context");
         }
 
-        if(_instance == null)
+        if (_instance == null)
             _instance = new DengageManager(context);
 
         _instance.buildSubscription();
@@ -67,10 +81,10 @@ public class DengageManager {
         logger.Verbose("setDeviceId method is called");
         try {
             _subscription.setDeviceId(deviceId);
-            logger.Debug("deviceId: "+ deviceId);
+            logger.Debug("deviceId: " + deviceId);
             saveSubscription();
         } catch (Exception e) {
-            logger.Error("setContactKey: "+ e.getMessage());
+            logger.Error("setContactKey: " + e.getMessage());
         }
         return _instance;
     }
@@ -79,22 +93,21 @@ public class DengageManager {
      * FirebaseApp Initiator method
      * <p>
      * Use to init Firebase Messaging
+     *
      * @return DengageManager
      * </p>
      */
     public DengageManager init() {
         try {
-            if(_context == null) throw new Exception("_context is null.");
+            if (_context == null) throw new Exception("_context is null.");
 
-            if(isGooglePlayServicesAvailable() && isHuaweiMobileServicesAvailable())
-            {
+            if (isGooglePlayServicesAvailable() && isHuaweiMobileServicesAvailable()) {
                 logger.Verbose("Google Play Services and Huawei Mobile Service are available. Firebase services will be used.");
                 initFirebase();
-            }
-            else if (isHuaweiMobileServicesAvailable()) {
+            } else if (isHuaweiMobileServicesAvailable()) {
                 logger.Verbose("Huawei Mobile Services is available.");
                 initHuawei();
-            } else if(isGooglePlayServicesAvailable()) {
+            } else if (isGooglePlayServicesAvailable()) {
                 initFirebase();
             }
 
@@ -148,16 +161,17 @@ public class DengageManager {
      * <p>
      * Use to set permission to a user
      * </p>
+     *
      * @param permission True/False
      */
     public void setPermission(Boolean permission) {
         logger.Verbose("setPermission method is called");
         try {
             _subscription.setPermission(permission);
-            logger.Debug("permission: "+ permission);
+            logger.Debug("permission: " + permission);
             saveSubscription();
         } catch (Exception e) {
-            logger.Error("setPermission: "+ e.getMessage());
+            logger.Error("setPermission: " + e.getMessage());
         }
     }
 
@@ -166,16 +180,17 @@ public class DengageManager {
      * <p>
      * Use to set dEngage key to a user.
      * </p>
+     *
      * @param contactKey user key
      */
     public void setContactKey(String contactKey) {
         logger.Verbose("setContactKey method is called");
         try {
             _subscription.setContactKey(contactKey);
-            logger.Debug("contactKey: "+ contactKey);
+            logger.Debug("contactKey: " + contactKey);
             saveSubscription();
         } catch (Exception e) {
-            logger.Error("setContactKey: "+ e.getMessage());
+            logger.Error("setContactKey: " + e.getMessage());
         }
     }
 
@@ -183,15 +198,15 @@ public class DengageManager {
     public DengageManager setFirebaseIntegrationKey(String key) {
         logger.Verbose("setFirebaseIntegrationKey method is called");
 
-        if(key == null || TextUtils.isEmpty(key)) {
+        if (key == null || TextUtils.isEmpty(key)) {
             throw new IllegalArgumentException("Argument null: key");
         }
 
         try {
-            logger.Debug("setFirebaseIntegrationKey: "+ key);
+            logger.Debug("setFirebaseIntegrationKey: " + key);
             _subscription.setFirebaseIntegrationKey(key);
         } catch (Exception e) {
-            logger.Error("setFirebaseIntegrationKey: "+ e.getMessage());
+            logger.Error("setFirebaseIntegrationKey: " + e.getMessage());
         }
         return _instance;
     }
@@ -199,15 +214,15 @@ public class DengageManager {
     public DengageManager setHuaweiIntegrationKey(String key) {
         logger.Verbose("setHuaweiIntegrationKey method is called");
 
-        if(key == null || TextUtils.isEmpty(key)) {
+        if (key == null || TextUtils.isEmpty(key)) {
             throw new IllegalArgumentException("Argument null: key");
         }
 
         try {
-            logger.Debug("setHuaweiIntegrationKey: "+ key);
+            logger.Debug("setHuaweiIntegrationKey: " + key);
             _subscription.setHuaweiIntegrationKey(key);
         } catch (Exception e) {
-            logger.Error("setHuaweiIntegrationKey: "+ e.getMessage());
+            logger.Error("setHuaweiIntegrationKey: " + e.getMessage());
         }
         return _instance;
     }
@@ -217,23 +232,23 @@ public class DengageManager {
      * <p>
      * Use to register a user to dEngage. Only required when you perform a manuel GCM registration.
      * </p>
+     *
      * @param token GCM Token
      */
     public void subscribe(String token) {
         logger.Verbose("subscribe(token) method is called");
         try {
-            if(TextUtils.isEmpty(token))
+            if (TextUtils.isEmpty(token))
                 throw new IllegalArgumentException("Argument empty: token");
             _subscription.setToken(token);
             saveSubscription();
             syncSubscription();
         } catch (Exception e) {
-            logger.Error("subscribe(token): "+ e.getMessage());
+            logger.Error("subscribe(token): " + e.getMessage());
         }
     }
 
     /**
-     *
      * @return Subscription Object from the saved json.
      */
     public Subscription getSubscription() {
@@ -244,12 +259,12 @@ public class DengageManager {
     public void buildSubscription() {
         try {
             if (Utils.hasSubscription(_context)) {
-                 _subscription = new Gson().fromJson(Utils.getSubscription(_context), Subscription.class);
+                _subscription = new Gson().fromJson(Utils.getSubscription(_context), Subscription.class);
             } else {
                 _subscription = new Subscription();
             }
         } catch (Exception ex) {
-            logger.Error("buildSubscription: "+ ex.getMessage());
+            logger.Error("buildSubscription: " + ex.getMessage());
             _subscription = new Subscription();
         }
     }
@@ -258,7 +273,7 @@ public class DengageManager {
         logger.Verbose("saveSubscription method is called");
         try {
 
-            if(TextUtils.isEmpty(_subscription.getDeviceId()))
+            if (TextUtils.isEmpty(_subscription.getDeviceId()))
                 _subscription.setDeviceId(Utils.getDeviceId(_context));
             _subscription.setCarrierId(Utils.carrier(_context));
             _subscription.setAppVersion(Utils.appVersion(_context));
@@ -266,18 +281,19 @@ public class DengageManager {
             _subscription.setUserAgent(Utils.getUserAgent(_context));
 
             String json = _subscription.toJson();
-            logger.Debug("subscriptionJson: "+ json);
+            logger.Debug("subscriptionJson: " + json);
             Utils.saveSubscription(_context, json);
 
         } catch (Exception e) {
-            logger.Error("saveSubscription: "+ e.getMessage());
+            logger.Error("saveSubscription: " + e.getMessage());
         }
     }
 
     /**
      * Sync user information with dEngage.
      * <p>
-     * Use to s     end the latest information to dEngage. If you set any property or perform a logout, you are advised to call this method.
+     * Use to s     end the latest information to dEngage. If you set any property or perform a
+     * logout, you are advised to call this method.
      * </p>
      */
     public void syncSubscription() {
@@ -292,15 +308,17 @@ public class DengageManager {
             RequestAsync req = new RequestAsync(baseApiUri, _subscription);
             req.executeTask();
         } catch (Exception e) {
-            logger.Error("syncSubscription: "+ e.getMessage());
+            logger.Error("syncSubscription: " + e.getMessage());
         }
     }
 
     /**
      * Sends open event
      * <p>
-     * Use to open report when a GCM message is received. Only required when you perform a manuel GCM registration.
+     * Use to open report when a GCM message is received. Only required when you perform a manuel
+     * GCM registration.
      * </p>
+     *
      * @param message The dEngage message object.
      */
     public void sendOpenEvent(String buttonId, String itemId, Message message) {
@@ -311,10 +329,10 @@ public class DengageManager {
         try {
             getSubscription();
 
-            if(message == null) throw new IllegalArgumentException("Argument null: message");
+            if (message == null) throw new IllegalArgumentException("Argument null: message");
 
             String source = message.getMessageSource();
-            if (!Constants.MESSAGE_SOURCE.equals(source))  return;
+            if (!Constants.MESSAGE_SOURCE.equals(source)) return;
 
             if (!TextUtils.isEmpty(message.getTransactionId())) {
 
@@ -357,7 +375,7 @@ public class DengageManager {
             }
 
         } catch (Exception e) {
-            logger.Error("sendOpenEvent: "+ e.getMessage());
+            logger.Error("sendOpenEvent: " + e.getMessage());
         }
     }
 
@@ -366,6 +384,7 @@ public class DengageManager {
      * <p>
      * Use to show logs on console.
      * </p>setLogStatus
+     *
      * @param status True/False
      */
     public DengageManager setLogStatus(Boolean status) {
@@ -378,16 +397,17 @@ public class DengageManager {
      * <p>
      * Use to hit a custom event report.
      * </p>
-        * @param tableName The event table name of the schema.
-        * @param key Value of the event key.
-        * @param data Additional key-value data which is correspond table column name-value.
+     *
+     * @param tableName The event table name of the schema.
+     * @param key       Value of the event key.
+     * @param data      Additional key-value data which is correspond table column name-value.
      */
-    public void sendCustomEvent(String tableName, String key, Map<String,Object> data) {
+    public void sendCustomEvent(String tableName, String key, Map<String, Object> data) {
         logger.Verbose("sendCustomEvent method is called");
         try {
             DengageEvent.getInstance(_context).sendCustomEvent(tableName, key, data);
         } catch (Exception e) {
-            logger.Error("sendCustomEvent: "+ e.getMessage());
+            logger.Error("sendCustomEvent: " + e.getMessage());
         }
     }
 
@@ -396,15 +416,16 @@ public class DengageManager {
      * <p>
      * Use to hit a device event report.
      * </p>
+     *
      * @param tableName The event table name of the schema.
-     * @param data Additional key-value data which is correspond table column name-value.
+     * @param data      Additional key-value data which is correspond table column name-value.
      */
     public void sendDeviceEvent(String tableName, Map<String, Object> data) {
         logger.Verbose("sendDeviceEvent method is called");
         try {
-           DengageEvent.getInstance(_context).sendDeviceEvent(tableName, data);
+            DengageEvent.getInstance(_context).sendDeviceEvent(tableName, data);
         } catch (Exception e) {
-            logger.Error("sendDeviceEvent: "+ e.getMessage());
+            logger.Error("sendDeviceEvent: " + e.getMessage());
         }
     }
 
@@ -419,29 +440,29 @@ public class DengageManager {
                 if (!adInfo.isLimitAdTrackingEnabled())
                     advertisingId = adInfo.getId();
             } catch (Exception e) {
-                logger.Error("GmsAdIdWorker Exception: "+e.getMessage());
+                logger.Error("GmsAdIdWorker Exception: " + e.getMessage());
             }
             return advertisingId;
         }
 
         @Override
         protected void onPostExecute(String adId) {
-            logger.Verbose("GmsAdIdWorker executed: "+ adId);
-            if(adId != null && !TextUtils.isEmpty(adId)) {
+            logger.Verbose("GmsAdIdWorker executed: " + adId);
+            if (adId != null && !TextUtils.isEmpty(adId)) {
                 _subscription.setAdvertisingId(adId);
                 saveSubscription();
             }
         }
 
         public void executeTask() {
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
                 this.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             else
                 this.execute();
         }
     }
 
-    private class GmsTokenWorker  {
+    private class GmsTokenWorker {
 
         void executeTask() {
             try {
@@ -453,7 +474,7 @@ public class DengageManager {
                             return;
                         }
 
-                        if(task.getResult() != null) {
+                        if (task.getResult() != null) {
                             String token = task.getResult().getToken();
                             logger.Debug("GMS Token retrieved: " + token);
                             _subscription.setToken(token);
@@ -462,7 +483,7 @@ public class DengageManager {
                     }
                 });
             } catch (Exception e) {
-                logger.Error("GmsTokenWorker Exception: "+e.getMessage());
+                logger.Error("GmsTokenWorker Exception: " + e.getMessage());
             }
         }
     }
@@ -474,26 +495,26 @@ public class DengageManager {
             String advertisingId = "";
             try {
                 com.huawei.hms.ads.identifier.AdvertisingIdClient.Info adInfo
-                = com.huawei.hms.ads.identifier.AdvertisingIdClient.
-                getAdvertisingIdInfo(_context);
+                        = com.huawei.hms.ads.identifier.AdvertisingIdClient.
+                        getAdvertisingIdInfo(_context);
                 if (!adInfo.isLimitAdTrackingEnabled())
                     advertisingId = adInfo.getId();
-            }  catch (Exception e) {
-                logger.Error("HmsAdIdWorker Exception: "+e.getMessage());
+            } catch (Exception e) {
+                logger.Error("HmsAdIdWorker Exception: " + e.getMessage());
             }
             return advertisingId;
         }
 
         @Override
         protected void onPostExecute(String adId) {
-            if(adId != null && !TextUtils.isEmpty(adId)) {
+            if (adId != null && !TextUtils.isEmpty(adId)) {
                 _subscription.setAdvertisingId(adId);
                 saveSubscription();
             }
         }
 
         public void executeTask() {
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
                 this.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             else
                 this.execute();
@@ -509,21 +530,21 @@ public class DengageManager {
                 String appId = AGConnectServicesConfig.fromContext(_context).getString("client/app_id");
                 token = HmsInstanceId.getInstance(_context).getToken(appId, com.huawei.hms.push.HmsMessaging.DEFAULT_TOKEN_SCOPE);
             } catch (Exception e) {
-                logger.Error("HmsTokenWorker Exception: "+ e.getMessage());
+                logger.Error("HmsTokenWorker Exception: " + e.getMessage());
             }
             return token;
         }
 
         @Override
         protected void onPostExecute(String token) {
-            if(token != null && !TextUtils.isEmpty(token)) {
+            if (token != null && !TextUtils.isEmpty(token)) {
                 _subscription.setToken(token);
                 saveSubscription();
             }
         }
 
         public void executeTask() {
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
                 this.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             else
                 this.execute();
@@ -533,24 +554,25 @@ public class DengageManager {
     public void onNewToken(String token) {
         try {
             logger.Debug("On new token : " + token);
-            if(!TextUtils.isEmpty(token))
-            {
+            if (!TextUtils.isEmpty(token)) {
                 logger.Debug("Send subscribe");
                 DengageManager.getInstance(_context).subscribe(token);
             }
         } catch (Exception e) {
-            logger.Error("onNewToken: "+ e.getMessage());
+            logger.Error("onNewToken: " + e.getMessage());
         }
     }
 
     public void onMessageReceived(Map<String, String> data) {
         logger.Verbose("onMessageReceived method is called.");
-        logger.Verbose("Raw Message: "+ new JSONObject(data).toString());
+        logger.Verbose("Raw Message: " + new JSONObject(data).toString());
 
-        if( (data != null && data.size() > 0)) {
+        if ((data != null && data.size() > 0)) {
             Message pushMessage = new Message(data);
+            sendMessageToInbox(pushMessage);
+
             String json = pushMessage.toJson();
-            logger.Verbose("Message Json: "+ json);
+            logger.Verbose("Message Json: " + json);
 
             String source = pushMessage.getMessageSource();
             if (Constants.MESSAGE_SOURCE.equals(source)) {
@@ -565,7 +587,7 @@ public class DengageManager {
         try {
             Intent intent = new Intent(Constants.PUSH_RECEIVE_EVENT);
             intent.putExtra("RAW_DATA", json);
-            logger.Verbose("RAW_DATA: "+ json);
+            logger.Verbose("RAW_DATA: " + json);
             for (Map.Entry<String, String> entry : data.entrySet()) {
                 intent.putExtra(entry.getKey(), entry.getValue());
             }
@@ -574,6 +596,107 @@ public class DengageManager {
         } catch (Exception e) {
             logger.Error("sendBroadcast: " + e.getMessage());
         }
+    }
+
+    /**
+     * Get saved inbox messages
+     */
+    public List<InboxMessage> getInboxMessages() {
+        Prefs prefs = new Prefs(_context);
+        List<InboxMessage> inboxMessages = findNotExpiredInboxMessages(prefs.getInboxMessages());
+        prefs.setInboxMessages(inboxMessages);
+        return inboxMessages;
+    }
+
+    /**
+     * Delete inbox message
+     *
+     * @param id id of inbox message that will be deleted.
+     */
+    public void deleteInboxMessage(final String id) {
+        Prefs prefs = new Prefs(_context);
+        List<InboxMessage> inboxMessages = findNotExpiredInboxMessages(prefs.getInboxMessages());
+
+        // remove inbox message with id
+        CollectionsKt.removeAll(inboxMessages, new Function1<InboxMessage, Boolean>() {
+            @Override
+            public Boolean invoke(InboxMessage inboxMessage) {
+                return inboxMessage.getId().equals(id);
+            }
+        });
+
+        // save inbox messages after removing
+        prefs.setInboxMessages(inboxMessages);
+    }
+
+    /**
+     * Mark inbox message as read
+     *
+     * @param id id of inbox message that will be marked as read.
+     */
+    public void markInboxMessageAsRead(final String id) {
+        Prefs prefs = new Prefs(_context);
+        List<InboxMessage> inboxMessages = findNotExpiredInboxMessages(prefs.getInboxMessages());
+
+        // find inbox message with id
+        InboxMessage inboxMessage = CollectionsKt.firstOrNull(inboxMessages, new Function1<InboxMessage, Boolean>() {
+            @Override
+            public Boolean invoke(InboxMessage inboxMessage) {
+                return inboxMessage.getId().equals(id);
+            }
+        });
+        if (inboxMessage != null) {
+            inboxMessage.setRead(true);
+        }
+
+        // save inbox messages after set read
+        prefs.setInboxMessages(inboxMessages);
+    }
+
+    /**
+     * Save message to inbox if addToInbox parameter is true
+     * Control expire dates on inbox message list that saved to prefs
+     *
+     * @param message message comes from fcm or hms
+     */
+    private void sendMessageToInbox(@NonNull Message message) {
+        if (message.getAddToInbox()) {
+            Prefs prefs = new Prefs(_context);
+            InboxMessage inboxMessage = InboxMessage.Companion.createWith(message);
+            @Nullable List<InboxMessage> inboxMessages = prefs.getInboxMessages();
+            if (inboxMessages == null || inboxMessages.isEmpty()) {
+                inboxMessages = Collections.singletonList(inboxMessage);
+            } else {
+                inboxMessages = findNotExpiredInboxMessages(inboxMessages);
+                inboxMessages.add(inboxMessage);
+            }
+            prefs.setInboxMessages(inboxMessages);
+        }
+    }
+
+    /**
+     * Find not expired inbox messaged with controlling expire date and date now
+     *
+     * @param inboxMessages inbox messages that will be filtered with expire date
+     */
+    private @Nullable
+    List<InboxMessage> findNotExpiredInboxMessages(@Nullable List<InboxMessage> inboxMessages) {
+        if (inboxMessages == null) return null;
+        List<InboxMessage> notExpiredMessages = new ArrayList<>();
+        Date now = new Date();
+        SimpleDateFormat expireDateFormat = new SimpleDateFormat(Constants.DATE_FORMAT, Locale.getDefault());
+        for (InboxMessage inboxMessage : inboxMessages) {
+            try {
+                Date expireDate = expireDateFormat.parse(inboxMessage.getExpireDate());
+                if (now.before(expireDate)) {
+                    notExpiredMessages.add(inboxMessage);
+                }
+            } catch (ParseException e) {
+                logger.Error("removeExpiredInboxMessages: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+        return notExpiredMessages;
     }
 }
 
