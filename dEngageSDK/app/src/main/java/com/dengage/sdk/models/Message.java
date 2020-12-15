@@ -1,12 +1,16 @@
 package com.dengage.sdk.models;
 
-import android.os.Bundle;
-import android.text.TextUtils;
-import androidx.annotation.NonNull;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
+
+import android.os.Bundle;
+import android.text.TextUtils;
+
 import java.util.HashMap;
 import java.util.Map;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class Message {
 
@@ -67,9 +71,16 @@ public class Message {
     @SerializedName("actionButtons")
     private ActionButton[] actionButtons = null;
 
+    @SerializedName("addToInbox")
+    private Boolean addToInbox = false;
+
+    @SerializedName("expireDate")
+    @Nullable
+    private String expireDate;
+
     private transient Gson gson = new Gson();
 
-    public Message(@NonNull Map<String,String> bundle) {
+    public Message(@NonNull Map<String, String> bundle) {
         setProperties(bundle);
     }
 
@@ -77,16 +88,16 @@ public class Message {
         Map<String, String> params = new HashMap<String, String>();
         for (String key : bundle.keySet()) {
             Object value = bundle.get(key);
-            if(value != null) {
+            if (value != null) {
                 params.put(key, value.toString());
             }
         }
         setProperties(params);
     }
 
-    private void setProperties(@NonNull Map<String,String> bundle) {
+    private void setProperties(@NonNull Map<String, String> bundle) {
 
-        if(bundle.get("notificationType") != null && !TextUtils.isEmpty(bundle.get("notificationType")))
+        if (bundle.get("notificationType") != null && !TextUtils.isEmpty(bundle.get("notificationType")))
             notificationType = NotificationType.valueOf(bundle.get("notificationType"));
 
         if (bundle.get("messageId") != null && !TextUtils.isEmpty(bundle.get("messageId")))
@@ -126,7 +137,7 @@ public class Message {
             badge = Boolean.parseBoolean(bundle.get("badge"));
 
         if (bundle.get("badgeCount") != null && !TextUtils.isEmpty(bundle.get("badgeCount")))
-            badgeCount = Integer.parseInt( bundle.get("badgeCount") );
+            badgeCount = Integer.parseInt(bundle.get("badgeCount"));
 
         if (bundle.get("sound") != null && !TextUtils.isEmpty(bundle.get("sound")))
             sound = bundle.get("sound");
@@ -143,9 +154,15 @@ public class Message {
         if (bundle.get("media") != null)
             media = gson.fromJson(bundle.get("media"), Media[].class);
 
-        if(media != null && media.length > 0) {
+        if (media != null && media.length > 0) {
             mediaUrl = media[0].getUrl();
         }
+
+        if (bundle.get("addToInbox") != null & !TextUtils.isEmpty(bundle.get("addToInbox")))
+            addToInbox = Boolean.parseBoolean(bundle.get("addToInbox"));
+
+        if (bundle.get("expireDate") != null && !TextUtils.isEmpty(bundle.get("expireDate")))
+            expireDate = bundle.get("expireDate");
     }
 
     public NotificationType getNotificationType() {
@@ -184,7 +201,7 @@ public class Message {
         return this.message;
     }
 
-    public Boolean getBadge(){
+    public Boolean getBadge() {
         return this.badge;
     }
 
@@ -222,6 +239,15 @@ public class Message {
 
     public String getMessageSource() {
         return messageSource;
+    }
+
+    public Boolean getAddToInbox() {
+        return addToInbox;
+    }
+
+    public @Nullable
+    String getExpireDate() {
+        return expireDate;
     }
 
     public String toJson() {
