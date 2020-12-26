@@ -3,6 +3,7 @@ package com.dengage.sdk
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
+import com.dengage.sdk.inappmessage.InAppMessage
 import com.dengage.sdk.models.InboxMessage
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -16,6 +17,8 @@ class Prefs(context: Context) {
 
     companion object {
         const val INBOX_MESSAGES = "INBOX_MESSAGES"
+        const val IN_APP_MESSAGES = "IN_APP_MESSAGES"
+        const val SESSION_NAVIGATION_COUNT = "SESSION_NAVIGATION_COUNT"
 
         fun getSharedPreferences(context: Context): SharedPreferences =
                 context.getSharedPreferences(Constants.DEN_DEVICE_UNIQUE_ID, Context.MODE_PRIVATE)
@@ -24,6 +27,14 @@ class Prefs(context: Context) {
     var inboxMessages: MutableList<InboxMessage>?
         get() = preferences.get(INBOX_MESSAGES)
         set(value) = preferences.set(INBOX_MESSAGES, value)
+
+    var inAppMessages: MutableList<InAppMessage>?
+        get() = preferences.get(IN_APP_MESSAGES)
+        set(value) = preferences.set(IN_APP_MESSAGES, value)
+
+    var sessionNavigationCount: Int?
+        get() = preferences.get(SESSION_NAVIGATION_COUNT, 0)
+        set(value) = preferences.set(SESSION_NAVIGATION_COUNT, value)
 
 }
 
