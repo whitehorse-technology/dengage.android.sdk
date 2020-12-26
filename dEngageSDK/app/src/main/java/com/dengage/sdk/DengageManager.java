@@ -15,6 +15,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.text.TextUtils;
 
+import com.dengage.sdk.inappmessage.InAppMessageManager;
 import com.dengage.sdk.models.InboxMessage;
 import com.dengage.sdk.models.Message;
 import com.dengage.sdk.models.Open;
@@ -50,6 +51,7 @@ public class DengageManager {
     private Context _context;
 
     private Subscription _subscription;
+    private InAppMessageManager inAppMessageManager;
 
     private DengageManager(Context context) {
         _context = context;
@@ -100,6 +102,10 @@ public class DengageManager {
     public DengageManager init() {
         try {
             if (_context == null) throw new Exception("_context is null.");
+
+            // create in app message manager and start new session
+            inAppMessageManager = new InAppMessageManager(new Prefs(_context), logger);
+            inAppMessageManager.startNewSession();
 
             if (isGooglePlayServicesAvailable() && isHuaweiMobileServicesAvailable()) {
                 logger.Verbose("Google Play Services and Huawei Mobile Service are available. Firebase services will be used.");
@@ -654,8 +660,8 @@ public class DengageManager {
     }
 
     /**
-     * Save message to inbox if addToInbox parameter is true
-     * Control expire dates on inbox message list that saved to prefs
+     * Save message to inbox if addToInbox parameter is true Control expire dates on inbox message
+     * list that saved to prefs
      *
      * @param message message comes from fcm or hms
      */
@@ -675,7 +681,7 @@ public class DengageManager {
     }
 
     /**
-     * Find not expired inbox messaged with controlling expire date and date now
+     * Find not expired inbox messages with controlling expire date and date now
      *
      * @param inboxMessages inbox messages that will be filtered with expire date
      */
