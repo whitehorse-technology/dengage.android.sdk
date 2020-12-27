@@ -3,6 +3,7 @@ package com.dengage.sdk.inappmessage.utils
 import com.dengage.sdk.Constants
 import com.dengage.sdk.Logger
 import com.dengage.sdk.inappmessage.model.InAppMessage
+import com.dengage.sdk.inappmessage.model.Operator
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -38,9 +39,58 @@ object InAppMessageUtils {
     /**
      * Find prior in app message to show with respect to hasShown and expireDate parameters
      */
-    fun findPriorInAppMessage(inAppMessages: List<InAppMessage>): InAppMessage? {
-        // sort list with comparator then return first
-        return inAppMessages.sortedWith(InAppMessageComparator()).firstOrNull()
+    fun findPriorInAppMessage(inAppMessages: List<InAppMessage>, screenName: String? = null): InAppMessage? {
+        // sort list with comparator
+        val sortedInAppMessages = inAppMessages.sortedWith(InAppMessageComparator())
+
+        // if screen name is not empty, find in app message that screen name filter has screen name value
+        return if (screenName.isNullOrEmpty()) {
+            sortedInAppMessages.firstOrNull()
+        } else {
+            sortedInAppMessages.firstOrNull { inAppMessage: InAppMessage ->
+                inAppMessage.displayCondition.screenNameFilters.firstOrNull { screenNameFilter ->
+                    operateScreenValues(screenNameFilter.value, screenName, screenNameFilter.operator)
+                } != null
+            }
+        }
+    }
+
+    private fun operateScreenValues(screenNameFilterValue: String, screenName: String, operator: String): Boolean {
+        when (operator) {
+            Operator.EQUALS.operator -> {
+                return screenNameFilterValue == screenName
+            }
+            Operator.NOT_EQUALS.operator -> {
+                return screenNameFilterValue != screenName
+            }
+            Operator.LIKE.operator -> {
+                return screenName.contains(screenNameFilterValue, true)
+            }
+            Operator.NOT_LIKE.operator -> {
+                return !screenName.contains(screenNameFilterValue, true)
+            }
+            Operator.STARTS_WITH.operator -> {
+                return screenName.startsWith(screenNameFilterValue, true)
+            }
+            Operator.NOT_STARTS_WITH.operator -> {
+                return !screenName.startsWith(screenNameFilterValue, true)
+            }
+            Operator.ENDS_WITH.operator -> {
+                return screenName.endsWith(screenNameFilterValue, true)
+            }
+            Operator.NOT_ENDS_WITH.operator -> {
+                return !screenName.endsWith(screenNameFilterValue, true)
+            }
+            Operator.IN.operator -> {
+                val screenNameFilterValues = screenNameFilterValue.split("|")
+                return screenNameFilterValues.contains(screenName)
+            }
+            Operator.NOT_IN.operator -> {
+                val screenNameFilterValues = screenNameFilterValue.split("|")
+                return !screenNameFilterValues.contains(screenName)
+            }
+        }
+        return true
     }
 
 }

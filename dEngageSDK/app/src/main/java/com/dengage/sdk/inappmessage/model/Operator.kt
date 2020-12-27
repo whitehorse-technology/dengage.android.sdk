@@ -6,7 +6,7 @@ package com.dengage.sdk.inappmessage.model
 enum class Operator(val operator: String) {
     EQUALS("EQUALS"), // eşittir
     NOT_EQUALS("NOT_EQUALS"), // eşit değildir
-    LIKE("LIKE"), // ScreenName içerisinde geçiyorsa. Mesala value 'cart' ise, o zaman screen name içerisinde cart geçiyorsa
+    LIKE("LIKE"), // ScreenName içerisinde geçiyorsa. Mesela value 'cart' ise, o zaman screen name içerisinde cart geçiyorsa
     NOT_LIKE("NOT_LIKE"), // ScreenName içinde geçmiyorsa
     STARTS_WITH("STARTS_WITH"), // ScreenName value'daki string ile başlıyorsa
     NOT_STARTS_WITH("NOT_STARTS_WITH"), // ScreenName value'daki string ile başlamıyorsa
