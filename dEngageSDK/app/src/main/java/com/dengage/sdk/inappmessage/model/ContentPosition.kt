@@ -1,4 +1,4 @@
-package com.dengage.sdk.inappmessage
+package com.dengage.sdk.inappmessage.model
 
 /**
  * Created by Batuhan Coskun on 26 December 2020

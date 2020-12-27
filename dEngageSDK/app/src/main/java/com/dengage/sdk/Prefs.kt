@@ -3,7 +3,7 @@ package com.dengage.sdk
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
-import com.dengage.sdk.inappmessage.InAppMessage
+import com.dengage.sdk.inappmessage.model.InAppMessage
 import com.dengage.sdk.models.InboxMessage
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken

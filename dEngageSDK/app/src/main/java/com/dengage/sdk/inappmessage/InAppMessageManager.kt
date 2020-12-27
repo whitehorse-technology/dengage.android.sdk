@@ -4,6 +4,7 @@ import android.app.Activity
 import com.dengage.sdk.Constants
 import com.dengage.sdk.Logger
 import com.dengage.sdk.Prefs
+import com.dengage.sdk.inappmessage.model.InAppMessage
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*

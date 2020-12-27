@@ -1,4 +1,4 @@
-package com.dengage.sdk.inappmessage
+package com.dengage.sdk.inappmessage.model
 
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
