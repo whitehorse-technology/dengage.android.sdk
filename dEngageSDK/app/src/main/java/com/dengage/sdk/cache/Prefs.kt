@@ -37,6 +37,10 @@ class Prefs(context: Context) {
         get() = preferences.get(SESSION_NAVIGATION_COUNT, 0)
         set(value) = preferences.set(SESSION_NAVIGATION_COUNT, value)
 
+    fun clear() {
+        preferences.edit().clear().apply()
+    }
+
 }
 
 /**

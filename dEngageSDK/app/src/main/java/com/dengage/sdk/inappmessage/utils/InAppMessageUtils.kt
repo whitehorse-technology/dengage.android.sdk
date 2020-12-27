@@ -48,7 +48,7 @@ object InAppMessageUtils {
             sortedInAppMessages.firstOrNull()
         } else {
             sortedInAppMessages.firstOrNull { inAppMessage: InAppMessage ->
-                inAppMessage.displayCondition.screenNameFilters.firstOrNull { screenNameFilter ->
+                inAppMessage.displayCondition.screenNameFilters?.firstOrNull { screenNameFilter ->
                     operateScreenValues(screenNameFilter.value, screenName, screenNameFilter.operator)
                 } != null
             }
