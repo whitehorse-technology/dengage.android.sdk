@@ -1,8 +1,9 @@
-package com.dengage.sdk
+package com.dengage.sdk.cache
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
+import com.dengage.sdk.Constants
 import com.dengage.sdk.inappmessage.model.InAppMessage
 import com.dengage.sdk.models.InboxMessage
 import com.google.gson.Gson

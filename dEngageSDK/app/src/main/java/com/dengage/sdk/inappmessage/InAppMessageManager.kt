@@ -2,7 +2,7 @@ package com.dengage.sdk.inappmessage
 
 import android.app.Activity
 import com.dengage.sdk.Logger
-import com.dengage.sdk.Prefs
+import com.dengage.sdk.cache.Prefs
 import com.dengage.sdk.inappmessage.utils.InAppMessageUtils
 import java.util.*
 

@@ -15,6 +15,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.text.TextUtils;
 
+import com.dengage.sdk.cache.Prefs;
 import com.dengage.sdk.inappmessage.InAppMessageManager;
 import com.dengage.sdk.models.InboxMessage;
 import com.dengage.sdk.models.Message;
