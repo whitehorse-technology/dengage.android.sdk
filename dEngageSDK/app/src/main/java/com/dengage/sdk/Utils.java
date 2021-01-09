@@ -2,7 +2,6 @@ package com.dengage.sdk;
 
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
@@ -20,6 +19,10 @@ import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
+import android.widget.RemoteViews;
+
+import com.dengage.sdk.models.CarouselItem;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -37,7 +40,7 @@ public class Utils {
     public static int getScreenWith(Context context) {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         WindowManager manager = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE));
-        if(manager!=null) {
+        if (manager != null) {
             manager.getDefaultDisplay().getMetrics(displayMetrics);
             return displayMetrics.widthPixels;
         } else {
@@ -48,7 +51,7 @@ public class Utils {
     public static int getScreenHeight(Context context) {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         WindowManager manager = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE));
-        if(manager!=null) {
+        if (manager != null) {
             manager.getDefaultDisplay().getMetrics(displayMetrics);
             return displayMetrics.heightPixels;
         } else {
@@ -56,7 +59,7 @@ public class Utils {
         }
     }
 
-    public static String getAppLanguage(){
+    public static String getAppLanguage() {
         return Locale.getDefault().getDisplayLanguage();
     }
 
@@ -106,12 +109,12 @@ public class Utils {
         if (installationID == null) {
             SharedPreferences sharedPrefs = context.getSharedPreferences(Constants.DEN_DEVICE_UNIQUE_ID, Context.MODE_PRIVATE);
             installationID = sharedPrefs.getString(Constants.DEN_DEVICE_UNIQUE_ID, null);
-                if (installationID == null) {
-                    installationID = UUID.randomUUID().toString();
-                    SharedPreferences.Editor editor = sharedPrefs.edit();
-                    editor.putString(Constants.DEN_DEVICE_UNIQUE_ID, installationID);
-                    editor.apply();
-                }
+            if (installationID == null) {
+                installationID = UUID.randomUUID().toString();
+                SharedPreferences.Editor editor = sharedPrefs.edit();
+                editor.putString(Constants.DEN_DEVICE_UNIQUE_ID, installationID);
+                editor.apply();
+            }
         }
         return installationID;
     }
@@ -180,7 +183,7 @@ public class Utils {
     }
 
     static String getUserAgent(Context context) {
-        return Utils.getAppLabel(context, "An Android App") + "/"+ Utils.appVersion(context) + " "+ Build.MANUFACTURER +"/"+ Build.MODEL +" "+ System.getProperty("http.agent") +" Mobile/"+ Build.ID +"";
+        return Utils.getAppLabel(context, "An Android App") + "/" + Utils.appVersion(context) + " " + Build.MANUFACTURER + "/" + Build.MODEL + " " + System.getProperty("http.agent") + " Mobile/" + Build.ID + "";
     }
 
     static String deviceType() {
@@ -201,7 +204,7 @@ public class Utils {
         int id = context.getResources().getIdentifier(sound, "raw", context.getPackageName());
         if (id != 0) {
             return Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + "/" + id);
-        }else{
+        } else {
             return RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         }
     }
@@ -250,25 +253,20 @@ public class Utils {
 
     public static String saveBitmapToInternalStorage(Context context, Bitmap bitmapImage, String fileName) {
         boolean fileSaved = false;
-        ContextWrapper cw = new ContextWrapper(context.getApplicationContext());
-        // path to /data/data/yourapp/app_data/imageDir
-        //File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
         File directory = context.getCacheDir();
-
-        // Create imageDir
-        File mypath = new File(directory, fileName + ".jpg");
+        File mypath = new File(directory, fileName + ".png");
 
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(mypath);
             // Use the compress method on the BitMap object to write image to the OutputStream
-            bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            bitmapImage.compress(Bitmap.CompressFormat.PNG, 80, fos);
             fileSaved = true;
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             try {
-                if(fos != null)
+                if (fos != null)
                     fos.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -284,7 +282,7 @@ public class Utils {
         Bitmap b = null;
 
         try {
-            File f = new File(path, fileName + ".jpg");
+            File f = new File(path, fileName + ".png");
             b = BitmapFactory.decodeStream(new FileInputStream(f));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -293,9 +291,9 @@ public class Utils {
     }
 
     public static Boolean removeFileFromStorage(String path, String fileName) {
-        File f = new File(path, fileName + ".jpg");
+        File f = new File(path, fileName + ".png");
         boolean result;
-        if(f.exists()) result = f.delete();
+        if (f.exists()) result = f.delete();
         else result = false;
         return result;
     }
@@ -319,12 +317,10 @@ public class Utils {
     }
 
     public static boolean isInteger(String s) {
-        try
-        {
+        try {
             Integer.parseInt(s);
             return true;
-        } catch (NumberFormatException ex)
-        {
+        } catch (NumberFormatException ex) {
             return false;
         }
     }
@@ -336,6 +332,28 @@ public class Utils {
             return bundle.getString(name);
         } catch (PackageManager.NameNotFoundException e) {
             return "";
+        }
+    }
+
+    public static void loadCarouselImageToView(final RemoteViews carouselView, final int imageViewId,
+                                               final CarouselItem carouselItem) {
+        Bitmap cachedFileBitmap = loadImageFromStorage(carouselItem.getMediaFileLocation(), carouselItem.getMediaFileName());
+        if (cachedFileBitmap == null) {
+            ImageDownloader imageDownloader = new ImageDownloader(carouselItem.getMediaUrl(),
+                    new ImageDownloader.OnImageLoaderListener() {
+                        @Override
+                        public void onError(ImageDownloader.ImageError error) {
+
+                        }
+
+                        @Override
+                        public void onComplete(Bitmap bitmap) {
+                            carouselView.setImageViewBitmap(imageViewId, bitmap);
+                        }
+                    });
+            imageDownloader.start();
+        } else {
+            carouselView.setImageViewBitmap(imageViewId, cachedFileBitmap);
         }
     }
 }
