@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Handler;
 import android.text.TextUtils;
 
 import com.dengage.sdk.models.InboxMessage;
@@ -51,6 +52,8 @@ public class DengageManager {
 
     private Subscription _subscription;
 
+    private boolean isSubscriptionSending = false;
+
     private DengageManager(Context context) {
         _context = context;
     }
@@ -81,7 +84,7 @@ public class DengageManager {
         logger.Verbose("setDeviceId method is called");
         try {
             // control the last device id equals to new device id then send subscription
-            if (_subscription.getDeviceId() == null || !_subscription.getDeviceId().equalsIgnoreCase(deviceId)) {
+            if (_subscription.getDeviceId() == null || !_subscription.getDeviceId().equals(deviceId)) {
                 _subscription.setDeviceId(deviceId);
                 logger.Debug("deviceId: " + deviceId);
                 saveSubscription();
@@ -115,6 +118,7 @@ public class DengageManager {
                 initFirebase();
             }
 
+            sendSubscription();
         } catch (Exception e) {
             logger.Error("initialization:" + e.getMessage());
         }
@@ -195,7 +199,7 @@ public class DengageManager {
         logger.Verbose("setContactKey method is called");
         try {
             // control the last contact key equals to new contact key then send subscription
-            if (_subscription.getContactKey() == null || !_subscription.getContactKey().equalsIgnoreCase(contactKey)) {
+            if (_subscription.getContactKey() == null || !_subscription.getContactKey().equals(contactKey)) {
                 _subscription.setContactKey(contactKey);
                 logger.Debug("contactKey: " + contactKey);
                 saveSubscription();
@@ -303,19 +307,34 @@ public class DengageManager {
 
     private void sendSubscription() {
         logger.Verbose("sendSubscription method is called");
+        if(isSubscriptionSending) return;
         try {
-            String baseApiUri = Utils.getMetaData(_context, "den_push_api_url");
-            if (TextUtils.isEmpty(baseApiUri))
-                baseApiUri = Constants.DEN_PUSH_API_URI;
-
-            baseApiUri += Constants.SUBSCRIPTION_API_ENDPOINT;
-
-            RequestAsync req = new RequestAsync(baseApiUri, _subscription);
-            req.executeTask();
+            isSubscriptionSending = true;
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        String baseApiUri = Utils.getMetaData(_context, "den_push_api_url");
+                        if (TextUtils.isEmpty(baseApiUri))
+                            baseApiUri = Constants.DEN_PUSH_API_URI;
+                        baseApiUri += Constants.SUBSCRIPTION_API_ENDPOINT;
+                        RequestAsync req = new RequestAsync(baseApiUri, _subscription);
+                        req.executeTask();
+                        isSubscriptionSending = false;
+                    } catch (Exception e) {
+                        isSubscriptionSending = false;
+                        logger.Error("sendSubscriptionDelay: " + e.getMessage());
+                    }
+                }
+            }, 1500);
         } catch (Exception e) {
+            isSubscriptionSending = false;
             logger.Error("sendSubscription: " + e.getMessage());
         }
     }
+
+
 
     /**
      * Deprecated function Subscription will send after changing contact key, permission or device
@@ -465,6 +484,7 @@ public class DengageManager {
             if (adId != null && !TextUtils.isEmpty(adId)) {
                 _subscription.setAdvertisingId(adId);
                 saveSubscription();
+                sendSubscription();
             }
         }
 
@@ -493,6 +513,7 @@ public class DengageManager {
                             logger.Debug("GMS Token retrieved: " + token);
                             _subscription.setToken(token);
                             saveSubscription();
+                            sendSubscription();
                         }
                     }
                 });
@@ -524,6 +545,7 @@ public class DengageManager {
             if (adId != null && !TextUtils.isEmpty(adId)) {
                 _subscription.setAdvertisingId(adId);
                 saveSubscription();
+                sendSubscription();
             }
         }
 
@@ -554,6 +576,7 @@ public class DengageManager {
             if (token != null && !TextUtils.isEmpty(token)) {
                 _subscription.setToken(token);
                 saveSubscription();
+                sendSubscription();
             }
         }
 
