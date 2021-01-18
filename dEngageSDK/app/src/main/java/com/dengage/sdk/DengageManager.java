@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Handler;
 import android.text.TextUtils;
 
 import com.dengage.sdk.models.InboxMessage;
@@ -51,6 +52,8 @@ public class DengageManager {
 
     private Subscription _subscription;
 
+    private boolean isSubscriptionSending = false;
+
     private DengageManager(Context context) {
         _context = context;
     }
@@ -80,11 +83,15 @@ public class DengageManager {
     public DengageManager setDeviceId(String deviceId) {
         logger.Verbose("setDeviceId method is called");
         try {
-            _subscription.setDeviceId(deviceId);
-            logger.Debug("deviceId: " + deviceId);
-            saveSubscription();
+            // control the last device id equals to new device id then send subscription
+            if (_subscription.getDeviceId() == null || !_subscription.getDeviceId().equals(deviceId)) {
+                _subscription.setDeviceId(deviceId);
+                logger.Debug("deviceId: " + deviceId);
+                saveSubscription();
+                sendSubscription();
+            }
         } catch (Exception e) {
-            logger.Error("setContactKey: " + e.getMessage());
+            logger.Error("setDeviceId: " + e.getMessage());
         }
         return _instance;
     }
@@ -111,6 +118,7 @@ public class DengageManager {
                 initFirebase();
             }
 
+            sendSubscription();
         } catch (Exception e) {
             logger.Error("initialization:" + e.getMessage());
         }
@@ -167,9 +175,13 @@ public class DengageManager {
     public void setPermission(Boolean permission) {
         logger.Verbose("setPermission method is called");
         try {
-            _subscription.setPermission(permission);
-            logger.Debug("permission: " + permission);
-            saveSubscription();
+            // control the last permission flag equals to new permission flag then send subscription
+            if (_subscription.getPermission() == null || _subscription.getPermission() != permission) {
+                _subscription.setPermission(permission);
+                logger.Debug("permission: " + permission);
+                saveSubscription();
+                sendSubscription();
+            }
         } catch (Exception e) {
             logger.Error("setPermission: " + e.getMessage());
         }
@@ -186,9 +198,13 @@ public class DengageManager {
     public void setContactKey(String contactKey) {
         logger.Verbose("setContactKey method is called");
         try {
-            _subscription.setContactKey(contactKey);
-            logger.Debug("contactKey: " + contactKey);
-            saveSubscription();
+            // control the last contact key equals to new contact key then send subscription
+            if (_subscription.getContactKey() == null || !_subscription.getContactKey().equals(contactKey)) {
+                _subscription.setContactKey(contactKey);
+                logger.Debug("contactKey: " + contactKey);
+                saveSubscription();
+                sendSubscription();
+            }
         } catch (Exception e) {
             logger.Error("setContactKey: " + e.getMessage());
         }
@@ -242,7 +258,7 @@ public class DengageManager {
                 throw new IllegalArgumentException("Argument empty: token");
             _subscription.setToken(token);
             saveSubscription();
-            syncSubscription();
+            sendSubscription();
         } catch (Exception e) {
             logger.Error("subscribe(token): " + e.getMessage());
         }
@@ -289,27 +305,44 @@ public class DengageManager {
         }
     }
 
-    /**
-     * Sync user information with dEngage.
-     * <p>
-     * Use to s     end the latest information to dEngage. If you set any property or perform a
-     * logout, you are advised to call this method.
-     * </p>
-     */
-    public void syncSubscription() {
-        logger.Verbose("syncSubscription method is called");
+    private void sendSubscription() {
+        logger.Verbose("sendSubscription method is called");
+        if(isSubscriptionSending) return;
         try {
-            String baseApiUri = Utils.getMetaData(_context, "den_push_api_url");
-            if (TextUtils.isEmpty(baseApiUri))
-                baseApiUri = Constants.DEN_PUSH_API_URI;
-
-            baseApiUri += Constants.SUBSCRIPTION_API_ENDPOINT;
-
-            RequestAsync req = new RequestAsync(baseApiUri, _subscription);
-            req.executeTask();
+            isSubscriptionSending = true;
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        String baseApiUri = Utils.getMetaData(_context, "den_push_api_url");
+                        if (TextUtils.isEmpty(baseApiUri))
+                            baseApiUri = Constants.DEN_PUSH_API_URI;
+                        baseApiUri += Constants.SUBSCRIPTION_API_ENDPOINT;
+                        RequestAsync req = new RequestAsync(baseApiUri, _subscription);
+                        req.executeTask();
+                        isSubscriptionSending = false;
+                    } catch (Exception e) {
+                        isSubscriptionSending = false;
+                        logger.Error("sendSubscriptionDelay: " + e.getMessage());
+                    }
+                }
+            }, 1500);
         } catch (Exception e) {
-            logger.Error("syncSubscription: " + e.getMessage());
+            isSubscriptionSending = false;
+            logger.Error("sendSubscription: " + e.getMessage());
         }
+    }
+
+
+
+    /**
+     * Deprecated function Subscription will send after changing contact key, permission or device
+     * id automatically
+     */
+    @Deprecated
+    public void syncSubscription() {
+
     }
 
     /**
@@ -451,6 +484,7 @@ public class DengageManager {
             if (adId != null && !TextUtils.isEmpty(adId)) {
                 _subscription.setAdvertisingId(adId);
                 saveSubscription();
+                sendSubscription();
             }
         }
 
@@ -479,6 +513,7 @@ public class DengageManager {
                             logger.Debug("GMS Token retrieved: " + token);
                             _subscription.setToken(token);
                             saveSubscription();
+                            sendSubscription();
                         }
                     }
                 });
@@ -510,6 +545,7 @@ public class DengageManager {
             if (adId != null && !TextUtils.isEmpty(adId)) {
                 _subscription.setAdvertisingId(adId);
                 saveSubscription();
+                sendSubscription();
             }
         }
 
@@ -540,6 +576,7 @@ public class DengageManager {
             if (token != null && !TextUtils.isEmpty(token)) {
                 _subscription.setToken(token);
                 saveSubscription();
+                sendSubscription();
             }
         }
 
@@ -654,8 +691,8 @@ public class DengageManager {
     }
 
     /**
-     * Save message to inbox if addToInbox parameter is true
-     * Control expire dates on inbox message list that saved to prefs
+     * Save message to inbox if addToInbox parameter is true Control expire dates on inbox message
+     * list that saved to prefs
      *
      * @param message message comes from fcm or hms
      */
