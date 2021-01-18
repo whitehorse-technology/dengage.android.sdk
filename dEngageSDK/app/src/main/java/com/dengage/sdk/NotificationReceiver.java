@@ -453,9 +453,17 @@ public class NotificationReceiver extends BroadcastReceiver {
     protected int getSmallIconId(Context context) {
         try {
             PackageManager packageManager = context.getPackageManager();
-            ApplicationInfo applicationInfo = packageManager.getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
-            logger.Verbose("Application icon: " + applicationInfo.icon);
-            return applicationInfo.icon;
+            String smallIcon = Utils.getMetaData(context, "den_push_small_icon");
+            if(!TextUtils.isEmpty(smallIcon)) {
+                int appIconId = getResourceId(context, smallIcon);
+                logger.Verbose("Application icon: " + smallIcon);
+                return appIconId;
+            }
+            else {
+                ApplicationInfo applicationInfo = packageManager.getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
+                logger.Verbose("Application icon: " + applicationInfo.icon);
+                return applicationInfo.icon;
+            }
         } catch (PackageManager.NameNotFoundException e) {
             logger.Verbose("Application Icon Not Found");
             return -1;
