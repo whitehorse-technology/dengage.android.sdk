@@ -35,6 +35,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -92,6 +93,22 @@ public class DengageManager {
             }
         } catch (Exception e) {
             logger.Error("setDeviceId: " + e.getMessage());
+        }
+        return _instance;
+    }
+
+    public DengageManager setCountry(String country) {
+        logger.Verbose("setCountry method is called");
+        try {
+            // control the last country equals to new country then send subscription
+            if (_subscription.getCountry() == null || !_subscription.getCountry().equals(country)) {
+                _subscription.setCountry(country);
+                logger.Debug("country: " + country);
+                saveSubscription();
+                sendSubscription();
+            }
+        } catch (Exception e) {
+            logger.Error("setCountry: " + e.getMessage());
         }
         return _instance;
     }
@@ -295,6 +312,8 @@ public class DengageManager {
             _subscription.setAppVersion(Utils.appVersion(_context));
             _subscription.setSdkVersion(com.dengage.sdk.BuildConfig.VERSION_NAME);
             _subscription.setUserAgent(Utils.getUserAgent(_context));
+            _subscription.setLanguage(Locale.getDefault().getLanguage());
+            _subscription.setTimezone(TimeZone.getDefault().getDisplayName());
 
             String json = _subscription.toJson();
             logger.Debug("subscriptionJson: " + json);
@@ -307,7 +326,7 @@ public class DengageManager {
 
     private void sendSubscription() {
         logger.Verbose("sendSubscription method is called");
-        if(isSubscriptionSending) return;
+        if (isSubscriptionSending) return;
         try {
             isSubscriptionSending = true;
             Handler handler = new Handler();
@@ -333,7 +352,6 @@ public class DengageManager {
             logger.Error("sendSubscription: " + e.getMessage());
         }
     }
-
 
 
     /**
