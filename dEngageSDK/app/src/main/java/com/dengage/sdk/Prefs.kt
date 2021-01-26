@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import com.dengage.sdk.models.InboxMessage
+import com.dengage.sdk.models.SdkParameters
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
@@ -16,6 +17,7 @@ class Prefs(context: Context) {
 
     companion object {
         const val INBOX_MESSAGES = "INBOX_MESSAGES"
+        const val SDK_PARAMETERS = "SDK_PARAMETERS"
 
         fun getSharedPreferences(context: Context): SharedPreferences =
                 context.getSharedPreferences(Constants.DEN_DEVICE_UNIQUE_ID, Context.MODE_PRIVATE)
@@ -24,6 +26,10 @@ class Prefs(context: Context) {
     var inboxMessages: MutableList<InboxMessage>?
         get() = preferences.get(INBOX_MESSAGES)
         set(value) = preferences.set(INBOX_MESSAGES, value)
+
+    var sdkParameters: SdkParameters?
+        get() = preferences.get(SDK_PARAMETERS)
+        set(value) = preferences.set(SDK_PARAMETERS, value)
 
 }
 

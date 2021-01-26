@@ -11,6 +11,7 @@ import com.google.gson.Gson;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
@@ -19,8 +20,12 @@ import android.text.TextUtils;
 import com.dengage.sdk.models.InboxMessage;
 import com.dengage.sdk.models.Message;
 import com.dengage.sdk.models.Open;
+import com.dengage.sdk.models.SdkParameters;
 import com.dengage.sdk.models.Subscription;
 import com.dengage.sdk.models.TransactionalOpen;
+import com.dengage.sdk.service.NetworkRequest;
+import com.dengage.sdk.service.NetworkRequestCallback;
+import com.dengage.sdk.service.NetworkRequestType;
 import com.huawei.agconnect.config.AGConnectServicesConfig;
 import com.huawei.hms.aaid.HmsInstanceId;
 import com.huawei.hms.api.HuaweiApiAvailability;
@@ -119,6 +124,7 @@ public class DengageManager {
             }
 
             sendSubscription();
+            getSdkParameters();
         } catch (Exception e) {
             logger.Error("initialization:" + e.getMessage());
         }
@@ -307,7 +313,7 @@ public class DengageManager {
 
     private void sendSubscription() {
         logger.Verbose("sendSubscription method is called");
-        if(isSubscriptionSending) return;
+        if (isSubscriptionSending) return;
         try {
             isSubscriptionSending = true;
             Handler handler = new Handler();
@@ -333,7 +339,6 @@ public class DengageManager {
             logger.Error("sendSubscription: " + e.getMessage());
         }
     }
-
 
 
     /**
@@ -633,6 +638,28 @@ public class DengageManager {
         } catch (Exception e) {
             logger.Error("sendBroadcast: " + e.getMessage());
         }
+    }
+
+    private void getSdkParameters() {
+        if (TextUtils.isEmpty(_subscription.integrationKey)) return;
+        String baseApiUri = Utils.getMetaData(_context, "den_push_api_url");
+        if (TextUtils.isEmpty(baseApiUri)) {
+            baseApiUri = Constants.DEN_PUSH_API_URI;
+        }
+        baseApiUri += Constants.SDK_PARAMS_API_ENDPOINT;
+        Uri uriWithQueryParams = Uri.parse(baseApiUri)
+                .buildUpon()
+                .appendQueryParameter("ik", _subscription.integrationKey)
+                .build();
+        NetworkRequest<SdkParameters> networkRequest = new NetworkRequest<>(uriWithQueryParams.toString(),
+                _subscription.getUserAgent(), NetworkRequestType.SDK_PARAMS, new NetworkRequestCallback<SdkParameters>() {
+            @Override
+            public void responseFetched(@Nullable SdkParameters response) {
+                Prefs prefs = new Prefs(_context);
+                prefs.setSdkParameters(response);
+            }
+        });
+        networkRequest.executeTask();
     }
 
     /**
