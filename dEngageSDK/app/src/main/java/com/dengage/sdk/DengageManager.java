@@ -23,6 +23,7 @@ import com.dengage.sdk.models.Open;
 import com.dengage.sdk.models.SdkParameters;
 import com.dengage.sdk.models.Subscription;
 import com.dengage.sdk.models.TransactionalOpen;
+import com.dengage.sdk.service.GsonUtils;
 import com.dengage.sdk.service.NetworkRequest;
 import com.dengage.sdk.service.NetworkRequestCallback;
 import com.dengage.sdk.service.NetworkRequestType;
@@ -642,6 +643,14 @@ public class DengageManager {
 
     private void getSdkParameters() {
         if (TextUtils.isEmpty(_subscription.integrationKey)) return;
+        final Prefs prefs = new Prefs(_context);
+
+        // if 24 hours passed after getting sdk params, you should get again
+        if (prefs.getSdkParameters() != null &&
+                System.currentTimeMillis() < prefs.getSdkParameters().getLastFetchTimeInMillis() + 24 * 60 * 60 * 1000) {
+            return;
+        }
+
         String baseApiUri = Utils.getMetaData(_context, "den_push_api_url");
         if (TextUtils.isEmpty(baseApiUri)) {
             baseApiUri = Constants.DEN_PUSH_API_URI;
@@ -651,12 +660,15 @@ public class DengageManager {
                 .buildUpon()
                 .appendQueryParameter("ik", _subscription.integrationKey)
                 .build();
-        NetworkRequest<SdkParameters> networkRequest = new NetworkRequest<>(uriWithQueryParams.toString(),
-                _subscription.getUserAgent(), NetworkRequestType.SDK_PARAMS, new NetworkRequestCallback<SdkParameters>() {
+        NetworkRequest networkRequest = new NetworkRequest(uriWithQueryParams.toString(),
+                _subscription.getUserAgent(), NetworkRequestType.SDK_PARAMS, new NetworkRequestCallback() {
             @Override
-            public void responseFetched(@Nullable SdkParameters response) {
-                Prefs prefs = new Prefs(_context);
-                prefs.setSdkParameters(response);
+            public void responseFetched(@Nullable String response) {
+                if (response != null) {
+                    SdkParameters sdkParameters = GsonUtils.INSTANCE.getGson().fromJson(response, SdkParameters.class);
+                    sdkParameters.setLastFetchTimeInMillis(System.currentTimeMillis());
+                    prefs.setSdkParameters(sdkParameters);
+                }
             }
         });
         networkRequest.executeTask();

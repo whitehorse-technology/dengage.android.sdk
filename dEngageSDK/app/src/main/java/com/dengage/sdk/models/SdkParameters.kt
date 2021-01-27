@@ -13,5 +13,5 @@ class SdkParameters(
         @SerializedName("inboxEnabled") val inboxEnabled: Boolean?,
         @SerializedName("inAppEnabled") val inAppEnabled: Boolean?,
         @SerializedName("subscriptionEnabled") val subscriptionEnabled: Boolean?,
-        @SerializedName("lastFetchTimeInMillis") val lastFetchTimeInMillis: Long?,
+        @SerializedName("lastFetchTimeInMillis") var lastFetchTimeInMillis: Long = 0,
 ) : Serializable

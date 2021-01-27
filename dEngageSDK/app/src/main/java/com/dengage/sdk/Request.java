@@ -113,8 +113,6 @@ public class Request {
         }
     }
 
-    // Converting InputStream to String
-
     private String readStream(InputStream in) {
         BufferedReader reader = null;
         StringBuilder response = new StringBuilder();

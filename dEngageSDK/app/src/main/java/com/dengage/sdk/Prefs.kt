@@ -50,7 +50,7 @@ inline fun <reified T : Any> SharedPreferences.get(key: String, defaultValue: T?
         Float::class -> getFloat(key, defaultValue as? Float ?: -1f) as T?
         Long::class -> getLong(key, defaultValue as? Long ?: -1) as T?
         else -> getString(key, null)?.let {
-            Gson().fromJson(it, object : TypeToken<T>() {}.type)
+            Gson().fromJson(it, T::class.java)
         }
     }
 }
