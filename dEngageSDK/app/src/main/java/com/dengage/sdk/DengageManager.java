@@ -23,7 +23,6 @@ import com.dengage.sdk.models.Open;
 import com.dengage.sdk.models.SdkParameters;
 import com.dengage.sdk.models.Subscription;
 import com.dengage.sdk.models.TransactionalOpen;
-import com.dengage.sdk.service.GsonUtils;
 import com.dengage.sdk.service.NetworkRequest;
 import com.dengage.sdk.service.NetworkRequestCallback;
 import com.dengage.sdk.service.NetworkRequestType;
@@ -665,7 +664,7 @@ public class DengageManager {
             @Override
             public void responseFetched(@Nullable String response) {
                 if (response != null) {
-                    SdkParameters sdkParameters = GsonUtils.INSTANCE.getGson().fromJson(response, SdkParameters.class);
+                    SdkParameters sdkParameters = new Gson().fromJson(response, SdkParameters.class);
                     sdkParameters.setLastFetchTimeInMillis(System.currentTimeMillis());
                     prefs.setSdkParameters(sdkParameters);
                 }
