@@ -23,7 +23,7 @@ public class Request {
             String json = model.toJson();
             String userAgent = model.getUserAgent();
             logger.Verbose("sendSubscription: " + url + " with the json: " + json);
-            sendRequest(url, "POST", userAgent, json);
+            sendRequestSafe(url, userAgent, json);
         } catch (Exception e) {
             logger.Error("sendSubscription: " + e.getMessage());
         }
@@ -34,7 +34,7 @@ public class Request {
             String json = model.toJson();
             String userAgent = model.getUserAgent();
             logger.Verbose("sendOpen: " + url + " with the json: " + json);
-            sendRequest(url, "POST", userAgent, json);
+            sendRequestSafe(url, userAgent, json);
         } catch (Exception e) {
             logger.Error("sendSubscription: " + e.getMessage());
         }
@@ -45,7 +45,7 @@ public class Request {
             String json = model.toJson();
             String userAgent = model.getUserAgent();
             logger.Verbose("sendTransactionalOpen: " + url + " with the json: " + json);
-            sendRequest(url, "POST", userAgent, json);
+            sendRequestSafe(url, userAgent, json);
         } catch (Exception e) {
             logger.Error("sendSubscription: " + e.getMessage());
         }
@@ -56,61 +56,60 @@ public class Request {
             String json = model.toJson();
             String userAgent = model.getUserAgent();
             logger.Verbose("sendEvent: " + url + " with the json: " + json);
-            sendRequest(url, "POST", userAgent, json);
+            sendRequestSafe(url, userAgent, json);
         } catch (Exception e) {
             logger.Error("sendEvent: " + e.getMessage());
         }
     }
 
-    public String getSdkParameters(String url, String userAgent) {
+    public String sendRequest(String url, String userAgent) throws Exception {
+        logger.Verbose("requestUrl: " + url);
+        return sendHttpRequest(url, "GET", userAgent, null, 10000);
+    }
+
+    void sendRequestSafe(String url, String userAgent,
+                         String data) {
         try {
-            logger.Verbose("getSdkParameters: " + url);
-            return sendRequest(url, "GET", userAgent, null);
+            sendHttpRequest(url, "POST", userAgent, data, 15000);
         } catch (Exception e) {
-            logger.Error("getSdkParameters: " + e.getMessage());
-            return null;
+            logger.Error("sendRequest: The remote server returned an error with the status code: " + e.getMessage());
         }
     }
 
-    private String sendRequest(String url, String methodType, String userAgent, String data) {
-        try {
-            URL uri = new URL(url);
-            HttpURLConnection conn = (HttpURLConnection) uri.openConnection();
-            int readTimeout = 10000;
-            conn.setReadTimeout(readTimeout);
-            int connectionTimeout = 15000;
-            conn.setConnectTimeout(connectionTimeout);
-            conn.setRequestMethod(methodType);
-            conn.setRequestProperty("Content-Type", "application/json");
-            conn.setRequestProperty("Cache-Control", "no-cache");
-            conn.setRequestProperty("User-Agent", userAgent);
-            conn.connect();
-            if (data != null) {
-                OutputStream os = new BufferedOutputStream(conn.getOutputStream());
-                os.write(data.getBytes());
-                os.flush();
-                os.close();
-            }
-            int responseCode = conn.getResponseCode();
-            String responseMessage = conn.getResponseMessage();
-
-            String response = null;
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                response = readStream(conn.getInputStream());
-            }
-
-            conn.disconnect();
-            logger.Verbose("The remote server response: " + response);
-            logger.Verbose("The remote server responseCode: " + responseCode);
-            logger.Verbose(responseMessage);
-            if (responseCode <= 199 || responseCode >= 300) {
-                throw new Exception("The remote server returned an error with the status code: " + responseCode);
-            }
-            return response;
-        } catch (Exception e) {
-            logger.Error("sendRequest: " + e.getMessage());
-            return null;
+    String sendHttpRequest(String url, String methodType, String userAgent,
+                           String data, int connectionTimeOut) throws Exception {
+        URL uri = new URL(url);
+        HttpURLConnection conn = (HttpURLConnection) uri.openConnection();
+        int readTimeout = 10000;
+        conn.setReadTimeout(readTimeout);
+        conn.setConnectTimeout(connectionTimeOut);
+        conn.setRequestMethod(methodType);
+        conn.setRequestProperty("Content-Type", "application/json");
+        conn.setRequestProperty("Cache-Control", "no-cache");
+        conn.setRequestProperty("User-Agent", userAgent);
+        conn.connect();
+        if (data != null) {
+            OutputStream os = new BufferedOutputStream(conn.getOutputStream());
+            os.write(data.getBytes());
+            os.flush();
+            os.close();
         }
+        int responseCode = conn.getResponseCode();
+        String responseMessage = conn.getResponseMessage();
+
+        String response = null;
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            response = readStream(conn.getInputStream());
+        }
+
+        conn.disconnect();
+        logger.Verbose("The remote server response: " + response);
+        logger.Verbose("The remote server responseCode: " + responseCode);
+        logger.Verbose(responseMessage);
+        if (responseCode <= 199 || responseCode >= 300) {
+            throw new Exception(String.valueOf(responseCode));
+        }
+        return response;
     }
 
     private String readStream(InputStream in) {

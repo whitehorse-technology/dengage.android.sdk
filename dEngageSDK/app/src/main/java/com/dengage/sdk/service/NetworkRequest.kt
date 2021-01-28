@@ -2,29 +2,30 @@ package com.dengage.sdk.service
 
 import android.os.AsyncTask
 import com.dengage.sdk.Request
+import com.dengage.sdk.models.DengageError
 
 /**
  * Created by Batuhan Coskun on 26 January 2021
  */
 class NetworkRequest(private val url: String, private val userAgent: String,
-                     private val networkRequestType: NetworkRequestType,
-                     private val networkRequestCallback: NetworkRequestCallback)
-    : AsyncTask<Void, String?, String>() {
+                     private val networkRequestCallback: NetworkRequestCallback?)
+    : AsyncTask<Void, Any?, Any>() {
 
-    override fun doInBackground(vararg params: Void?): String? {
-        return when (networkRequestType) {
-            NetworkRequestType.SDK_PARAMS -> {
-                Request().getSdkParameters(url, userAgent)
-            }
-            else -> {
-                null
-            }
+    override fun doInBackground(vararg params: Void?): Any? {
+        return try {
+            Request().sendRequest(url, userAgent)
+        } catch (e: Exception) {
+            e
         }
     }
 
-    override fun onPostExecute(result: String?) {
+    override fun onPostExecute(result: Any?) {
         super.onPostExecute(result)
-        networkRequestCallback.responseFetched(result)
+        if (result == null || result is String?) {
+            networkRequestCallback?.responseFetched(result as String?)
+        } else if (result is Exception) {
+            networkRequestCallback?.requestError(DengageError("Api Error: ${result.message}"))
+        }
     }
 
     fun executeTask() {

@@ -23,6 +23,4 @@ public class Constants {
     public static final String PUSH_ACTION_CLICK_EVENT = "com.dengage.push.intent.ACTION_CLICK";
     public static final String FIREBASE_TOKEN_TYPE = "A";
     public static final String HUAWEI_TOKEN_TYPE = "H";
-    public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
-    public static final String SDK_PARAMS_API_ENDPOINT = "/api/getSdkParams";
 }
