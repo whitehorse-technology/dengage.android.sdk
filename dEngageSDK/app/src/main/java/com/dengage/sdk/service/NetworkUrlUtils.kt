@@ -36,7 +36,7 @@ object NetworkUrlUtils {
         val uriWithQueryParams = Uri.parse(baseApiUri)
                 .buildUpon()
                 .appendQueryParameter("acc", accountName)
-                .appendQueryParameter("contactkey", if (TextUtils.isEmpty(subscription.contactKey)) subscription.deviceId
+                .appendQueryParameter("cdkey", if (TextUtils.isEmpty(subscription.contactKey)) subscription.deviceId
                 else subscription.contactKey)
                 .appendQueryParameter("did", subscription.deviceId)
                 .appendQueryParameter("limit", limit.toString())
@@ -55,7 +55,7 @@ object NetworkUrlUtils {
         val uriWithQueryParams = Uri.parse(baseApiUri)
                 .buildUpon()
                 .appendQueryParameter("acc", accountName)
-                .appendQueryParameter("contactkey", if (TextUtils.isEmpty(subscription.contactKey)) subscription.deviceId
+                .appendQueryParameter("cdkey", if (TextUtils.isEmpty(subscription.contactKey)) subscription.deviceId
                 else subscription.contactKey)
                 .appendQueryParameter("did", subscription.deviceId)
                 .appendQueryParameter("msgId", messageId)
@@ -73,7 +73,7 @@ object NetworkUrlUtils {
         val uriWithQueryParams = Uri.parse(baseApiUri)
                 .buildUpon()
                 .appendQueryParameter("acc", accountName)
-                .appendQueryParameter("contactkey", if (TextUtils.isEmpty(subscription.contactKey)) subscription.deviceId
+                .appendQueryParameter("cdkey", if (TextUtils.isEmpty(subscription.contactKey)) subscription.deviceId
                 else subscription.contactKey)
                 .appendQueryParameter("did", subscription.deviceId)
                 .appendQueryParameter("msgId", messageId)
