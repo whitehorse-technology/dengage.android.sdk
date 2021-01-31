@@ -39,6 +39,7 @@ object NetworkUrlUtils {
                 .appendQueryParameter("cdkey", if (TextUtils.isEmpty(subscription.contactKey)) subscription.deviceId
                 else subscription.contactKey)
                 .appendQueryParameter("did", subscription.deviceId)
+                .appendQueryParameter("type", if (TextUtils.isEmpty(subscription.contactKey)) "d" else "c")
                 .appendQueryParameter("limit", limit.toString())
                 .appendQueryParameter("offset", offset.toString())
                 .build()
@@ -58,6 +59,7 @@ object NetworkUrlUtils {
                 .appendQueryParameter("cdkey", if (TextUtils.isEmpty(subscription.contactKey)) subscription.deviceId
                 else subscription.contactKey)
                 .appendQueryParameter("did", subscription.deviceId)
+                .appendQueryParameter("type", if (TextUtils.isEmpty(subscription.contactKey)) "d" else "c")
                 .appendQueryParameter("msgId", messageId)
                 .build()
         return uriWithQueryParams.toString()
@@ -76,6 +78,7 @@ object NetworkUrlUtils {
                 .appendQueryParameter("cdkey", if (TextUtils.isEmpty(subscription.contactKey)) subscription.deviceId
                 else subscription.contactKey)
                 .appendQueryParameter("did", subscription.deviceId)
+                .appendQueryParameter("type", if (TextUtils.isEmpty(subscription.contactKey)) "d" else "c")
                 .appendQueryParameter("msgId", messageId)
                 .build()
         return uriWithQueryParams.toString()
