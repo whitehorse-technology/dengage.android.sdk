@@ -48,16 +48,14 @@ import kotlin.jvm.functions.Function1;
 public class DengageManager {
 
     private static Logger logger = Logger.getInstance();
-
     @SuppressLint("StaticFieldLeak")
     private static DengageManager _instance = null;
-
     private Context _context;
-
     private Subscription _subscription;
-
     private boolean isSubscriptionSending = false;
+
     private List<InboxMessage> inboxMessages = new ArrayList<>();
+    private Long inboxMessageFetchMillis = 0L;
 
     private DengageManager(Context context) {
         _context = context;
@@ -681,7 +679,8 @@ public class DengageManager {
             return;
         }
 
-        if (inboxMessages != null && !inboxMessages.isEmpty() && offset == 0) {
+        if (inboxMessages != null && !inboxMessages.isEmpty() && offset == 0 &&
+                System.currentTimeMillis() < inboxMessageFetchMillis + 600000) {
             dengageCallback.onResult(inboxMessages);
         } else {
             NetworkRequest networkRequest = new NetworkRequest(
@@ -690,6 +689,7 @@ public class DengageManager {
                     _subscription.getUserAgent(), new NetworkRequestCallback() {
                 @Override
                 public void responseFetched(@Nullable String response) {
+                    inboxMessageFetchMillis = System.currentTimeMillis();
                     Type listType = new TypeToken<List<InboxMessage>>() {
                     }.getType();
                     List<InboxMessage> fetchedInboxMessages = new Gson().fromJson(response, listType);
