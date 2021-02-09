@@ -648,7 +648,7 @@ public class DengageManager {
 
         NetworkRequest networkRequest = new NetworkRequest(
                 NetworkUrlUtils.INSTANCE.getSdkParametersRequestUrl(_context, _subscription.integrationKey),
-                _subscription.getUserAgent(), new NetworkRequestCallback() {
+                Utils.getUserAgent(_context), new NetworkRequestCallback() {
             @Override
             public void responseFetched(@Nullable String response) {
                 if (response != null) {
@@ -686,7 +686,7 @@ public class DengageManager {
             NetworkRequest networkRequest = new NetworkRequest(
                     NetworkUrlUtils.INSTANCE.getInboxMessagesRequestUrl(_context,
                             sdkParameters.getAccountName(), _subscription, limit, offset),
-                    _subscription.getUserAgent(), new NetworkRequestCallback() {
+                    Utils.getUserAgent(_context), new NetworkRequestCallback() {
                 @Override
                 public void responseFetched(@Nullable String response) {
                     inboxMessageFetchMillis = System.currentTimeMillis();
@@ -734,7 +734,7 @@ public class DengageManager {
         NetworkRequest networkRequest = new NetworkRequest(
                 NetworkUrlUtils.INSTANCE.setAsDeletedRequestUrl(_context, id,
                         sdkParameters.getAccountName(), _subscription),
-                _subscription.getUserAgent(), null);
+                Utils.getUserAgent(_context), null);
         networkRequest.executeTask();
     }
 
@@ -767,7 +767,7 @@ public class DengageManager {
         NetworkRequest networkRequest = new NetworkRequest(
                 NetworkUrlUtils.INSTANCE.setAsClickedRequestUrl(_context, id,
                         sdkParameters.getAccountName(), _subscription),
-                _subscription.getUserAgent(), null);
+                Utils.getUserAgent(_context), null);
         networkRequest.executeTask();
     }
 }
