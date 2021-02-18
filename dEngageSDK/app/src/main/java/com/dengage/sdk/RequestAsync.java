@@ -18,8 +18,7 @@ class RequestAsync extends AsyncTask<Void, Void, Void> {
         this.model = model;
     }
 
-    RequestAsync
-            (String url, ModelBase model) {
+    RequestAsync(String url, ModelBase model) {
         this.model = model;
         this.url = url;
     }
@@ -28,19 +27,13 @@ class RequestAsync extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... voids) {
         Request req = new Request();
 
-        if(this.model instanceof Subscription) {
+        if (this.model instanceof Subscription) {
             req.sendSubscription(url, (Subscription) this.model);
-        }
-
-        else if(this.model instanceof Open) {
+        } else if (this.model instanceof Open) {
             req.sendOpen(url, (Open) this.model);
-        }
-
-        else if(this.model instanceof TransactionalOpen) {
+        } else if (this.model instanceof TransactionalOpen) {
             req.sendTransactionalOpen(url, (TransactionalOpen) this.model);
-        }
-
-        else if(this.model instanceof Event) {
+        } else if (this.model instanceof Event) {
             req.sendEvent(url, (Event) this.model);
         }
 
@@ -48,7 +41,7 @@ class RequestAsync extends AsyncTask<Void, Void, Void> {
     }
 
     public void executeTask() {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
             this.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         else
             this.execute();

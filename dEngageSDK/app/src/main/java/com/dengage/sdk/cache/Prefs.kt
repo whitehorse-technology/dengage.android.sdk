@@ -5,9 +5,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.dengage.sdk.Constants
 import com.dengage.sdk.inappmessage.model.InAppMessage
-import com.dengage.sdk.models.InboxMessage
+import com.dengage.sdk.models.SdkParameters
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 
 /**
  * Created by Batuhan Coskun on 30 November 2020
@@ -17,17 +16,17 @@ class Prefs(context: Context) {
     private val preferences = getSharedPreferences(context)
 
     companion object {
-        const val INBOX_MESSAGES = "INBOX_MESSAGES"
         const val IN_APP_MESSAGES = "IN_APP_MESSAGES"
         const val SESSION_NAVIGATION_COUNT = "SESSION_NAVIGATION_COUNT"
+        const val SDK_PARAMETERS = "SDK_PARAMETERS"
 
         fun getSharedPreferences(context: Context): SharedPreferences =
                 context.getSharedPreferences(Constants.DEN_DEVICE_UNIQUE_ID, Context.MODE_PRIVATE)
     }
 
-    var inboxMessages: MutableList<InboxMessage>?
-        get() = preferences.get(INBOX_MESSAGES)
-        set(value) = preferences.set(INBOX_MESSAGES, value)
+    var sdkParameters: SdkParameters?
+        get() = preferences.get(SDK_PARAMETERS)
+        set(value) = preferences.set(SDK_PARAMETERS, value)
 
     var inAppMessages: MutableList<InAppMessage>?
         get() = preferences.get(IN_APP_MESSAGES)
@@ -60,7 +59,7 @@ inline fun <reified T : Any> SharedPreferences.get(key: String, defaultValue: T?
         Float::class -> getFloat(key, defaultValue as? Float ?: -1f) as T?
         Long::class -> getLong(key, defaultValue as? Long ?: -1) as T?
         else -> getString(key, null)?.let {
-            Gson().fromJson(it, object : TypeToken<T>() {}.type)
+            Gson().fromJson(it, T::class.java)
         }
     }
 }

@@ -16,26 +16,20 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.text.TextUtils;
-import androidx.core.app.NotificationCompat;
+
 import com.dengage.sdk.models.ActionButton;
 import com.dengage.sdk.models.CarouselItem;
-import com.dengage.sdk.models.Event;
 import com.dengage.sdk.models.Message;
-import com.dengage.sdk.models.ModelBase;
 import com.dengage.sdk.models.NotificationType;
-import com.dengage.sdk.models.Open;
-import com.dengage.sdk.models.Subscription;
-import com.dengage.sdk.models.TransactionalOpen;
 
-import java.io.IOException;
 import java.net.URL;
-import java.util.Calendar;
 import java.util.Random;
+
+import androidx.core.app.NotificationCompat;
 
 public class NotificationReceiver extends BroadcastReceiver {
 
@@ -69,14 +63,14 @@ public class NotificationReceiver extends BroadcastReceiver {
     protected void onPushReceive(Context context, Intent intent) {
         logger.Verbose("onPushReceive method is called.");
         Bundle extras = intent.getExtras();
-        if(extras == null) return;
+        if (extras == null) return;
 
         onRenderStart(context, intent);
     }
 
-    private  void launchActivity(Context context, Intent intent, String uri) {
+    private void launchActivity(Context context, Intent intent, String uri) {
         Class<? extends Activity> cls = getActivity(context, intent);
-        if(cls == null) return;
+        if (cls == null) return;
 
         Intent activityIntent;
         if (uri != null && !TextUtils.isEmpty(uri)) {
@@ -85,7 +79,7 @@ public class NotificationReceiver extends BroadcastReceiver {
             activityIntent = new Intent(context, cls);
         }
 
-        if(intent.getExtras() != null)
+        if (intent.getExtras() != null)
             activityIntent.putExtras(intent.getExtras());
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -108,7 +102,7 @@ public class NotificationReceiver extends BroadcastReceiver {
     private void onRenderStart(final Context context, final Intent intent) {
         logger.Verbose("onRenderStart method is called.");
         final Message message = new Message(intent.getExtras());
-        if(message.getNotificationType() == NotificationType.CAROUSEL) {
+        if (message.getNotificationType() == NotificationType.CAROUSEL) {
             logger.Verbose("This is a carousel notification");
             new CarouselDownloader(context, message.getCarouselContent(),
                     new CarouselDownloader.OnDownloadsCompletedListener() {
@@ -119,13 +113,14 @@ public class NotificationReceiver extends BroadcastReceiver {
                             onCarouselRender(context, intent, message);
                         }
                     }).start();
-        } else if(message.getNotificationType() == NotificationType.RICH) {
+        } else if (message.getNotificationType() == NotificationType.RICH) {
             logger.Verbose("This is a rich notification");
             new ImageDownloader(message.getMediaUrl(), new ImageDownloader.OnImageLoaderListener() {
                 @Override
                 public void onError(ImageDownloader.ImageError error) {
-                    logger.Error("Image Download Error: "+ error.getMessage());
+                    logger.Error("Image Download Error: " + error.getMessage());
                 }
+
                 @Override
                 public void onComplete(Bitmap bitmap) {
                     logger.Verbose("Image downloaded.");
@@ -174,34 +169,34 @@ public class NotificationReceiver extends BroadcastReceiver {
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setSmallIcon(getSmallIconId(context));
 
-        if(!TextUtils.isEmpty(message.getTitle())) {
+        if (!TextUtils.isEmpty(message.getTitle())) {
             notificationBuilder.setContentTitle(message.getTitle());
         } else {
             String label = Utils.getAppLabel(context, "");
             notificationBuilder.setContentTitle(label);
         }
 
-        if(!TextUtils.isEmpty(message.getSubText())) {
+        if (!TextUtils.isEmpty(message.getSubText())) {
             notificationBuilder.setSubText(message.getSubText());
         }
 
-        if(!TextUtils.isEmpty(message.getMessage())) {
+        if (!TextUtils.isEmpty(message.getMessage())) {
             notificationBuilder.setContentText(message.getMessage());
         }
 
-        if(!TextUtils.isEmpty(message.getSound())){
+        if (!TextUtils.isEmpty(message.getSound())) {
             notificationBuilder.setSound(Utils.getSound(context, message.getSound()));
         } else {
             Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             notificationBuilder.setSound(sound);
         }
 
-        if(message.getBadgeCount() > 0){
+        if (message.getBadgeCount() > 0) {
             notificationBuilder.setBadgeIconType(NotificationCompat.BADGE_ICON_SMALL);
             notificationBuilder.setNumber(message.getBadgeCount());
         }
 
-        if(message.getActionButtons() != null && message.getActionButtons().length > 0) {
+        if (message.getActionButtons() != null && message.getActionButtons().length > 0) {
             for (ActionButton button : message.getActionButtons()) {
                 int requestCode = random.nextInt();
                 Intent buttonIntent = new Intent(Constants.PUSH_ACTION_CLICK_EVENT);
@@ -227,7 +222,7 @@ public class NotificationReceiver extends BroadcastReceiver {
             notificationBuilder.setStyle(style);
         }
 
-        NotificationManager manager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         Notification notification = notificationBuilder.build();
         if (manager != null) {
             manager.notify(message.getMessageSource(), message.getMessageId(), notification);
@@ -235,7 +230,7 @@ public class NotificationReceiver extends BroadcastReceiver {
     }
 
     protected void onTextNotificationRender(Context context, Intent intent, Message message, NotificationCompat.Builder notificationBuilder) {
-        NotificationManager manager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         Notification notification = notificationBuilder.build();
         if (manager != null) {
             manager.notify(message.getMessageSource(), message.getMessageId(), notification);
@@ -263,7 +258,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         if (extras != null) {
 
             String rawJson = extras.getString("RAW_DATA");
-            if(!TextUtils.isEmpty(rawJson))
+            if (!TextUtils.isEmpty(rawJson))
                 message = Message.fromJson(rawJson);
 
             uri = extras.getString("targetUrl");
@@ -285,9 +280,9 @@ public class NotificationReceiver extends BroadcastReceiver {
         Bundle extras = intent.getExtras();
         Message message = new Message(extras);
 
-        if(extras != null) {
+        if (extras != null) {
             String rawJson = extras.getString("RAW_DATA");
-            if(!TextUtils.isEmpty(rawJson))
+            if (!TextUtils.isEmpty(rawJson))
                 message = Message.fromJson(rawJson);
         }
 
@@ -306,7 +301,7 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         if (extras != null) {
             String rawJson = extras.getString("RAW_DATA");
-            if(!TextUtils.isEmpty(rawJson))
+            if (!TextUtils.isEmpty(rawJson))
                 message = Message.fromJson(rawJson);
 
             String id = extras.getString("id", "");
@@ -346,26 +341,26 @@ public class NotificationReceiver extends BroadcastReceiver {
         }
 
         Message message = new Message(intent.getExtras());
-        if(!TextUtils.isEmpty(rawJson))
+        if (!TextUtils.isEmpty(rawJson))
             message = Message.fromJson(rawJson);
 
-        logger.Debug("Current Item Index: "+ current);
-        if(current  > -1) {
+        logger.Debug("Current Item Index: " + current);
+        if (current > -1) {
             CarouselItem item = message.getCarouselContent()[current];
             uri = item.getTargetUrl();
-            logger.Debug("Current URI: "+ uri);
+            logger.Debug("Current URI: " + uri);
         }
 
-        if(navigation.equals("")) {
+        if (navigation.equals("")) {
 
             manager.sendOpenEvent("", id, new Message(extras));
 
             clearNotification(context, message);
             launchActivity(context, intent, uri);
 
-        } else if(navigation.equals("left")) {
+        } else if (navigation.equals("left")) {
             onCarouselReRender(context, intent, message);
-        } else if(navigation.equals("right")) {
+        } else if (navigation.equals("right")) {
             onCarouselReRender(context, intent, message);
         }
     }
@@ -425,17 +420,17 @@ public class NotificationReceiver extends BroadcastReceiver {
     }
 
     protected void clearNotification(Context context, Message message) {
-        logger.Verbose("Clearing notification ID: "+ message.getMessageId());
-        logger.Verbose("Clearing notification TAG: "+ message.getMessageSource());
+        logger.Verbose("Clearing notification ID: " + message.getMessageId());
+        logger.Verbose("Clearing notification TAG: " + message.getMessageSource());
 
-        if(message.getCarouselContent() != null && message.getCarouselContent().length > 0) {
+        if (message.getCarouselContent() != null && message.getCarouselContent().length > 0) {
             for (CarouselItem item : message.getCarouselContent()) {
                 Utils.removeFileFromStorage(item.getMediaFileLocation(), item.getMediaFileName());
             }
         }
 
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        if(manager != null) {
+        if (manager != null) {
             manager.cancel(message.getMessageSource(), message.getMessageId());
         }
     }
@@ -458,9 +453,17 @@ public class NotificationReceiver extends BroadcastReceiver {
     protected int getSmallIconId(Context context) {
         try {
             PackageManager packageManager = context.getPackageManager();
-            ApplicationInfo applicationInfo = packageManager.getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
-            logger.Verbose("Application icon: "+ applicationInfo.icon);
-            return applicationInfo.icon;
+            String smallIcon = Utils.getMetaData(context, "den_push_small_icon");
+            if(!TextUtils.isEmpty(smallIcon)) {
+                int appIconId = getResourceId(context, smallIcon);
+                logger.Verbose("Application icon: " + smallIcon);
+                return appIconId;
+            }
+            else {
+                ApplicationInfo applicationInfo = packageManager.getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
+                logger.Verbose("Application icon: " + applicationInfo.icon);
+                return applicationInfo.icon;
+            }
         } catch (PackageManager.NameNotFoundException e) {
             logger.Verbose("Application Icon Not Found");
             return -1;
@@ -468,8 +471,8 @@ public class NotificationReceiver extends BroadcastReceiver {
     }
 
     public int getResourceId(Context context, String resourceName) {
-        if(TextUtils.isEmpty(resourceName)) return 0;
-        if(Utils.isInteger(resourceName)) return 0;
+        if (TextUtils.isEmpty(resourceName)) return 0;
+        if (Utils.isInteger(resourceName)) return 0;
 
         try {
             int resourceId = context.getResources().getIdentifier(resourceName, "drawable", context.getPackageName());
@@ -478,7 +481,8 @@ public class NotificationReceiver extends BroadcastReceiver {
             try {
                 int defaultResourceId = android.R.drawable.class.getField(resourceName).getInt(null);
                 return defaultResourceId;
-            } catch (Throwable ignored) {}
+            } catch (Throwable ignored) {
+            }
             e.printStackTrace();
             return 0;
         }
@@ -491,7 +495,7 @@ public class NotificationReceiver extends BroadcastReceiver {
             return BitmapFactory.decodeStream(new URL(imageUrl).openConnection().getInputStream());
         } catch (Exception e) {
             e.printStackTrace();
-            logger.Debug("getBitmapFromUrl: "+ e.getMessage());
+            logger.Debug("getBitmapFromUrl: " + e.getMessage());
             return null;
         }
     }
