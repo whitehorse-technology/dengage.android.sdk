@@ -24,7 +24,7 @@ object InAppMessageUtils {
         val expireDateFormat = SimpleDateFormat(Constants.DATE_FORMAT, Locale.getDefault())
         for (inAppMessage in inAppMessages) {
             try {
-                val expireDate = expireDateFormat.parse(inAppMessage.expireDate)
+                val expireDate = expireDateFormat.parse(inAppMessage.data.expireDate)
                 if (untilDate.before(expireDate)) {
                     notExpiredMessages.add(inAppMessage)
                 }
@@ -48,7 +48,7 @@ object InAppMessageUtils {
             sortedInAppMessages.firstOrNull()
         } else {
             sortedInAppMessages.firstOrNull { inAppMessage: InAppMessage ->
-                inAppMessage.displayCondition.screenNameFilters?.firstOrNull { screenNameFilter ->
+                inAppMessage.data.displayCondition.screenNameFilters?.firstOrNull { screenNameFilter ->
                     operateScreenValues(screenNameFilter.value, screenName, screenNameFilter.operator)
                 } != null
             }

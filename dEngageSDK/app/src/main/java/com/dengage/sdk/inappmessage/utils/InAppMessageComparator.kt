@@ -15,8 +15,8 @@ class InAppMessageComparator : Comparator<InAppMessage> {
 
         if (firstHasShown == secondHasShown) {
             val simpleDateFormat = SimpleDateFormat(Constants.DATE_FORMAT, Locale.getDefault())
-            val firstExpireDate = simpleDateFormat.parse(first.expireDate)
-            val secondExpireDate = simpleDateFormat.parse(second.expireDate)
+            val firstExpireDate = simpleDateFormat.parse(first.data.expireDate)
+            val secondExpireDate = simpleDateFormat.parse(second.data.expireDate)
             return if (firstExpireDate == null || secondExpireDate == null) {
                 0
             } else if (firstExpireDate.before(secondExpireDate)) {
