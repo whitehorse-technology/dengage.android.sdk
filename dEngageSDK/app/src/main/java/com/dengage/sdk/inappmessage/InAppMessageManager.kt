@@ -37,8 +37,7 @@ class InAppMessageManager(
 
         if (System.currentTimeMillis() >= prefs.inAppMessageFetchTime + 3600000) {
             val networkRequest = NetworkRequest(
-                    NetworkUrlUtils.getInAppMessagesRequestUrl(context,
-                            sdkParameters.accountName, subscription),
+                    NetworkUrlUtils.getInAppMessagesRequestUrl(context, sdkParameters.accountName, subscription),
                     Utils.getUserAgent(context), object : NetworkRequestCallback {
                 override fun responseFetched(response: String?) {
                     val listType = object : TypeToken<MutableList<InAppMessage>>() {}.type
@@ -51,7 +50,7 @@ class InAppMessageManager(
                 override fun requestError(error: DengageError) {
                     // ignored
                 }
-            })
+            }, 5000)
             networkRequest.executeTask()
         }
     }

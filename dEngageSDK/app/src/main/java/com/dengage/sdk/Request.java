@@ -62,13 +62,12 @@ public class Request {
         }
     }
 
-    public String sendRequest(String url, String userAgent) throws Exception {
+    public String sendRequest(String url, String userAgent, int connectionTimeOut) throws Exception {
         logger.Verbose("requestUrl: " + url);
-        return sendHttpRequest(url, "GET", userAgent, null, 10000);
+        return sendHttpRequest(url, "GET", userAgent, null, connectionTimeOut);
     }
 
-    void sendRequestSafe(String url, String userAgent,
-                         String data) {
+    void sendRequestSafe(String url, String userAgent, String data) {
         try {
             sendHttpRequest(url, "POST", userAgent, data, 15000);
         } catch (Exception e) {
