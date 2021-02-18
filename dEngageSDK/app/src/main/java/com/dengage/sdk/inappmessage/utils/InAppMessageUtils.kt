@@ -37,7 +37,7 @@ object InAppMessageUtils {
     }
 
     /**
-     * Find prior in app message to show with respect to hasShown and expireDate parameters
+     * Find prior in app message to show with respect to priority and expireDate parameters
      */
     fun findPriorInAppMessage(inAppMessages: List<InAppMessage>, screenName: String? = null): InAppMessage? {
         // sort list with comparator

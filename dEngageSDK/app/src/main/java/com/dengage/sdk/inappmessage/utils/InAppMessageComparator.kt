@@ -10,10 +10,7 @@ import java.util.*
  */
 class InAppMessageComparator : Comparator<InAppMessage> {
     override fun compare(first: InAppMessage, second: InAppMessage): Int {
-        val firstHasShown = first.hasShown
-        val secondHasShown = second.hasShown
-
-        if (firstHasShown == secondHasShown) {
+        if (first.data.priority == second.data.priority) {
             val simpleDateFormat = SimpleDateFormat(Constants.DATE_FORMAT, Locale.getDefault())
             val firstExpireDate = simpleDateFormat.parse(first.data.expireDate)
             val secondExpireDate = simpleDateFormat.parse(second.data.expireDate)
@@ -27,7 +24,7 @@ class InAppMessageComparator : Comparator<InAppMessage> {
                 0
             }
         } else {
-            return if (firstHasShown) -1 else 1
+            return if (first.data.priority < second.data.priority) -1 else 1
         }
     }
 }

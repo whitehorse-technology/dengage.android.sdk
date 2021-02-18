@@ -8,6 +8,5 @@ import java.io.Serializable
  */
 class InAppMessage(
         @SerializedName("id") val id: String,
-        @SerializedName("data") val data: InAppMessageData,
-        @SerializedName("hasShown") val hasShown: Boolean = false
+        @SerializedName("data") val data: InAppMessageData
 ) : Serializable
