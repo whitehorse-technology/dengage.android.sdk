@@ -14,7 +14,6 @@ import androidx.annotation.Nullable;
 import com.dengage.sdk.cache.Prefs;
 import com.dengage.sdk.callback.DengageCallback;
 import com.dengage.sdk.inappmessage.InAppMessageManager;
-import com.dengage.sdk.inappmessage.model.InAppMessage;
 import com.dengage.sdk.models.DengageError;
 import com.dengage.sdk.models.InboxMessage;
 import com.dengage.sdk.models.Message;
@@ -45,7 +44,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 
@@ -664,6 +662,9 @@ public class DengageManager {
                     SdkParameters sdkParameters = new Gson().fromJson(response, SdkParameters.class);
                     sdkParameters.setLastFetchTimeInMillis(System.currentTimeMillis());
                     prefs.setSdkParameters(sdkParameters);
+
+                    // after fetching sdk parameters, fetch in app messages
+                    inAppMessageManager.fetchInAppMessages();
                 }
             }
 
