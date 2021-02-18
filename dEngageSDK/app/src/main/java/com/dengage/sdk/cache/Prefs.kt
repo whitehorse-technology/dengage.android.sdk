@@ -19,6 +19,7 @@ class Prefs(context: Context) {
         const val IN_APP_MESSAGES = "IN_APP_MESSAGES"
         const val SESSION_NAVIGATION_COUNT = "SESSION_NAVIGATION_COUNT"
         const val SDK_PARAMETERS = "SDK_PARAMETERS"
+        const val IN_APP_MESSAGE_FETCH_TIME = "IN_APP_MESSAGE_FETCH_TIME"
 
         fun getSharedPreferences(context: Context): SharedPreferences =
                 context.getSharedPreferences(Constants.DEN_DEVICE_UNIQUE_ID, Context.MODE_PRIVATE)
@@ -35,6 +36,10 @@ class Prefs(context: Context) {
     var sessionNavigationCount: Int?
         get() = preferences.get(SESSION_NAVIGATION_COUNT, 0)
         set(value) = preferences.set(SESSION_NAVIGATION_COUNT, value)
+
+    var inAppMessageFetchTime: Long
+        get() = preferences.get(IN_APP_MESSAGE_FETCH_TIME, 0) ?: 0
+        set(value) = preferences.set(IN_APP_MESSAGE_FETCH_TIME, value)
 
     fun clear() {
         preferences.edit().clear().apply()

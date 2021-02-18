@@ -84,4 +84,23 @@ object NetworkUrlUtils {
         return uriWithQueryParams.toString()
     }
 
+    fun getInAppMessagesRequestUrl(context: Context, accountName: String,
+                                   subscription: Subscription): String {
+        // todo update here
+        var baseApiUri = Utils.getMetaData(context, "den_push_api_url")
+        if (TextUtils.isEmpty(baseApiUri)) {
+            baseApiUri = Constants.DEN_PUSH_API_URI
+        }
+        baseApiUri += "/api/pi/getInAppMessages"
+        val uriWithQueryParams = Uri.parse(baseApiUri)
+                .buildUpon()
+                .appendQueryParameter("acc", accountName)
+                .appendQueryParameter("cdkey", if (TextUtils.isEmpty(subscription.contactKey)) subscription.deviceId
+                else subscription.contactKey)
+                .appendQueryParameter("did", subscription.deviceId)
+                .appendQueryParameter("type", if (TextUtils.isEmpty(subscription.contactKey)) "d" else "c")
+                .build()
+        return uriWithQueryParams.toString()
+    }
+
 }

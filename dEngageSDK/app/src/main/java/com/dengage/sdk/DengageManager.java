@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 import com.dengage.sdk.cache.Prefs;
 import com.dengage.sdk.callback.DengageCallback;
 import com.dengage.sdk.inappmessage.InAppMessageManager;
+import com.dengage.sdk.inappmessage.model.InAppMessage;
 import com.dengage.sdk.models.DengageError;
 import com.dengage.sdk.models.InboxMessage;
 import com.dengage.sdk.models.Message;
@@ -44,15 +45,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 
 public class DengageManager {
 
-    private static Logger logger = Logger.getInstance();
+    private static final Logger logger = Logger.getInstance();
     @SuppressLint("StaticFieldLeak")
     private static DengageManager _instance = null;
-    private Context _context;
+    private final Context _context;
+    private final Prefs prefs;
     private Subscription _subscription;
     private boolean isSubscriptionSending = false;
 
@@ -63,6 +66,7 @@ public class DengageManager {
 
     private DengageManager(Context context) {
         _context = context;
+        prefs = new Prefs(context);
     }
 
     /**
@@ -113,10 +117,8 @@ public class DengageManager {
      */
     public DengageManager init() {
         try {
-            if (_context == null) throw new Exception("_context is null.");
-
             // create in app message manager and start new session
-            inAppMessageManager = new InAppMessageManager(new Prefs(_context), logger);
+            inAppMessageManager = new InAppMessageManager(_context, _subscription, logger);
             inAppMessageManager.startNewSession();
 
             if (isGooglePlayServicesAvailable() && isHuaweiMobileServicesAvailable()) {
@@ -646,7 +648,6 @@ public class DengageManager {
 
     private void getSdkParameters() {
         if (TextUtils.isEmpty(_subscription.integrationKey)) return;
-        final Prefs prefs = new Prefs(_context);
 
         // if 24 hours passed after getting sdk params, you should get again
         if (prefs.getSdkParameters() != null &&
@@ -674,13 +675,17 @@ public class DengageManager {
         networkRequest.executeTask();
     }
 
+    public void getInAppMessages() {
+        inAppMessageManager.fetchInAppMessages();
+    }
+
     /**
      * Get saved inbox messages
      */
     public void getInboxMessages(@NonNull Integer limit, @NonNull final Integer offset,
                                  @NonNull final DengageCallback<List<InboxMessage>> dengageCallback) {
         // control inbox message enabled
-        SdkParameters sdkParameters = new Prefs(_context).getSdkParameters();
+        SdkParameters sdkParameters = prefs.getSdkParameters();
         if (sdkParameters == null || sdkParameters.getAccountName() == null ||
                 sdkParameters.getInboxEnabled() == null || !sdkParameters.getInboxEnabled()) {
             dengageCallback.onResult(new ArrayList<InboxMessage>());
@@ -723,7 +728,7 @@ public class DengageManager {
      */
     public void deleteInboxMessage(final String id) {
         // control inbox message enabled
-        SdkParameters sdkParameters = new Prefs(_context).getSdkParameters();
+        SdkParameters sdkParameters = prefs.getSdkParameters();
         if (sdkParameters == null || sdkParameters.getAccountName() == null ||
                 sdkParameters.getInboxEnabled() == null || !sdkParameters.getInboxEnabled()) {
             return;
@@ -753,7 +758,7 @@ public class DengageManager {
      */
     public void setInboxMessageAsClicked(final String id) {
         // control inbox message enabled
-        SdkParameters sdkParameters = new Prefs(_context).getSdkParameters();
+        SdkParameters sdkParameters = prefs.getSdkParameters();
         if (sdkParameters == null || sdkParameters.getAccountName() == null ||
                 sdkParameters.getInboxEnabled() == null || !sdkParameters.getInboxEnabled()) {
             return;
