@@ -46,8 +46,8 @@ object NetworkUrlUtils {
         return uriWithQueryParams.toString()
     }
 
-    fun setAsDeletedRequestUrl(context: Context, messageId: String,
-                               accountName: String, subscription: Subscription): String {
+    fun setInboxMessageAsDeletedRequestUrl(context: Context, messageId: String,
+                                           accountName: String, subscription: Subscription): String {
         var baseApiUri = Utils.getMetaData(context, "den_push_api_url")
         if (TextUtils.isEmpty(baseApiUri)) {
             baseApiUri = Constants.DEN_PUSH_API_URI
@@ -65,8 +65,8 @@ object NetworkUrlUtils {
         return uriWithQueryParams.toString()
     }
 
-    fun setAsClickedRequestUrl(context: Context, messageId: String,
-                               accountName: String, subscription: Subscription): String {
+    fun setInboxMessageAsClickedRequestUrl(context: Context, messageId: String,
+                                           accountName: String, subscription: Subscription): String {
         var baseApiUri = Utils.getMetaData(context, "den_push_api_url")
         if (TextUtils.isEmpty(baseApiUri)) {
             baseApiUri = Constants.DEN_PUSH_API_URI
@@ -91,7 +91,7 @@ object NetworkUrlUtils {
         if (TextUtils.isEmpty(baseApiUri)) {
             baseApiUri = Constants.DEN_PUSH_API_URI
         }
-        baseApiUri += "/api/pi/getInAppMessages"
+        baseApiUri += "/api/getInApp"
         val uriWithQueryParams = Uri.parse(baseApiUri)
                 .buildUpon()
                 .appendQueryParameter("acc", accountName)
@@ -99,6 +99,66 @@ object NetworkUrlUtils {
                 else subscription.contactKey)
                 .appendQueryParameter("did", subscription.deviceId)
                 .appendQueryParameter("type", if (TextUtils.isEmpty(subscription.contactKey)) "d" else "c")
+                .build()
+        return uriWithQueryParams.toString()
+    }
+
+    fun getInAppMessageAsDisplayedRequestUrl(context: Context, inAppMessageId: String,
+                                             accountName: String, subscription: Subscription): String {
+        // todo update here
+        var baseApiUri = Utils.getMetaData(context, "den_push_api_url")
+        if (TextUtils.isEmpty(baseApiUri)) {
+            baseApiUri = Constants.DEN_PUSH_API_URI
+        }
+        baseApiUri += "/api/inApp/setAsDisplayed"
+        val uriWithQueryParams = Uri.parse(baseApiUri)
+                .buildUpon()
+                .appendQueryParameter("acc", accountName)
+                .appendQueryParameter("cdkey", if (TextUtils.isEmpty(subscription.contactKey)) subscription.deviceId
+                else subscription.contactKey)
+                .appendQueryParameter("did", subscription.deviceId)
+                .appendQueryParameter("type", if (TextUtils.isEmpty(subscription.contactKey)) "d" else "c")
+                .appendQueryParameter("inAppMessageId", inAppMessageId)
+                .build()
+        return uriWithQueryParams.toString()
+    }
+
+    fun getInAppMessageAsClickedRequestUrl(context: Context, inAppMessageId: String,
+                                           accountName: String, subscription: Subscription): String {
+        // todo update here
+        var baseApiUri = Utils.getMetaData(context, "den_push_api_url")
+        if (TextUtils.isEmpty(baseApiUri)) {
+            baseApiUri = Constants.DEN_PUSH_API_URI
+        }
+        baseApiUri += "/api/inApp/setAsClicked"
+        val uriWithQueryParams = Uri.parse(baseApiUri)
+                .buildUpon()
+                .appendQueryParameter("acc", accountName)
+                .appendQueryParameter("cdkey", if (TextUtils.isEmpty(subscription.contactKey)) subscription.deviceId
+                else subscription.contactKey)
+                .appendQueryParameter("did", subscription.deviceId)
+                .appendQueryParameter("type", if (TextUtils.isEmpty(subscription.contactKey)) "d" else "c")
+                .appendQueryParameter("inAppMessageId", inAppMessageId)
+                .build()
+        return uriWithQueryParams.toString()
+    }
+
+    fun getInAppMessageAsDismissedRequestUrl(context: Context, inAppMessageId: String,
+                                             accountName: String, subscription: Subscription): String {
+        // todo update here
+        var baseApiUri = Utils.getMetaData(context, "den_push_api_url")
+        if (TextUtils.isEmpty(baseApiUri)) {
+            baseApiUri = Constants.DEN_PUSH_API_URI
+        }
+        baseApiUri += "/api/inApp/setAsDismissed"
+        val uriWithQueryParams = Uri.parse(baseApiUri)
+                .buildUpon()
+                .appendQueryParameter("acc", accountName)
+                .appendQueryParameter("cdkey", if (TextUtils.isEmpty(subscription.contactKey)) subscription.deviceId
+                else subscription.contactKey)
+                .appendQueryParameter("did", subscription.deviceId)
+                .appendQueryParameter("type", if (TextUtils.isEmpty(subscription.contactKey)) "d" else "c")
+                .appendQueryParameter("inAppMessageId", inAppMessageId)
                 .build()
         return uriWithQueryParams.toString()
     }

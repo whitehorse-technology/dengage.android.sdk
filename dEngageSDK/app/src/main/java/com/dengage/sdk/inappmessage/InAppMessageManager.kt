@@ -55,6 +55,50 @@ class InAppMessageManager(
         }
     }
 
+    fun setInAppMessageAsDisplayed(inAppMessageId: String) {
+        // control in app message enabled
+        val sdkParameters = prefs.sdkParameters
+        if (sdkParameters?.accountName == null || sdkParameters.inAppEnabled == null ||
+                !sdkParameters.inAppEnabled) {
+            return
+        }
+
+        val networkRequest = NetworkRequest(
+                NetworkUrlUtils.getInAppMessageAsDisplayedRequestUrl(context, inAppMessageId,
+                        sdkParameters.accountName, subscription),
+                Utils.getUserAgent(context), null, 5000)
+        networkRequest.executeTask()
+    }
+
+    fun setInAppMessageAsClicked(inAppMessageId: String) {
+        // control in app message enabled
+        val sdkParameters = prefs.sdkParameters
+        if (sdkParameters?.accountName == null || sdkParameters.inAppEnabled == null ||
+                !sdkParameters.inAppEnabled) {
+            return
+        }
+
+        val networkRequest = NetworkRequest(
+                NetworkUrlUtils.getInAppMessageAsClickedRequestUrl(context, inAppMessageId,
+                        sdkParameters.accountName, subscription),
+                Utils.getUserAgent(context), null, 5000)
+        networkRequest.executeTask()
+    }
+
+    fun setInAppMessageAsDismissed(inAppMessageId: String) {
+        // control in app message enabled
+        val sdkParameters = prefs.sdkParameters
+        if (sdkParameters?.accountName == null || sdkParameters.inAppEnabled == null ||
+                !sdkParameters.inAppEnabled) {
+            return
+        }
+
+        val networkRequest = NetworkRequest(
+                NetworkUrlUtils.getInAppMessageAsDismissedRequestUrl(context, inAppMessageId,
+                        sdkParameters.accountName, subscription),
+                Utils.getUserAgent(context), null, 5000)
+        networkRequest.executeTask()
+    }
 
     fun setNavigation(activity: Activity, screenName: String? = null, screenData: Map<String, Any>? = null) {
         addNavigation()

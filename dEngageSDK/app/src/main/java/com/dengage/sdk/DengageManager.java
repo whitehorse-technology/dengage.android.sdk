@@ -746,7 +746,7 @@ public class DengageManager {
 
         // call http request
         NetworkRequest networkRequest = new NetworkRequest(
-                NetworkUrlUtils.INSTANCE.setAsDeletedRequestUrl(_context, id,
+                NetworkUrlUtils.INSTANCE.setInboxMessageAsDeletedRequestUrl(_context, id,
                         sdkParameters.getAccountName(), _subscription),
                 Utils.getUserAgent(_context), null);
         networkRequest.executeTask();
@@ -779,7 +779,7 @@ public class DengageManager {
 
         // call http request
         NetworkRequest networkRequest = new NetworkRequest(
-                NetworkUrlUtils.INSTANCE.setAsClickedRequestUrl(_context, id,
+                NetworkUrlUtils.INSTANCE.setInboxMessageAsClickedRequestUrl(_context, id,
                         sdkParameters.getAccountName(), _subscription),
                 Utils.getUserAgent(_context), null);
         networkRequest.executeTask();
