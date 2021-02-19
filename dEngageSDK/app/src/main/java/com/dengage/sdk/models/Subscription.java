@@ -49,6 +49,39 @@ public class Subscription extends ModelBase {
     @SerializedName("userAgent")
     private transient String userAgent = "";
 
+    @SerializedName("country")
+    private String country;
+
+    @SerializedName("language")
+    private String language;
+
+    @SerializedName("timezone")
+    private String timezone;
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public String getTimezone() {
+        return timezone;
+    }
+
+    public void setTimezone(String timezone) {
+        this.timezone = timezone;
+    }
+
     public String getUserAgent() {
         return userAgent;
     }
