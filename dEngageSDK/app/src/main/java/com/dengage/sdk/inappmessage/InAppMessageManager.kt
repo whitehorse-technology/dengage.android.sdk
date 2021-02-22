@@ -48,7 +48,7 @@ class InAppMessageManager(
                 }
 
                 override fun requestError(error: DengageError) {
-                    // ignored
+                    prefs.inAppMessageFetchTime = System.currentTimeMillis() - 3600000
                 }
             }, 5000)
             networkRequest.executeTask()
