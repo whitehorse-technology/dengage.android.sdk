@@ -1,7 +1,7 @@
 package com.dengage.sdk.inappmessage
 
-import android.app.Activity
 import android.content.Context
+import androidx.appcompat.app.AppCompatActivity
 import com.dengage.sdk.Logger
 import com.dengage.sdk.Utils
 import com.dengage.sdk.cache.Prefs
@@ -23,10 +23,42 @@ class InAppMessageManager(
         private val context: Context,
         private val subscription: Subscription,
         private val logger: Logger
-) {
+) : InAppMessageDialog.InAppMessageCallback {
 
     private val prefs: Prefs = Prefs(context)
 
+    /**
+     *Call this method for the pages that you should show in app message if available
+     */
+    fun setNavigation(activity: AppCompatActivity, screenName: String? = null, screenData: Map<String, Any>? = null) {
+        addNavigation()
+        val inAppMessages = InAppMessageUtils.findNotExpiredInAppMessages(logger, Date(), prefs.inAppMessages)
+        prefs.inAppMessages = inAppMessages
+        if (!inAppMessages.isNullOrEmpty()) {
+            val priorInAppMessage = InAppMessageUtils.findPriorInAppMessage(inAppMessages, screenName)
+            if (priorInAppMessage != null) {
+                showInAppMessage(activity, priorInAppMessage)
+            }
+        }
+    }
+
+    /**
+     *Starts new session for in app message navigation count controls
+     */
+    fun startNewSession() {
+        prefs.sessionNavigationCount = 0
+    }
+
+    /**
+     * Add navigation to cache for in app message navigation count controls
+     */
+    private fun addNavigation() {
+        prefs.sessionNavigationCount = prefs.sessionNavigationCount?.plus(1)
+    }
+
+    /**
+     * Fetch in app messages if enabled and fetch time is available
+     */
     fun fetchInAppMessages() {
         // control in app message enabled
         val sdkParameters = prefs.sdkParameters
@@ -55,7 +87,10 @@ class InAppMessageManager(
         }
     }
 
-    fun setInAppMessageAsDisplayed(inAppMessageId: String) {
+    /**
+     * Call service for setting in app message as displayed
+     */
+    private fun setInAppMessageAsDisplayed(inAppMessageId: String) {
         // control in app message enabled
         val sdkParameters = prefs.sdkParameters
         if (sdkParameters?.accountName == null || sdkParameters.inAppEnabled == null ||
@@ -70,7 +105,10 @@ class InAppMessageManager(
         networkRequest.executeTask()
     }
 
-    fun setInAppMessageAsClicked(inAppMessageId: String) {
+    /**
+     * Call service for setting in app message as clicked
+     */
+    private fun setInAppMessageAsClicked(inAppMessageId: String) {
         // control in app message enabled
         val sdkParameters = prefs.sdkParameters
         if (sdkParameters?.accountName == null || sdkParameters.inAppEnabled == null ||
@@ -85,7 +123,10 @@ class InAppMessageManager(
         networkRequest.executeTask()
     }
 
-    fun setInAppMessageAsDismissed(inAppMessageId: String) {
+    /**
+     * Call service for setting in app message as dismissed
+     */
+    private fun setInAppMessageAsDismissed(inAppMessageId: String) {
         // control in app message enabled
         val sdkParameters = prefs.sdkParameters
         if (sdkParameters?.accountName == null || sdkParameters.inAppEnabled == null ||
@@ -100,34 +141,22 @@ class InAppMessageManager(
         networkRequest.executeTask()
     }
 
-    fun setNavigation(activity: Activity, screenName: String? = null, screenData: Map<String, Any>? = null) {
-        addNavigation()
-        val inAppMessages = InAppMessageUtils.findNotExpiredInAppMessages(logger, Date(), prefs.inAppMessages)
-        prefs.inAppMessages = inAppMessages
-        if (!inAppMessages.isNullOrEmpty()) {
-            val priorInAppMessage = InAppMessageUtils.findPriorInAppMessage(inAppMessages)
-            if (priorInAppMessage != null) {
-                showInAppMessage(priorInAppMessage)
-            }
-        }
-    }
-
-    private fun showInAppMessage(inAppMessage: InAppMessage){
-
-    }
-
     /**
-    Starts new session for in app message navigation count controls
+     * Show in app message dialog on activity screen
      */
-    fun startNewSession() {
-        prefs.sessionNavigationCount = 0
+    private fun showInAppMessage(activity: AppCompatActivity, inAppMessage: InAppMessage) {
+        setInAppMessageAsDisplayed(inAppMessageId = inAppMessage.id)
+        InAppMessageDialog.newInstance(inAppMessage)
+                .show(activity.supportFragmentManager, InAppMessageDialog::class.java.simpleName)
     }
 
-    /**
-    Add navigation to cache for in app message navigation count controls
-     */
-    private fun addNavigation() {
-        prefs.sessionNavigationCount = prefs.sessionNavigationCount?.plus(1)
+    override fun inAppMessageClicked(inAppMessage: InAppMessage) {
+        setInAppMessageAsClicked(inAppMessageId = inAppMessage.id)
+        // todo action in app message click
+    }
+
+    override fun inAppMessageDismissed(inAppMessage: InAppMessage) {
+        setInAppMessageAsDismissed(inAppMessageId = inAppMessage.id)
     }
 
 }

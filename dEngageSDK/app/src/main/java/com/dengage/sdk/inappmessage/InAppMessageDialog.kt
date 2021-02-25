@@ -17,6 +17,7 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
 
     private lateinit var binding: DialogInAppMessageBinding
     private lateinit var inAppMessage: InAppMessage
+    private var inAppMessageCallback: InAppMessageCallback? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,16 +61,26 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
     }
 
     private fun inAppMessageClicked() {
-        // todo action in app click
+        inAppMessageCallback?.inAppMessageClicked(inAppMessage)
     }
 
     private fun inAppMessageDismissed() {
-        // todo action in app dismiss
+        inAppMessageCallback?.inAppMessageDismissed(inAppMessage)
     }
 
     override fun onDestroy() {
         binding.unbind()
+        inAppMessageCallback = null
         super.onDestroy()
+    }
+
+    fun setInAppMessageCallback(inAppMessageCallback: InAppMessageCallback) {
+        this.inAppMessageCallback = inAppMessageCallback
+    }
+
+    interface InAppMessageCallback {
+        fun inAppMessageClicked(inAppMessage: InAppMessage)
+        fun inAppMessageDismissed(inAppMessage: InAppMessage)
     }
 
     companion object {
