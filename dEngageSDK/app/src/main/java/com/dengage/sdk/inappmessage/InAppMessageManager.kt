@@ -107,9 +107,13 @@ class InAppMessageManager(
         if (!inAppMessages.isNullOrEmpty()) {
             val priorInAppMessage = InAppMessageUtils.findPriorInAppMessage(inAppMessages)
             if (priorInAppMessage != null) {
-                // todo show in app message
+                showInAppMessage(priorInAppMessage)
             }
         }
+    }
+
+    private fun showInAppMessage(inAppMessage: InAppMessage){
+
     }
 
     /**

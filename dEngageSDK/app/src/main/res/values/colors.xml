@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="in_app_message_color_background">#E5E5E5</color>
+    <color name="in_app_message_color_title">#004E5A</color>
+    <color name="in_app_message_color_message">#80232326</color>
+
+</resources>
