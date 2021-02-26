@@ -1,11 +1,13 @@
 package com.dengage.sdk.inappmessage
 
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
+import com.dengage.sdk.ImageDownloader
 import com.dengage.sdk.R
 import com.dengage.sdk.databinding.DialogInAppMessageBinding
 import com.dengage.sdk.inappmessage.model.InAppMessage
@@ -40,10 +42,23 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
         }
 
         inAppMessage = requireArguments().getSerializable(EXTRA_IN_APP_MESSAGE) as InAppMessage
-        binding.tvInAppTitle.visibility = if (inAppMessage.data.content.params.showTitle) View.VISIBLE else View.GONE
-        binding.ivInAppMessage.visibility = if (inAppMessage.data.content.params.showImage) View.VISIBLE else View.GONE
-        binding.tvInAppTitle.text = inAppMessage.data.content.params.title
-        binding.tvInAppMessage.text = inAppMessage.data.content.params.message
+        val contentParams = inAppMessage.data.content.params
+        binding.tvInAppTitle.visibility = if (contentParams.showTitle) View.VISIBLE else View.GONE
+        binding.tvInAppTitle.text = contentParams.title
+        binding.tvInAppMessage.text = contentParams.message
+
+        binding.cardInAppMessageImage.visibility = if (contentParams.showImage) View.VISIBLE else View.GONE
+        if (contentParams.showImage && !contentParams.imageUrl.isNullOrEmpty()) {
+            ImageDownloader(contentParams.imageUrl, object : ImageDownloader.OnImageLoaderListener {
+                override fun onError(error: ImageDownloader.ImageError) {
+                    binding.cardInAppMessageImage.visibility = View.GONE
+                }
+
+                override fun onComplete(bitmap: Bitmap) {
+                    binding.ivInAppMessage.setImageBitmap(bitmap)
+                }
+            }).start()
+        }
 
         binding.vInAppMessageContainer.setOnClickListener(this)
         binding.vInAppMessage.setOnClickListener(this)
