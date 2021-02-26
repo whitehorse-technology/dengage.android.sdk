@@ -18,7 +18,7 @@ object InAppMessageUtils {
      *
      * @param inAppMessages in app messages that will be filtered with expire date
      */
-    fun findNotExpiredInAppMessages(logger: Logger, untilDate: Date, inAppMessages: List<InAppMessage>?): MutableList<InAppMessage>? {
+    fun findNotExpiredInAppMessages(logger: Logger?, untilDate: Date, inAppMessages: List<InAppMessage>?): MutableList<InAppMessage>? {
         if (inAppMessages == null) return null
         val notExpiredMessages = mutableListOf<InAppMessage>()
         val expireDateFormat = SimpleDateFormat(Constants.DATE_FORMAT, Locale.getDefault())
@@ -29,7 +29,7 @@ object InAppMessageUtils {
                     notExpiredMessages.add(inAppMessage)
                 }
             } catch (e: ParseException) {
-                logger.Error("removeExpiredInAppMessages: " + e.message)
+                logger?.Error("removeExpiredInAppMessages: " + e.message)
                 e.printStackTrace()
             }
         }
@@ -55,7 +55,7 @@ object InAppMessageUtils {
         }
     }
 
-    private fun operateScreenValues(screenNameFilterValue: String, screenName: String, operator: String): Boolean {
+    fun operateScreenValues(screenNameFilterValue: String, screenName: String, operator: String): Boolean {
         when (operator) {
             Operator.EQUALS.operator -> {
                 return screenNameFilterValue == screenName
