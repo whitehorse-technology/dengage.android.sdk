@@ -3,5 +3,6 @@
 
     <dimen name="in_app_message_text_size_title">16sp</dimen>
     <dimen name="in_app_message_text_size_message">14sp</dimen>
+    <dimen name="in_app_message_height">86dp</dimen>
 
 </resources>

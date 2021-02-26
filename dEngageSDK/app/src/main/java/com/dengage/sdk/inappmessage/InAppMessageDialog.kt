@@ -5,12 +5,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.widget.RelativeLayout
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import com.dengage.sdk.ImageDownloader
 import com.dengage.sdk.R
 import com.dengage.sdk.databinding.DialogInAppMessageBinding
+import com.dengage.sdk.inappmessage.model.ContentPosition
 import com.dengage.sdk.inappmessage.model.InAppMessage
+
 
 /**
  * Created by Batuhan Coskun on 26 February 2021
@@ -59,6 +63,21 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
                 }
             }).start()
         }
+
+        val params = RelativeLayout.LayoutParams(MATCH_PARENT,
+                resources.getDimensionPixelSize(R.dimen.in_app_message_height))
+        when (contentParams.position) {
+            ContentPosition.BOTTOM.position -> {
+                params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+            }
+            ContentPosition.MIDDLE.position -> {
+                params.addRule(RelativeLayout.CENTER_VERTICAL)
+            }
+            ContentPosition.TOP.position -> {
+                params.addRule(RelativeLayout.ALIGN_PARENT_TOP)
+            }
+        }
+        binding.vInAppMessage.layoutParams = params
 
         binding.vInAppMessageContainer.setOnClickListener(this)
         binding.vInAppMessage.setOnClickListener(this)
