@@ -323,7 +323,7 @@ public class DengageManager {
                 _subscription.setDeviceId(Utils.getDeviceId(_context));
             _subscription.setCarrierId(Utils.carrier(_context));
             _subscription.setAppVersion(Utils.appVersion(_context));
-            _subscription.setSdkVersion(com.dengage.sdk.BuildConfig.VERSION_NAME);
+            _subscription.setSdkVersion(Utils.getSdkVersion());
             _subscription.setUserAgent(Utils.getUserAgent(_context));
             _subscription.setLanguage(Locale.getDefault().getLanguage());
             _subscription.setTimezone(TimeZone.getDefault().getDisplayName());

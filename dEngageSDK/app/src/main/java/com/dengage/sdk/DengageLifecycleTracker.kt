@@ -14,7 +14,7 @@ class DengageLifecycleTracker : Application.ActivityLifecycleCallbacks {
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
     }
 
-    override fun onActivityStarted(activity: Activity?) {
+    override fun onActivityStarted(activity: Activity) {
         if (startedActivityCount == 0) {
             // app went to foreground
             DengageManager.getInstance(activity)?.getInAppMessages()
@@ -28,7 +28,7 @@ class DengageLifecycleTracker : Application.ActivityLifecycleCallbacks {
     override fun onActivityPaused(activity: Activity) {
     }
 
-    override fun onActivityStopped(activity: Activity?) {
+    override fun onActivityStopped(activity: Activity) {
         startedActivityCount--
     }
 
