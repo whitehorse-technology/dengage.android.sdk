@@ -10,6 +10,7 @@ import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.dengage.sdk.cache.Prefs;
 import com.dengage.sdk.callback.DengageCallback;
@@ -684,7 +685,7 @@ public class DengageManager {
                     prefs.setSdkParameters(sdkParameters);
 
                     // after fetching sdk parameters, fetch in app messages
-                    inAppMessageManager.fetchInAppMessages();
+                    getInAppMessages();
                 }
             }
 
@@ -698,6 +699,10 @@ public class DengageManager {
 
     public void getInAppMessages() {
         inAppMessageManager.fetchInAppMessages();
+    }
+
+    public void setNavigation(@NonNull AppCompatActivity activity, @Nullable String screenName) {
+        inAppMessageManager.setNavigation(activity, screenName, null);
     }
 
     /**
