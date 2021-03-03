@@ -108,6 +108,9 @@ class InAppMessageManager(
             return
         }
 
+        // remove in app message from cache if clicked
+        removeInAppMessageFromCache(inAppMessageId)
+
         val networkRequest = NetworkRequest(
                 NetworkUrlUtils.getInAppMessageAsClickedRequestUrl(context, inAppMessageId,
                         sdkParameters.accountName, subscription),
