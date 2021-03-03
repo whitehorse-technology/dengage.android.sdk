@@ -40,14 +40,11 @@ object InAppMessageUtils {
      * Find prior in app message to show with respect to priority and expireDate parameters
      */
     fun findPriorInAppMessage(inAppMessages: List<InAppMessage>, screenName: String? = null): InAppMessage? {
-        // sort list with comparator
-        val sortedInAppMessages = inAppMessages.sortedWith(InAppMessageComparator())
-
         // if screen name is not empty, find in app message that screen name filter has screen name value
         return if (screenName.isNullOrEmpty()) {
-            sortedInAppMessages.firstOrNull()
+            inAppMessages.firstOrNull()
         } else {
-            sortedInAppMessages.firstOrNull { inAppMessage: InAppMessage ->
+            inAppMessages.firstOrNull { inAppMessage: InAppMessage ->
                 inAppMessage.data.displayCondition.screenNameFilters?.firstOrNull { screenNameFilter ->
                     operateScreenValues(screenNameFilter.value, screenName, screenNameFilter.operator)
                 } != null

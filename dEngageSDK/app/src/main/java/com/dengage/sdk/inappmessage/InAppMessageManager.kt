@@ -4,16 +4,16 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import com.dengage.sdk.Logger
 import com.dengage.sdk.Utils
+import com.dengage.sdk.cache.GsonHolder
 import com.dengage.sdk.cache.Prefs
 import com.dengage.sdk.inappmessage.model.InAppMessage
+import com.dengage.sdk.inappmessage.utils.InAppMessageComparator
 import com.dengage.sdk.inappmessage.utils.InAppMessageUtils
 import com.dengage.sdk.models.DengageError
 import com.dengage.sdk.models.Subscription
 import com.dengage.sdk.service.NetworkRequest
 import com.dengage.sdk.service.NetworkRequestCallback
 import com.dengage.sdk.service.NetworkUrlUtils
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import java.util.*
 
 /**
@@ -57,11 +57,21 @@ class InAppMessageManager(
                     NetworkUrlUtils.getInAppMessagesRequestUrl(context, sdkParameters.accountName, subscription),
                     Utils.getUserAgent(context), object : NetworkRequestCallback {
                 override fun responseFetched(response: String?) {
-                    val listType = object : TypeToken<MutableList<InAppMessage>>() {}.type
-                    val fetchedInAppMessages = Gson().fromJson<MutableList<InAppMessage>>(response, listType)
-
+                    val fetchedInAppMessages = GsonHolder.fromJson<MutableList<InAppMessage>>(response)
                     prefs.inAppMessageFetchTime = System.currentTimeMillis()
-                    prefs.inAppMessages = fetchedInAppMessages
+
+                    if (!fetchedInAppMessages.isNullOrEmpty()) {
+                        // get existing in app messages and save with fetched in app messages
+                        var existingInAppMessages = prefs.inAppMessages
+                        if (existingInAppMessages == null) {
+                            existingInAppMessages = mutableListOf()
+                        }
+                        existingInAppMessages.addAll(fetchedInAppMessages)
+
+                        // sort list with comparator
+                        existingInAppMessages.sortedWith(InAppMessageComparator())
+                        prefs.inAppMessages = existingInAppMessages
+                    }
                 }
 
                 override fun requestError(error: DengageError) {
