@@ -33,10 +33,6 @@ class Prefs(context: Context) {
         get() = preferences.get(IN_APP_MESSAGES)
         set(value) = preferences.set(IN_APP_MESSAGES, value)
 
-    var sessionNavigationCount: Int?
-        get() = preferences.get(SESSION_NAVIGATION_COUNT, 0)
-        set(value) = preferences.set(SESSION_NAVIGATION_COUNT, value)
-
     var inAppMessageFetchTime: Long
         get() = preferences.get(IN_APP_MESSAGE_FETCH_TIME, 0) ?: 0
         set(value) = preferences.set(IN_APP_MESSAGE_FETCH_TIME, value)

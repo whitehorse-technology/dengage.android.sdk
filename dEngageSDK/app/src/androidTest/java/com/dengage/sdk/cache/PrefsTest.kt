@@ -58,13 +58,6 @@ class PrefsTest {
     }
 
     @Test
-    fun saveSessionNavigationCountToPrefsTest() {
-        val sessionNavigationCount = 2
-        prefs.sessionNavigationCount = sessionNavigationCount
-        Assert.assertEquals(prefs.sessionNavigationCount, sessionNavigationCount)
-    }
-
-    @Test
     fun saveInAppMessageFetchTimeToPrefsTest() {
         val time = 20L
         prefs.inAppMessageFetchTime = time
@@ -73,9 +66,9 @@ class PrefsTest {
 
     @Test
     fun clearPrefsTest() {
-        prefs.sessionNavigationCount = 1
+        prefs.inAppMessageFetchTime = 1
         prefs.clear()
-        Assert.assertEquals(prefs.sessionNavigationCount, 0)
+        Assert.assertEquals(prefs.inAppMessageFetchTime, 0)
     }
 
 }

@@ -30,8 +30,7 @@ class InAppMessageManager(
     /**
      *Call this method for the pages that you should show in app message if available
      */
-    fun setNavigation(activity: AppCompatActivity, screenName: String? = null, screenData: Map<String, Any>? = null) {
-        addNavigation()
+    fun setNavigation(activity: AppCompatActivity, screenName: String? = null) {
         val inAppMessages = InAppMessageUtils.findNotExpiredInAppMessages(logger, Date(), prefs.inAppMessages)
         prefs.inAppMessages = inAppMessages
         if (!inAppMessages.isNullOrEmpty()) {
@@ -40,20 +39,6 @@ class InAppMessageManager(
                 showInAppMessage(activity, priorInAppMessage)
             }
         }
-    }
-
-    /**
-     *Starts new session for in app message navigation count controls
-     */
-    fun startNewSession() {
-        prefs.sessionNavigationCount = 0
-    }
-
-    /**
-     * Add navigation to cache for in app message navigation count controls
-     */
-    private fun addNavigation() {
-        prefs.sessionNavigationCount = prefs.sessionNavigationCount?.plus(1)
     }
 
     /**

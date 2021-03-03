@@ -136,7 +136,6 @@ public class DengageManager {
         try {
             // create in app message manager and start new session
             inAppMessageManager = new InAppMessageManager(_context, _subscription, logger);
-            inAppMessageManager.startNewSession();
 
             if (isGooglePlayServicesAvailable() && isHuaweiMobileServicesAvailable()) {
                 logger.Verbose("Google Play Services and Huawei Mobile Service are available. Firebase services will be used.");
@@ -702,7 +701,7 @@ public class DengageManager {
     }
 
     public void setNavigation(@NonNull AppCompatActivity activity, @Nullable String screenName) {
-        inAppMessageManager.setNavigation(activity, screenName, null);
+        inAppMessageManager.setNavigation(activity, screenName);
     }
 
     /**
