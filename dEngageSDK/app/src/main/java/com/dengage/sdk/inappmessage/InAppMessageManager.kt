@@ -68,8 +68,6 @@ class InAppMessageManager(
                         }
                         existingInAppMessages.addAll(fetchedInAppMessages)
 
-                        // sort list with comparator
-                        existingInAppMessages.sortedWith(InAppMessageComparator())
                         prefs.inAppMessages = existingInAppMessages
                     }
                 }
