@@ -6,7 +6,6 @@ import android.content.SharedPreferences
 import com.dengage.sdk.Constants
 import com.dengage.sdk.inappmessage.model.InAppMessage
 import com.dengage.sdk.models.SdkParameters
-import com.google.gson.Gson
 
 /**
  * Created by Batuhan Coskun on 30 November 2020
@@ -17,7 +16,6 @@ class Prefs(context: Context) {
 
     companion object {
         const val IN_APP_MESSAGES = "IN_APP_MESSAGES"
-        const val SESSION_NAVIGATION_COUNT = "SESSION_NAVIGATION_COUNT"
         const val SDK_PARAMETERS = "SDK_PARAMETERS"
         const val IN_APP_MESSAGE_FETCH_TIME = "IN_APP_MESSAGE_FETCH_TIME"
 
@@ -60,7 +58,7 @@ inline fun <reified T : Any> SharedPreferences.get(key: String, defaultValue: T?
         Float::class -> getFloat(key, defaultValue as? Float ?: -1f) as T?
         Long::class -> getLong(key, defaultValue as? Long ?: -1) as T?
         else -> getString(key, null)?.let {
-            Gson().fromJson(it, T::class.java)
+            GsonHolder.fromJson<T>(it)
         }
     }
 }
@@ -78,7 +76,7 @@ fun SharedPreferences.set(key: String, value: Any?, immediately: Boolean = false
         is Boolean -> edit(immediately) { it.putBoolean(key, value) }
         is Float -> edit(immediately) { it.putFloat(key, value) }
         is Long -> edit(immediately) { it.putLong(key, value) }
-        else -> edit(immediately) { it.putString(key, Gson().toJson(value)) }
+        else -> edit(immediately) { it.putString(key, GsonHolder.toJson(value)) }
     }
 }
 
