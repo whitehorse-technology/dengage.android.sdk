@@ -4,6 +4,7 @@ import com.dengage.sdk.Constants
 import com.dengage.sdk.inappmessage.InAppMessageMocker
 import com.dengage.sdk.inappmessage.model.Operator
 import com.dengage.sdk.inappmessage.model.Priority
+import com.dengage.sdk.inappmessage.model.TriggerBy
 import org.junit.Assert
 import org.junit.Test
 import java.text.SimpleDateFormat
@@ -238,6 +239,33 @@ class InAppMessageUtilsTest {
                 inAppMessages = inAppMessages
         )
         Assert.assertEquals(priorInAppMessage?.id, id1)
+    }
+
+    @Test
+    fun `findPriorInAppMessage triggerBy test`() {
+        val id1 = Math.random().toString()
+        val id2 = Math.random().toString()
+
+        val expireDateFormat = SimpleDateFormat(Constants.DATE_FORMAT, Locale.getDefault())
+        val expireDate = expireDateFormat.format(Date())
+        val inAppMessageTriggerByEvent = InAppMessageMocker.createInAppMessage(
+                id = id1,
+                priority = Priority.HIGH,
+                expireDate = expireDate
+        )
+        val inAppMessageTriggerByNavigation = InAppMessageMocker.createInAppMessage(
+                id = id2,
+                priority = Priority.LOW,
+                expireDate = expireDate
+        )
+        inAppMessageTriggerByEvent.data.displayTiming.triggerBy = TriggerBy.EVENT.triggerBy
+        inAppMessageTriggerByNavigation.data.displayTiming.triggerBy = TriggerBy.NAVIGATION.triggerBy
+
+        val inAppMessages = listOf(inAppMessageTriggerByEvent, inAppMessageTriggerByNavigation)
+        val priorInAppMessage = InAppMessageUtils.findPriorInAppMessage(
+                inAppMessages = inAppMessages
+        )
+        Assert.assertEquals(priorInAppMessage?.id, id2)
     }
 
     @Test

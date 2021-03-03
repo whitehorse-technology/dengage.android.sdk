@@ -4,6 +4,7 @@ import com.dengage.sdk.Constants
 import com.dengage.sdk.Logger
 import com.dengage.sdk.inappmessage.model.InAppMessage
 import com.dengage.sdk.inappmessage.model.Operator
+import com.dengage.sdk.inappmessage.model.TriggerBy
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -48,15 +49,17 @@ object InAppMessageUtils {
         // Also control nextDisplayTime for showEveryXMinutes type in app messages
         return if (screenName.isNullOrEmpty()) {
             sortedInAppMessages.firstOrNull { inAppMessage: InAppMessage ->
-                inAppMessage.data.displayCondition.screenNameFilters == null &&
+                inAppMessage.data.displayTiming.triggerBy != TriggerBy.EVENT.triggerBy &&
+                        inAppMessage.data.displayCondition.screenNameFilters == null &&
                         isDisplayTimeAvailable(inAppMessage)
 
             }
         } else {
             sortedInAppMessages.firstOrNull { inAppMessage: InAppMessage ->
-                inAppMessage.data.displayCondition.screenNameFilters?.firstOrNull { screenNameFilter ->
-                    operateScreenValues(screenNameFilter.value, screenName, screenNameFilter.operator)
-                } != null && isDisplayTimeAvailable(inAppMessage)
+                inAppMessage.data.displayTiming.triggerBy != TriggerBy.EVENT.triggerBy &&
+                        inAppMessage.data.displayCondition.screenNameFilters?.firstOrNull { screenNameFilter ->
+                            operateScreenValues(screenNameFilter.value, screenName, screenNameFilter.operator)
+                        } != null && isDisplayTimeAvailable(inAppMessage)
             }
         }
     }

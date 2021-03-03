@@ -7,7 +7,7 @@ import java.io.Serializable
  * Created by Batuhan Coskun on 26 December 2020
  */
 class DisplayTiming(
-        @SerializedName("triggerBy") val triggerBy: String,
+        @SerializedName("triggerBy") var triggerBy: String,
         @SerializedName("delay") val delay: Int?,
         @SerializedName("showEveryXMinutes") val showEveryXMinutes: Int?
 ) : Serializable
