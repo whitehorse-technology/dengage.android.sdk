@@ -34,7 +34,8 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.dialog_in_app_message, container, false)
+        binding =
+                DataBindingUtil.inflate(inflater, R.layout.dialog_in_app_message, container, false)
         return binding.root
     }
 
@@ -51,7 +52,8 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
         binding.tvInAppTitle.text = contentParams.title
         binding.tvInAppMessage.text = contentParams.message
 
-        binding.cardInAppMessageImage.visibility = if (contentParams.showImage) View.VISIBLE else View.GONE
+        binding.cardInAppMessageImage.visibility =
+                if (contentParams.showImage) View.VISIBLE else View.GONE
         if (contentParams.showImage && !contentParams.imageUrl.isNullOrEmpty()) {
             ImageDownloader(contentParams.imageUrl, object : ImageDownloader.OnImageLoaderListener {
                 override fun onError(error: ImageDownloader.ImageError) {
@@ -64,8 +66,10 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
             }).start()
         }
 
-        val params = RelativeLayout.LayoutParams(MATCH_PARENT,
-                resources.getDimensionPixelSize(R.dimen.in_app_message_height))
+        val params = RelativeLayout.LayoutParams(
+                MATCH_PARENT,
+                resources.getDimensionPixelSize(R.dimen.in_app_message_height)
+        )
         when (contentParams.position) {
             ContentPosition.BOTTOM.position -> {
                 params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
@@ -86,9 +90,11 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.vInAppMessageContainer -> {
+                dismiss()
                 inAppMessageDismissed()
             }
             R.id.vInAppMessage -> {
+                dismiss()
                 inAppMessageClicked()
             }
         }
