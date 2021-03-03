@@ -82,7 +82,7 @@ class InAppMessageManager(
     /**
      * Call service for setting in app message as displayed
      */
-    private fun setInAppMessageAsDisplayed(inAppMessageId: String) {
+    private fun setInAppMessageAsDisplayed(inAppMessageDetails: String?) {
         // control in app message enabled
         val sdkParameters = prefs.sdkParameters
         if (sdkParameters?.accountName == null || sdkParameters.inAppEnabled == null ||
@@ -91,7 +91,7 @@ class InAppMessageManager(
         }
 
         val networkRequest = NetworkRequest(
-                NetworkUrlUtils.getInAppMessageAsDisplayedRequestUrl(context, inAppMessageId,
+                NetworkUrlUtils.getInAppMessageAsDisplayedRequestUrl(context, inAppMessageDetails,
                         sdkParameters.accountName, subscription),
                 Utils.getUserAgent(context), null, 5000)
         networkRequest.executeTask()
@@ -100,7 +100,7 @@ class InAppMessageManager(
     /**
      * Call service for setting in app message as clicked
      */
-    private fun setInAppMessageAsClicked(inAppMessageId: String) {
+    private fun setInAppMessageAsClicked(inAppMessageId: String, inAppMessageDetails: String?) {
         // control in app message enabled
         val sdkParameters = prefs.sdkParameters
         if (sdkParameters?.accountName == null || sdkParameters.inAppEnabled == null ||
@@ -112,7 +112,7 @@ class InAppMessageManager(
         removeInAppMessageFromCache(inAppMessageId)
 
         val networkRequest = NetworkRequest(
-                NetworkUrlUtils.getInAppMessageAsClickedRequestUrl(context, inAppMessageId,
+                NetworkUrlUtils.getInAppMessageAsClickedRequestUrl(context, inAppMessageDetails,
                         sdkParameters.accountName, subscription),
                 Utils.getUserAgent(context), null, 5000)
         networkRequest.executeTask()
@@ -121,7 +121,7 @@ class InAppMessageManager(
     /**
      * Call service for setting in app message as dismissed
      */
-    private fun setInAppMessageAsDismissed(inAppMessageId: String) {
+    private fun setInAppMessageAsDismissed(inAppMessageDetails: String?) {
         // control in app message enabled
         val sdkParameters = prefs.sdkParameters
         if (sdkParameters?.accountName == null || sdkParameters.inAppEnabled == null ||
@@ -130,7 +130,7 @@ class InAppMessageManager(
         }
 
         val networkRequest = NetworkRequest(
-                NetworkUrlUtils.getInAppMessageAsDismissedRequestUrl(context, inAppMessageId,
+                NetworkUrlUtils.getInAppMessageAsDismissedRequestUrl(context, inAppMessageDetails,
                         sdkParameters.accountName, subscription),
                 Utils.getUserAgent(context), null, 5000)
         networkRequest.executeTask()
@@ -140,7 +140,9 @@ class InAppMessageManager(
      * Show in app message dialog on activity screen
      */
     private fun showInAppMessage(activity: AppCompatActivity, inAppMessage: InAppMessage) {
-        setInAppMessageAsDisplayed(inAppMessageId = inAppMessage.id)
+        setInAppMessageAsDisplayed(
+                inAppMessageDetails = inAppMessage.data.messageDetails
+        )
         if (inAppMessage.data.displayTiming.showEveryXMinutes != null) {
             inAppMessage.data.nextDisplayTime = inAppMessage.data.displayTiming.showEveryXMinutes * 60000L
             updateInAppMessageOnCache(inAppMessage)
@@ -165,12 +167,17 @@ class InAppMessageManager(
     }
 
     override fun inAppMessageClicked(inAppMessage: InAppMessage) {
-        setInAppMessageAsClicked(inAppMessageId = inAppMessage.id)
+        setInAppMessageAsClicked(
+                inAppMessageId = inAppMessage.id,
+                inAppMessageDetails = inAppMessage.data.messageDetails
+        )
         // todo action in app message click
     }
 
     override fun inAppMessageDismissed(inAppMessage: InAppMessage) {
-        setInAppMessageAsDismissed(inAppMessageId = inAppMessage.id)
+        setInAppMessageAsDismissed(
+                inAppMessageDetails = inAppMessage.data.messageDetails
+        )
     }
 
 }
