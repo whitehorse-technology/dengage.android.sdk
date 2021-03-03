@@ -15,5 +15,6 @@ class InAppMessageData(
         @SerializedName("dengageCampId") val dengageCampId: Int,
         @SerializedName("content") val content: Content,
         @SerializedName("displayCondition") val displayCondition: DisplayCondition,
-        @SerializedName("displayTiming") val displayTiming: DisplayTiming
+        @SerializedName("displayTiming") val displayTiming: DisplayTiming,
+        @SerializedName("nextDisplayTime") var nextDisplayTime: Long = 0
 ) : Serializable

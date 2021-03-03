@@ -9,5 +9,5 @@ import java.io.Serializable
 class DisplayTiming(
         @SerializedName("triggerBy") val triggerBy: String,
         @SerializedName("delay") val delay: Int?,
-        @SerializedName("minVisitedScreens") val minVisitedScreens: Int?
+        @SerializedName("showEveryXMinutes") val showEveryXMinutes: Int?
 ) : Serializable

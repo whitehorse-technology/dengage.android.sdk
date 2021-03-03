@@ -72,6 +72,50 @@ class InAppMessageUtilsTest {
     }
 
     @Test
+    fun `findPriorInAppMessage empty screen name test`() {
+        val id1 = Math.random().toString()
+        val id2 = Math.random().toString()
+        val id3 = Math.random().toString()
+        val id4 = Math.random().toString()
+
+        val expireDateFormat = SimpleDateFormat(Constants.DATE_FORMAT, Locale.getDefault())
+        val expireDate = expireDateFormat.format(Date())
+        val inAppMessage1 = InAppMessageMocker.createInAppMessage(
+                id = id1,
+                priority = Priority.HIGH,
+                expireDate = expireDate,
+                screenName = "screenName",
+                operator = Operator.EQUALS
+        )
+        val inAppMessage2 = InAppMessageMocker.createInAppMessage(
+                id = id2,
+                priority = Priority.HIGH,
+                expireDate = expireDate,
+                screenName = "screenName",
+                operator = Operator.EQUALS
+        )
+        val inAppMessage3 = InAppMessageMocker.createInAppMessage(
+                id = id3,
+                priority = Priority.HIGH,
+                expireDate = expireDate,
+                screenName = "screenName",
+                operator = Operator.EQUALS
+        )
+        val inAppMessage4 = InAppMessageMocker.createInAppMessage(
+                id = id4,
+                priority = Priority.LOW,
+                expireDate = expireDate
+        )
+
+        val inAppMessages = listOf(inAppMessage1, inAppMessage2,
+                inAppMessage3, inAppMessage4)
+        val priorInAppMessage = InAppMessageUtils.findPriorInAppMessage(
+                inAppMessages = inAppMessages
+        )
+        Assert.assertEquals(priorInAppMessage?.id, id4)
+    }
+
+    @Test
     fun `findPriorInAppMessage screen name test`() {
         val id1 = Math.random().toString()
         val id2 = Math.random().toString()
@@ -163,6 +207,33 @@ class InAppMessageUtilsTest {
         )
 
         val inAppMessages = listOf(inAppMessagePriorityLow2, inAppMessagePriorityLow1, inAppMessagePriorityLow3)
+        val priorInAppMessage = InAppMessageUtils.findPriorInAppMessage(
+                inAppMessages = inAppMessages
+        )
+        Assert.assertEquals(priorInAppMessage?.id, id1)
+    }
+
+    @Test
+    fun `findPriorInAppMessage display timing test`() {
+        val id1 = Math.random().toString()
+        val id2 = Math.random().toString()
+
+        val expireDateFormat = SimpleDateFormat(Constants.DATE_FORMAT, Locale.getDefault())
+        val expireDate = expireDateFormat.format(Date())
+        val inAppMessageIsAvailableTiming = InAppMessageMocker.createInAppMessage(
+                id = id1,
+                priority = Priority.MEDIUM,
+                expireDate = expireDate
+        )
+        val inAppMessageIsNotAvailableTiming = InAppMessageMocker.createInAppMessage(
+                id = id2,
+                priority = Priority.HIGH,
+                expireDate = expireDate
+        )
+        inAppMessageIsAvailableTiming.data.nextDisplayTime = System.currentTimeMillis() - 1000
+        inAppMessageIsNotAvailableTiming.data.nextDisplayTime = System.currentTimeMillis() + 10000
+
+        val inAppMessages = listOf(inAppMessageIsNotAvailableTiming, inAppMessageIsAvailableTiming)
         val priorInAppMessage = InAppMessageUtils.findPriorInAppMessage(
                 inAppMessages = inAppMessages
         )

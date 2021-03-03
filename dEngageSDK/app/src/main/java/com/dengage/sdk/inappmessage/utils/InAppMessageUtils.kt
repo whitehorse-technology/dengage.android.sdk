@@ -43,14 +43,20 @@ object InAppMessageUtils {
         // sort list with comparator
         val sortedInAppMessages = inAppMessages.sortedWith(InAppMessageComparator())
 
+        // if screen name is empty, find in app message that has no screen name filter
         // if screen name is not empty, find in app message that screen name filter has screen name value
+        // Also control nextDisplayTime for showEveryXMinutes type in app messages
         return if (screenName.isNullOrEmpty()) {
-            sortedInAppMessages.firstOrNull()
+            sortedInAppMessages.firstOrNull { inAppMessage: InAppMessage ->
+                inAppMessage.data.displayCondition.screenNameFilters == null &&
+                        isDisplayTimeAvailable(inAppMessage)
+
+            }
         } else {
             sortedInAppMessages.firstOrNull { inAppMessage: InAppMessage ->
                 inAppMessage.data.displayCondition.screenNameFilters?.firstOrNull { screenNameFilter ->
                     operateScreenValues(screenNameFilter.value, screenName, screenNameFilter.operator)
-                } != null
+                } != null && isDisplayTimeAvailable(inAppMessage)
             }
         }
     }
@@ -91,6 +97,11 @@ object InAppMessageUtils {
             }
         }
         return true
+    }
+
+    private fun isDisplayTimeAvailable(inAppMessage: InAppMessage): Boolean {
+        return (inAppMessage.data.displayTiming.showEveryXMinutes == null ||
+                inAppMessage.data.nextDisplayTime <= System.currentTimeMillis())
     }
 
 }

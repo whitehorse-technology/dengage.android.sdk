@@ -7,7 +7,6 @@ import com.dengage.sdk.Utils
 import com.dengage.sdk.cache.GsonHolder
 import com.dengage.sdk.cache.Prefs
 import com.dengage.sdk.inappmessage.model.InAppMessage
-import com.dengage.sdk.inappmessage.utils.InAppMessageComparator
 import com.dengage.sdk.inappmessage.utils.InAppMessageUtils
 import com.dengage.sdk.models.DengageError
 import com.dengage.sdk.models.Subscription
@@ -139,8 +138,27 @@ class InAppMessageManager(
      */
     private fun showInAppMessage(activity: AppCompatActivity, inAppMessage: InAppMessage) {
         setInAppMessageAsDisplayed(inAppMessageId = inAppMessage.id)
+        if (inAppMessage.data.displayTiming.showEveryXMinutes != null) {
+            inAppMessage.data.nextDisplayTime = inAppMessage.data.displayTiming.showEveryXMinutes * 60000L
+            updateInAppMessageOnCache(inAppMessage)
+        } else {
+            removeInAppMessageFromCache(inAppMessageId = inAppMessage.id)
+        }
         InAppMessageDialog.newInstance(inAppMessage)
                 .show(activity.supportFragmentManager, InAppMessageDialog::class.java.simpleName)
+    }
+
+    private fun updateInAppMessageOnCache(inAppMessage: InAppMessage) {
+        val inAppMessages = prefs.inAppMessages
+        inAppMessages?.removeAll { message -> message.id == inAppMessage.id }
+        inAppMessages?.add(inAppMessage)
+        prefs.inAppMessages = inAppMessages
+    }
+
+    private fun removeInAppMessageFromCache(inAppMessageId: String) {
+        val inAppMessages = prefs.inAppMessages
+        inAppMessages?.removeAll { inAppMessage -> inAppMessage.id == inAppMessageId }
+        prefs.inAppMessages = inAppMessages
     }
 
     override fun inAppMessageClicked(inAppMessage: InAppMessage) {

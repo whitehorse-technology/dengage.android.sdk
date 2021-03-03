@@ -12,17 +12,17 @@ class DisplayTimingTest {
     fun `DisplayTiming constructor test`() {
         val triggerBy = TriggerBy.NAVIGATION.triggerBy
         val delay = 10
-        val minVisitedScreens = 20
+        val showEveryXMinutes = 20
 
         val displayTiming = DisplayTiming(
                 triggerBy = triggerBy,
                 delay = delay,
-                minVisitedScreens = minVisitedScreens
+                showEveryXMinutes = showEveryXMinutes
         )
 
         Assert.assertEquals(triggerBy, displayTiming.triggerBy)
         Assert.assertEquals(delay, displayTiming.delay)
-        Assert.assertEquals(minVisitedScreens, displayTiming.minVisitedScreens)
+        Assert.assertEquals(showEveryXMinutes, displayTiming.showEveryXMinutes)
     }
 
 }

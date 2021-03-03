@@ -93,7 +93,7 @@ class PrefsTest {
         val displayTiming = DisplayTiming(
                 triggerBy = TriggerBy.NAVIGATION.triggerBy,
                 delay = 10,
-                minVisitedScreens = 5
+                showEveryXMinutes = 5
         )
         val inAppMessageData = InAppMessageData(
                 messageId = Math.random().toString(),
