@@ -4,9 +4,12 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
+
+import com.dengage.sdk.batch.EventScheduler;
 import com.dengage.sdk.models.Event;
 import com.dengage.sdk.models.Session;
 import com.dengage.sdk.models.Subscription;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -234,10 +237,16 @@ public class DengageEvent {
             data.put("session_id", sessionId);
             Event event = new Event(subscription.getIntegrationKey(), tableName, key, data);
             logger.Debug("sendCustomEvent: " + event.toJson());
-            RequestAsync req = new RequestAsync(baseApiUri, event);
-            req.executeTask();
+
+            EventScheduler eventScheduler = instance.eventScheduler;
+            if (eventScheduler != null) {
+                eventScheduler.schedule(event);
+            } else {
+                RequestAsync req = new RequestAsync(baseApiUri, event);
+                req.executeTask();
+            }
         } catch (Exception e) {
-            logger.Error("sendCustomEvent: "+ e.getMessage());
+            logger.Error("sendCustomEvent: " + e.getMessage());
         }
     }
 

@@ -1,5 +1,7 @@
 package com.dengage.sdk;
 
+import androidx.annotation.RestrictTo;
+
 import com.dengage.sdk.models.Event;
 import com.dengage.sdk.models.Open;
 import com.dengage.sdk.models.Subscription;
@@ -10,11 +12,12 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-class Request  {
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+public class Request  {
 
     private Logger logger = Logger.getInstance();
 
-    void sendSubscription(String url, Subscription model) {
+    public void sendSubscription(String url, Subscription model) {
         try {
             String json = model.toJson();
             String userAgent = model.getUserAgent();
@@ -25,7 +28,7 @@ class Request  {
         }
     }
 
-    void sendOpen(String url, Open model) {
+    public void sendOpen(String url, Open model) {
         try {
             String json = model.toJson();
             String userAgent = model.getUserAgent();
@@ -36,7 +39,7 @@ class Request  {
         }
     }
 
-    void sendTransactionalOpen(String url, TransactionalOpen model) {
+    public void sendTransactionalOpen(String url, TransactionalOpen model) {
         try {
             String json = model.toJson();
             String userAgent = model.getUserAgent();
@@ -47,7 +50,7 @@ class Request  {
         }
     }
 
-    void sendEvent(String url, Event model) {
+    public void sendEvent(String url, Event model) {
         try {
             String json = model.toJson();
             String userAgent = model.getUserAgent();
