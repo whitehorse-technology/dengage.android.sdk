@@ -1,5 +1,14 @@
 package com.dengage.sdk;
 
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -13,14 +22,18 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RestrictTo;
 import androidx.room.Room;
 
+import com.dengage.sdk.callback.DengageCallback;
 import com.dengage.sdk.batch.Processor;
 import com.dengage.sdk.batch.EventScheduler;
 import com.dengage.sdk.batch.database.DengageDatabase;
 import com.dengage.sdk.models.AbstractOpen;
+import com.dengage.sdk.callback.DengageCallback;
+import com.dengage.sdk.models.DengageError;
 import com.dengage.sdk.models.InboxMessage;
 import com.dengage.sdk.models.Message;
 import com.dengage.sdk.models.ModelBase;
 import com.dengage.sdk.models.Open;
+import com.dengage.sdk.models.SdkParameters;
 import com.dengage.sdk.models.Subscription;
 import com.dengage.sdk.models.TransactionalOpen;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -30,21 +43,25 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.google.gson.Gson;
+import com.dengage.sdk.service.NetworkRequest;
+import com.dengage.sdk.service.NetworkRequestCallback;
+import com.dengage.sdk.service.NetworkUrlUtils;
 import com.huawei.agconnect.config.AGConnectServicesConfig;
 import com.huawei.hms.aaid.HmsInstanceId;
 import com.huawei.hms.api.HuaweiApiAvailability;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 
@@ -55,12 +72,12 @@ public class DengageManager {
 
     @SuppressLint("StaticFieldLeak")
     private static DengageManager _instance = null;
-
     private Context _context;
-
     private Subscription _subscription;
-
     private boolean isSubscriptionSending = false;
+
+    private List<InboxMessage> inboxMessages = new ArrayList<>();
+    private Long inboxMessageFetchMillis = 0L;
 
     private int _period = 60;
 
@@ -112,6 +129,22 @@ public class DengageManager {
         return _instance;
     }
 
+    public DengageManager setCountry(String country) {
+        logger.Verbose("setCountry method is called");
+        try {
+            // control the last country equals to new country then send subscription
+            if (_subscription.getCountry() == null || !_subscription.getCountry().equals(country)) {
+                _subscription.setCountry(country);
+                logger.Debug("country: " + country);
+                saveSubscription();
+                sendSubscription();
+            }
+        } catch (Exception e) {
+            logger.Error("setCountry: " + e.getMessage());
+        }
+        return _instance;
+    }
+
     /**
      * FirebaseApp Initiator method
      * <p>
@@ -137,6 +170,7 @@ public class DengageManager {
             }
 
             sendSubscription();
+            getSdkParameters();
         } catch (Exception e) {
             logger.Error("initialization:" + e.getMessage());
         }
@@ -331,6 +365,8 @@ public class DengageManager {
             _subscription.setAppVersion(Utils.appVersion(_context));
             _subscription.setSdkVersion(com.dengage.sdk.BuildConfig.VERSION_NAME);
             _subscription.setUserAgent(Utils.getUserAgent(_context));
+            _subscription.setLanguage(Locale.getDefault().getLanguage());
+            _subscription.setTimezone(TimeZone.getDefault().getDisplayName());
 
             String json = _subscription.toJson();
             logger.Debug("subscriptionJson: " + json);
@@ -343,7 +379,7 @@ public class DengageManager {
 
     private void sendSubscription() {
         logger.Verbose("sendSubscription method is called");
-        if (isSubscriptionSending) return;
+        if(isSubscriptionSending) return;
         try {
             isSubscriptionSending = true;
             Handler handler = new Handler();
@@ -351,7 +387,9 @@ public class DengageManager {
                 @Override
                 public void run() {
                     try {
-                        String baseApiUri = getBaseApiUrl();
+                        String baseApiUri = Utils.getMetaData(_context, "den_push_api_url");
+                        if (TextUtils.isEmpty(baseApiUri))
+                            baseApiUri = Constants.DEN_PUSH_API_URI;
                         baseApiUri += Constants.SUBSCRIPTION_API_ENDPOINT;
                         RequestAsync req = new RequestAsync(baseApiUri, _subscription);
                         req.executeTask();
@@ -387,12 +425,14 @@ public class DengageManager {
      *
      * @param message The dEngage message object.
      */
-    public void sendOpenEvent(String buttonId, String itemId, @NonNull Message message) {
+    public void sendOpenEvent(String buttonId, String itemId, Message message) {
         logger.Verbose("sendOpenEvent method is called");
         logger.Verbose(buttonId);
         logger.Verbose(itemId);
         logger.Verbose(message.toJson());
         try {
+            getSubscription();
+
             if (message == null) throw new IllegalArgumentException("Argument null: message");
 
             String source = message.getMessageSource();
@@ -664,8 +704,6 @@ public class DengageManager {
 
         if ((data != null && data.size() > 0)) {
             Message pushMessage = new Message(data);
-            sendMessageToInbox(pushMessage);
-
             String json = pushMessage.toJson();
             logger.Verbose("Message Json: " + json);
 
@@ -693,14 +731,76 @@ public class DengageManager {
         }
     }
 
+    private void getSdkParameters() {
+        if (TextUtils.isEmpty(_subscription.integrationKey)) return;
+        final Prefs prefs = new Prefs(_context);
+
+        // if 24 hours passed after getting sdk params, you should get again
+        if (prefs.getSdkParameters() != null &&
+                System.currentTimeMillis() < prefs.getSdkParameters().getLastFetchTimeInMillis() + 24 * 60 * 60 * 1000) {
+            return;
+        }
+
+        NetworkRequest networkRequest = new NetworkRequest(
+                NetworkUrlUtils.INSTANCE.getSdkParametersRequestUrl(_context, _subscription.integrationKey),
+                Utils.getUserAgent(_context), new NetworkRequestCallback() {
+            @Override
+            public void responseFetched(@Nullable String response) {
+                if (response != null) {
+                    SdkParameters sdkParameters = new Gson().fromJson(response, SdkParameters.class);
+                    sdkParameters.setLastFetchTimeInMillis(System.currentTimeMillis());
+                    prefs.setSdkParameters(sdkParameters);
+                }
+            }
+
+            @Override
+            public void requestError(@NotNull DengageError error) {
+                // error behavior
+            }
+        });
+        networkRequest.executeTask();
+    }
+
     /**
      * Get saved inbox messages
      */
-    public List<InboxMessage> getInboxMessages() {
-        Prefs prefs = new Prefs(_context);
-        List<InboxMessage> inboxMessages = findNotExpiredInboxMessages(prefs.getInboxMessages());
-        prefs.setInboxMessages(inboxMessages);
-        return inboxMessages;
+    public void getInboxMessages(@NonNull Integer limit, @NonNull final Integer offset,
+                                 @NonNull final DengageCallback<List<InboxMessage>> dengageCallback) {
+        // control inbox message enabled
+        SdkParameters sdkParameters = new Prefs(_context).getSdkParameters();
+        if (sdkParameters == null || sdkParameters.getAccountName() == null ||
+                sdkParameters.getInboxEnabled() == null || !sdkParameters.getInboxEnabled()) {
+            dengageCallback.onResult(new ArrayList<InboxMessage>());
+            return;
+        }
+
+        if (inboxMessages != null && !inboxMessages.isEmpty() && offset == 0 &&
+                System.currentTimeMillis() < inboxMessageFetchMillis + 600000) {
+            dengageCallback.onResult(inboxMessages);
+        } else {
+            NetworkRequest networkRequest = new NetworkRequest(
+                    NetworkUrlUtils.INSTANCE.getInboxMessagesRequestUrl(_context,
+                            sdkParameters.getAccountName(), _subscription, limit, offset),
+                    Utils.getUserAgent(_context), new NetworkRequestCallback() {
+                @Override
+                public void responseFetched(@Nullable String response) {
+                    inboxMessageFetchMillis = System.currentTimeMillis();
+                    Type listType = new TypeToken<List<InboxMessage>>() {
+                    }.getType();
+                    List<InboxMessage> fetchedInboxMessages = new Gson().fromJson(response, listType);
+                    if (offset == 0) {
+                        inboxMessages = fetchedInboxMessages;
+                    }
+                    dengageCallback.onResult(fetchedInboxMessages);
+                }
+
+                @Override
+                public void requestError(@NotNull DengageError error) {
+                    dengageCallback.onError(error);
+                }
+            });
+            networkRequest.executeTask();
+        }
     }
 
     /**
@@ -709,19 +809,28 @@ public class DengageManager {
      * @param id id of inbox message that will be deleted.
      */
     public void deleteInboxMessage(final String id) {
-        Prefs prefs = new Prefs(_context);
-        List<InboxMessage> inboxMessages = findNotExpiredInboxMessages(prefs.getInboxMessages());
+        // control inbox message enabled
+        SdkParameters sdkParameters = new Prefs(_context).getSdkParameters();
+        if (sdkParameters == null || sdkParameters.getAccountName() == null ||
+                sdkParameters.getInboxEnabled() == null || !sdkParameters.getInboxEnabled()) {
+            return;
+        }
 
-        // remove inbox message with id
+        // remove cached inbox message with id
         CollectionsKt.removeAll(inboxMessages, new Function1<InboxMessage, Boolean>() {
             @Override
             public Boolean invoke(InboxMessage inboxMessage) {
+                inboxMessage.getId();
                 return inboxMessage.getId().equals(id);
             }
         });
 
-        // save inbox messages after removing
-        prefs.setInboxMessages(inboxMessages);
+        // call http request
+        NetworkRequest networkRequest = new NetworkRequest(
+                NetworkUrlUtils.INSTANCE.setAsDeletedRequestUrl(_context, id,
+                        sdkParameters.getAccountName(), _subscription),
+                Utils.getUserAgent(_context), null);
+        networkRequest.executeTask();
     }
 
     /**
@@ -729,69 +838,32 @@ public class DengageManager {
      *
      * @param id id of inbox message that will be marked as read.
      */
-    public void markInboxMessageAsRead(final String id) {
-        Prefs prefs = new Prefs(_context);
-        List<InboxMessage> inboxMessages = findNotExpiredInboxMessages(prefs.getInboxMessages());
+    public void setInboxMessageAsClicked(final String id) {
+        // control inbox message enabled
+        SdkParameters sdkParameters = new Prefs(_context).getSdkParameters();
+        if (sdkParameters == null || sdkParameters.getAccountName() == null ||
+                sdkParameters.getInboxEnabled() == null || !sdkParameters.getInboxEnabled()) {
+            return;
+        }
 
-        // find inbox message with id
+        // find cached inbox message with id and set clicked
         InboxMessage inboxMessage = CollectionsKt.firstOrNull(inboxMessages, new Function1<InboxMessage, Boolean>() {
             @Override
             public Boolean invoke(InboxMessage inboxMessage) {
+                inboxMessage.getId();
                 return inboxMessage.getId().equals(id);
             }
         });
         if (inboxMessage != null) {
-            inboxMessage.setRead(true);
+            inboxMessage.setClicked(true);
         }
 
-        // save inbox messages after set read
-        prefs.setInboxMessages(inboxMessages);
-    }
-
-    /**
-     * Save message to inbox if addToInbox parameter is true Control expire dates on inbox message
-     * list that saved to prefs
-     *
-     * @param message message comes from fcm or hms
-     */
-    private void sendMessageToInbox(@NonNull Message message) {
-        if (message.getAddToInbox()) {
-            Prefs prefs = new Prefs(_context);
-            InboxMessage inboxMessage = InboxMessage.Companion.createWith(message);
-            @Nullable List<InboxMessage> inboxMessages = prefs.getInboxMessages();
-            if (inboxMessages == null || inboxMessages.isEmpty()) {
-                inboxMessages = Collections.singletonList(inboxMessage);
-            } else {
-                inboxMessages = findNotExpiredInboxMessages(inboxMessages);
-                inboxMessages.add(inboxMessage);
-            }
-            prefs.setInboxMessages(inboxMessages);
-        }
-    }
-
-    /**
-     * Find not expired inbox messaged with controlling expire date and date now
-     *
-     * @param inboxMessages inbox messages that will be filtered with expire date
-     */
-    private @Nullable
-    List<InboxMessage> findNotExpiredInboxMessages(@Nullable List<InboxMessage> inboxMessages) {
-        if (inboxMessages == null) return null;
-        List<InboxMessage> notExpiredMessages = new ArrayList<>();
-        Date now = new Date();
-        SimpleDateFormat expireDateFormat = new SimpleDateFormat(Constants.DATE_FORMAT, Locale.getDefault());
-        for (InboxMessage inboxMessage : inboxMessages) {
-            try {
-                Date expireDate = expireDateFormat.parse(inboxMessage.getExpireDate());
-                if (now.before(expireDate)) {
-                    notExpiredMessages.add(inboxMessage);
-                }
-            } catch (ParseException e) {
-                logger.Error("removeExpiredInboxMessages: " + e.getMessage());
-                e.printStackTrace();
-            }
-        }
-        return notExpiredMessages;
+        // call http request
+        NetworkRequest networkRequest = new NetworkRequest(
+                NetworkUrlUtils.INSTANCE.setAsClickedRequestUrl(_context, id,
+                        sdkParameters.getAccountName(), _subscription),
+                Utils.getUserAgent(_context), null);
+        networkRequest.executeTask();
     }
 }
 

@@ -1,18 +1,6 @@
 package com.dengage.sdk.models;
 
-import android.text.TextUtils;
-
-import com.dengage.sdk.Constants;
-import com.google.gson.ExclusionStrategy;
-import com.google.gson.FieldAttributes;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
-
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Subscription extends ModelBase {
 
@@ -60,6 +48,39 @@ public class Subscription extends ModelBase {
 
     @SerializedName("userAgent")
     private transient String userAgent = "";
+
+    @SerializedName("country")
+    private String country;
+
+    @SerializedName("language")
+    private String language;
+
+    @SerializedName("timezone")
+    private String timezone;
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public String getTimezone() {
+        return timezone;
+    }
+
+    public void setTimezone(String timezone) {
+        this.timezone = timezone;
+    }
 
     public String getUserAgent() {
         return userAgent;
