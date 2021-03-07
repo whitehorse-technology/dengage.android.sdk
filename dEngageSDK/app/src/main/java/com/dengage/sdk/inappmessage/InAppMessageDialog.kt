@@ -1,6 +1,7 @@
 package com.dengage.sdk.inappmessage
 
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -48,6 +49,7 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
         val cardInAppMessageImage = view.findViewById<CardView>(R.id.cardInAppMessageImage)
         val ivInAppMessage = view.findViewById<AppCompatImageView>(R.id.ivInAppMessage)
         val cardInAppMessage = view.findViewById<CardView>(R.id.cardInAppMessage)
+        val vInAppMessage = view.findViewById<RelativeLayout>(R.id.vInAppMessage)
         val vInAppMessageContainer = view.findViewById<RelativeLayout>(R.id.vInAppMessageContainer)
 
         inAppMessage = requireArguments().getSerializable(EXTRA_IN_APP_MESSAGE) as InAppMessage
@@ -55,6 +57,20 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
         tvInAppTitle.visibility = if (contentParams.showTitle) View.VISIBLE else View.GONE
         tvInAppTitle.text = contentParams.title
         tvInAppMessage.text = contentParams.message
+
+        // set colors
+        if (!contentParams.backgroundColor.isNullOrEmpty() &&
+                contentParams.backgroundColor.length == 6) {
+            vInAppMessage.setBackgroundColor(Color.parseColor("#${contentParams.backgroundColor}"))
+        }
+        if (!contentParams.primaryColor.isNullOrEmpty() &&
+                contentParams.primaryColor.length == 6) {
+            tvInAppTitle.setTextColor(Color.parseColor("#${contentParams.primaryColor}"))
+        }
+        if (!contentParams.secondaryColor.isNullOrEmpty() &&
+                contentParams.secondaryColor.length == 6) {
+            tvInAppMessage.setTextColor(Color.parseColor("#${contentParams.secondaryColor}"))
+        }
 
         cardInAppMessageImage.visibility =
                 if (contentParams.showImage) View.VISIBLE else View.GONE

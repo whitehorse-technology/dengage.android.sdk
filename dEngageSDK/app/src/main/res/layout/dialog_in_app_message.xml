@@ -20,9 +20,10 @@
             app:cardElevation="8dp">
 
             <RelativeLayout
+                android:id="@+id/vInAppMessage"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/bg_in_app_message"
+                android:background="@color/in_app_message_color_background"
                 android:gravity="center_vertical"
                 android:paddingStart="14dp"
                 android:paddingEnd="14dp">
