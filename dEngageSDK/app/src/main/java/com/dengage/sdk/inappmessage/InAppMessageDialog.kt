@@ -7,21 +7,20 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.RelativeLayout
-import androidx.databinding.DataBindingUtil
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.widget.AppCompatTextView
+import androidx.cardview.widget.CardView
 import androidx.fragment.app.DialogFragment
 import com.dengage.sdk.ImageDownloader
 import com.dengage.sdk.R
-import com.dengage.sdk.databinding.DialogInAppMessageBinding
 import com.dengage.sdk.inappmessage.model.ContentPosition
 import com.dengage.sdk.inappmessage.model.InAppMessage
-
 
 /**
  * Created by Batuhan Coskun on 26 February 2021
  */
 class InAppMessageDialog : DialogFragment(), View.OnClickListener {
 
-    private lateinit var binding: DialogInAppMessageBinding
     private lateinit var inAppMessage: InAppMessage
     private var inAppMessageCallback: InAppMessageCallback? = null
 
@@ -34,9 +33,7 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View {
-        binding =
-                DataBindingUtil.inflate(inflater, R.layout.dialog_in_app_message, container, false)
-        return binding.root
+        return inflater.inflate(R.layout.dialog_in_app_message, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -46,22 +43,29 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
             inAppMessageDismissed()
         }
 
+        val tvInAppTitle = view.findViewById<AppCompatTextView>(R.id.tvInAppTitle)
+        val tvInAppMessage = view.findViewById<AppCompatTextView>(R.id.tvInAppMessage)
+        val cardInAppMessageImage = view.findViewById<CardView>(R.id.cardInAppMessageImage)
+        val ivInAppMessage = view.findViewById<AppCompatImageView>(R.id.ivInAppMessage)
+        val vInAppMessage = view.findViewById<RelativeLayout>(R.id.vInAppMessage)
+        val vInAppMessageContainer = view.findViewById<RelativeLayout>(R.id.vInAppMessageContainer)
+
         inAppMessage = requireArguments().getSerializable(EXTRA_IN_APP_MESSAGE) as InAppMessage
         val contentParams = inAppMessage.data.content.params
-        binding.tvInAppTitle.visibility = if (contentParams.showTitle) View.VISIBLE else View.GONE
-        binding.tvInAppTitle.text = contentParams.title
-        binding.tvInAppMessage.text = contentParams.message
+        tvInAppTitle.visibility = if (contentParams.showTitle) View.VISIBLE else View.GONE
+        tvInAppTitle.text = contentParams.title
+        tvInAppMessage.text = contentParams.message
 
-        binding.cardInAppMessageImage.visibility =
+        cardInAppMessageImage.visibility =
                 if (contentParams.showImage) View.VISIBLE else View.GONE
         if (contentParams.showImage && !contentParams.imageUrl.isNullOrEmpty()) {
             ImageDownloader(contentParams.imageUrl, object : ImageDownloader.OnImageLoaderListener {
                 override fun onError(error: ImageDownloader.ImageError) {
-                    binding.cardInAppMessageImage.visibility = View.GONE
+                    cardInAppMessageImage.visibility = View.GONE
                 }
 
                 override fun onComplete(bitmap: Bitmap) {
-                    binding.ivInAppMessage.setImageBitmap(bitmap)
+                    ivInAppMessage.setImageBitmap(bitmap)
                 }
             }).start()
         }
@@ -81,10 +85,10 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
                 params.addRule(RelativeLayout.ALIGN_PARENT_TOP)
             }
         }
-        binding.vInAppMessage.layoutParams = params
+        vInAppMessage.layoutParams = params
 
-        binding.vInAppMessageContainer.setOnClickListener(this)
-        binding.vInAppMessage.setOnClickListener(this)
+        vInAppMessageContainer.setOnClickListener(this)
+        vInAppMessage.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
@@ -109,7 +113,6 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
     }
 
     override fun onDestroy() {
-        binding.unbind()
         inAppMessageCallback = null
         super.onDestroy()
     }

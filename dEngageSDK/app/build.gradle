@@ -33,10 +33,6 @@ android {
             java.srcDirs = ['src/main/java']
         }
     }
-
-    dataBinding {
-        enabled = true
-    }
 }
 
 dependencies {
