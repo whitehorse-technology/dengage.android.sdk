@@ -9,67 +9,75 @@
         android:id="@+id/vInAppMessageContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/transparent"
-        android:padding="30dp">
+        android:background="@android:color/transparent">
 
-        <RelativeLayout
-            android:id="@+id/vInAppMessage"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardInAppMessage"
             android:layout_width="match_parent"
             android:layout_height="@dimen/in_app_message_height"
-            android:background="@drawable/bg_in_app_message"
-            android:gravity="center_vertical"
-            android:paddingStart="14dp"
-            android:paddingEnd="14dp">
+            android:layout_margin="30dp"
+            app:cardCornerRadius="6dp"
+            app:cardElevation="8dp">
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginStart="14dp"
-                android:layout_toEndOf="@+id/cardInAppMessageImage"
+                android:background="@drawable/bg_in_app_message"
                 android:gravity="center_vertical"
-                android:orientation="vertical"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp">
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp">
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/tvInAppTitle"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/font_in_app_title"
-                    android:maxLines="1"
-                    android:textColor="@color/in_app_message_color_title"
-                    android:textSize="@dimen/in_app_message_text_size_title"
-                    tools:text="Burası Title" />
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="14dp"
+                    android:layout_toEndOf="@+id/cardInAppMessageImage"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvInAppTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/font_in_app_title"
+                        android:maxLines="1"
+                        android:textColor="@color/in_app_message_color_title"
+                        android:textSize="@dimen/in_app_message_text_size_title"
+                        tools:text="Burası Title" />
 
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/tvInAppMessage"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:fontFamily="@font/font_in_app_message"
-                    android:maxLines="2"
-                    android:textColor="@color/in_app_message_color_message"
-                    android:textSize="@dimen/in_app_message_text_size_message"
-                    tools:text="Burası Mesaj Burası Mesaj Burası Mesaj Burası Mesaj Burası Mesaj Burası Mesaj Burası Mesaj" />
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvInAppMessage"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:fontFamily="@font/font_in_app_message"
+                        android:maxLines="2"
+                        android:textColor="@color/in_app_message_color_message"
+                        android:textSize="@dimen/in_app_message_text_size_message"
+                        tools:text="Burası Mesaj Burası Mesaj Burası Mesaj Burası Mesaj Burası Mesaj Burası Mesaj Burası Mesaj" />
 
-            </LinearLayout>
+                </LinearLayout>
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardInAppMessageImage"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_centerVertical="true"
-                app:cardCornerRadius="6dp">
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardInAppMessageImage"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_centerVertical="true"
+                    app:cardCornerRadius="6dp">
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/ivInAppMessage"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/ivInAppMessage"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
 
-            </androidx.cardview.widget.CardView>
+                </androidx.cardview.widget.CardView>
 
-        </RelativeLayout>
+            </RelativeLayout>
+
+        </androidx.cardview.widget.CardView>
 
     </RelativeLayout>
 

@@ -47,7 +47,7 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
         val tvInAppMessage = view.findViewById<AppCompatTextView>(R.id.tvInAppMessage)
         val cardInAppMessageImage = view.findViewById<CardView>(R.id.cardInAppMessageImage)
         val ivInAppMessage = view.findViewById<AppCompatImageView>(R.id.ivInAppMessage)
-        val vInAppMessage = view.findViewById<RelativeLayout>(R.id.vInAppMessage)
+        val cardInAppMessage = view.findViewById<CardView>(R.id.cardInAppMessage)
         val vInAppMessageContainer = view.findViewById<RelativeLayout>(R.id.vInAppMessageContainer)
 
         inAppMessage = requireArguments().getSerializable(EXTRA_IN_APP_MESSAGE) as InAppMessage
@@ -74,6 +74,11 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
                 MATCH_PARENT,
                 resources.getDimensionPixelSize(R.dimen.in_app_message_height)
         )
+        val marginTop = resources.getDimensionPixelSize(R.dimen.in_app_message_margin_top)
+        val marginBottom = resources.getDimensionPixelSize(R.dimen.in_app_message_margin_bottom)
+        val marginStart = resources.getDimensionPixelSize(R.dimen.in_app_message_margin_start)
+        val marginEnd = resources.getDimensionPixelSize(R.dimen.in_app_message_margin_end)
+        params.setMargins(marginStart, marginTop, marginEnd, marginBottom)
         when (contentParams.position) {
             ContentPosition.BOTTOM.position -> {
                 params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
@@ -85,10 +90,10 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
                 params.addRule(RelativeLayout.ALIGN_PARENT_TOP)
             }
         }
-        vInAppMessage.layoutParams = params
+        cardInAppMessage.layoutParams = params
 
         vInAppMessageContainer.setOnClickListener(this)
-        vInAppMessage.setOnClickListener(this)
+        cardInAppMessage.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
@@ -97,7 +102,7 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
                 dismiss()
                 inAppMessageDismissed()
             }
-            R.id.vInAppMessage -> {
+            R.id.cardInAppMessage -> {
                 dismiss()
                 inAppMessageClicked()
             }
