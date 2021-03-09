@@ -6,7 +6,7 @@ import com.dengage.sdk.Logger
 import com.dengage.sdk.Utils
 import com.dengage.sdk.cache.GsonHolder
 import com.dengage.sdk.cache.Prefs
-import com.dengage.sdk.inappmessage.model.*
+import com.dengage.sdk.inappmessage.model.InAppMessage
 import com.dengage.sdk.inappmessage.utils.InAppMessageUtils
 import com.dengage.sdk.models.DengageError
 import com.dengage.sdk.models.Subscription
@@ -149,8 +149,17 @@ class InAppMessageManager(
         } else {
             removeInAppMessageFromCache(inAppMessageId = inAppMessage.id)
         }
-        InAppMessageDialog.newInstance(inAppMessage)
-                .show(activity.supportFragmentManager, InAppMessageDialog::class.java.simpleName)
+
+        // set delay for showing in app message
+        val delay = (inAppMessage.data.displayTiming.delay ?: 0) * 1000L
+        Timer().schedule(object : TimerTask() {
+            override fun run() {
+                InAppMessageDialog.newInstance(inAppMessage).show(
+                        activity.supportFragmentManager,
+                        InAppMessageDialog::class.java.simpleName
+                )
+            }
+        }, delay)
     }
 
     private fun updateInAppMessageOnCache(inAppMessage: InAppMessage) {
