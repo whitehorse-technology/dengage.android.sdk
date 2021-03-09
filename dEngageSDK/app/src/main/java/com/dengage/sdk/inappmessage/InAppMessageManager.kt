@@ -3,6 +3,7 @@ package com.dengage.sdk.inappmessage
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import com.dengage.sdk.Logger
+import com.dengage.sdk.NotificationReceiver
 import com.dengage.sdk.Utils
 import com.dengage.sdk.cache.GsonHolder
 import com.dengage.sdk.cache.Prefs
@@ -154,7 +155,9 @@ class InAppMessageManager(
         val delay = (inAppMessage.data.displayTiming.delay ?: 0) * 1000L
         Timer().schedule(object : TimerTask() {
             override fun run() {
-                InAppMessageDialog.newInstance(inAppMessage).show(
+                val inAppMessageDialog = InAppMessageDialog.newInstance(inAppMessage)
+                inAppMessageDialog.setInAppMessageCallback(this@InAppMessageManager)
+                inAppMessageDialog.show(
                         activity.supportFragmentManager,
                         InAppMessageDialog::class.java.simpleName
                 )
@@ -180,7 +183,7 @@ class InAppMessageManager(
                 inAppMessageId = inAppMessage.id,
                 inAppMessageDetails = inAppMessage.data.messageDetails
         )
-        // todo action in app message click
+        NotificationReceiver.launchActivity(context, null, inAppMessage.data.content.params.targetUrl)
     }
 
     override fun inAppMessageDismissed(inAppMessage: InAppMessage) {
