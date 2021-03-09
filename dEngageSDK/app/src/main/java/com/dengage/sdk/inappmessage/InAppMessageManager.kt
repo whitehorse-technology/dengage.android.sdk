@@ -6,7 +6,7 @@ import com.dengage.sdk.Logger
 import com.dengage.sdk.Utils
 import com.dengage.sdk.cache.GsonHolder
 import com.dengage.sdk.cache.Prefs
-import com.dengage.sdk.inappmessage.model.InAppMessage
+import com.dengage.sdk.inappmessage.model.*
 import com.dengage.sdk.inappmessage.utils.InAppMessageUtils
 import com.dengage.sdk.models.DengageError
 import com.dengage.sdk.models.Subscription
@@ -51,13 +51,13 @@ class InAppMessageManager(
             return
         }
 
-        if (System.currentTimeMillis() >= prefs.inAppMessageFetchTime + 3600000) {
+        if (System.currentTimeMillis() >= prefs.inAppMessageFetchTime) {
             val networkRequest = NetworkRequest(
                     NetworkUrlUtils.getInAppMessagesRequestUrl(context, sdkParameters.accountName, subscription),
                     Utils.getUserAgent(context), object : NetworkRequestCallback {
                 override fun responseFetched(response: String?) {
                     val fetchedInAppMessages = GsonHolder.fromJson<MutableList<InAppMessage>>(response)
-                    prefs.inAppMessageFetchTime = System.currentTimeMillis()
+                    prefs.inAppMessageFetchTime = System.currentTimeMillis() + 3600000
 
                     if (!fetchedInAppMessages.isNullOrEmpty()) {
                         // get existing in app messages and save with fetched in app messages
@@ -72,7 +72,7 @@ class InAppMessageManager(
                 }
 
                 override fun requestError(error: DengageError) {
-                    prefs.inAppMessageFetchTime = System.currentTimeMillis() - 3600000
+                    prefs.inAppMessageFetchTime = System.currentTimeMillis()
                 }
             }, 5000)
             networkRequest.executeTask()
