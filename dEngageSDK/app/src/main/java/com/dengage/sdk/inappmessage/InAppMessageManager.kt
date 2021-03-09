@@ -57,6 +57,7 @@ class InAppMessageManager(
         }
 
         if (System.currentTimeMillis() >= prefs.inAppMessageFetchTime) {
+            prefs.inAppMessageFetchTime = System.currentTimeMillis() + 3600000
             val networkRequest = NetworkRequest(
                     NetworkUrlUtils.getInAppMessagesRequestUrl(
                             context,
@@ -68,7 +69,6 @@ class InAppMessageManager(
                     val listType = object : TypeToken<MutableList<InAppMessage>>() {}.type
                     val fetchedInAppMessages =
                             GsonHolder.gson.fromJson<MutableList<InAppMessage>>(response, listType)
-                    prefs.inAppMessageFetchTime = System.currentTimeMillis() + 3600000
 
                     if (!fetchedInAppMessages.isNullOrEmpty()) {
                         // get existing in app messages and save with fetched in app messages
