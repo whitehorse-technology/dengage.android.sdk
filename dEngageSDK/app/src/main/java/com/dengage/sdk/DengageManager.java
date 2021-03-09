@@ -1,5 +1,14 @@
 package com.dengage.sdk;
 
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -7,10 +16,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
 import android.text.TextUtils;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.dengage.sdk.cache.Prefs;
 import com.dengage.sdk.callback.DengageCallback;
@@ -25,14 +30,6 @@ import com.dengage.sdk.models.TransactionalOpen;
 import com.dengage.sdk.service.NetworkRequest;
 import com.dengage.sdk.service.NetworkRequestCallback;
 import com.dengage.sdk.service.NetworkUrlUtils;
-import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.huawei.agconnect.config.AGConnectServicesConfig;
 import com.huawei.hms.aaid.HmsInstanceId;
 import com.huawei.hms.api.HuaweiApiAvailability;
@@ -47,6 +44,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 
@@ -700,6 +700,21 @@ public class DengageManager {
         inAppMessageManager.fetchInAppMessages();
     }
 
+    /**
+     * Show in app message if any available
+     *
+     * @param activity for showing dialog fragment as in app message
+     */
+    public void setNavigation(@NonNull AppCompatActivity activity) {
+        setNavigation(activity, null);
+    }
+
+    /**
+     * Show in app message if any available
+     *
+     * @param activity   for showing dialog fragment as in app message
+     * @param screenName for showing screen specific in app message
+     */
     public void setNavigation(@NonNull AppCompatActivity activity, @Nullable String screenName) {
         inAppMessageManager.setNavigation(activity, screenName);
     }
