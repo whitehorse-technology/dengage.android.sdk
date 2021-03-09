@@ -7,13 +7,14 @@ import com.dengage.sdk.NotificationReceiver
 import com.dengage.sdk.Utils
 import com.dengage.sdk.cache.GsonHolder
 import com.dengage.sdk.cache.Prefs
-import com.dengage.sdk.inappmessage.model.InAppMessage
+import com.dengage.sdk.inappmessage.model.*
 import com.dengage.sdk.inappmessage.utils.InAppMessageUtils
 import com.dengage.sdk.models.DengageError
 import com.dengage.sdk.models.Subscription
 import com.dengage.sdk.service.NetworkRequest
 import com.dengage.sdk.service.NetworkRequestCallback
 import com.dengage.sdk.service.NetworkUrlUtils
+import com.google.gson.reflect.TypeToken
 import java.util.*
 
 /**
@@ -31,10 +32,12 @@ class InAppMessageManager(
      *Call this method for the pages that you should show in app message if available
      */
     fun setNavigation(activity: AppCompatActivity, screenName: String? = null) {
-        val inAppMessages = InAppMessageUtils.findNotExpiredInAppMessages(logger, Date(), prefs.inAppMessages)
+        val inAppMessages =
+                InAppMessageUtils.findNotExpiredInAppMessages(logger, Date(), prefs.inAppMessages)
         prefs.inAppMessages = inAppMessages
         if (!inAppMessages.isNullOrEmpty()) {
-            val priorInAppMessage = InAppMessageUtils.findPriorInAppMessage(inAppMessages, screenName)
+            val priorInAppMessage =
+                    InAppMessageUtils.findPriorInAppMessage(inAppMessages, screenName)
             if (priorInAppMessage != null) {
                 showInAppMessage(activity, priorInAppMessage)
             }
@@ -48,16 +51,23 @@ class InAppMessageManager(
         // control in app message enabled
         val sdkParameters = prefs.sdkParameters
         if (sdkParameters?.accountName == null || sdkParameters.inAppEnabled == null ||
-                !sdkParameters.inAppEnabled) {
+                !sdkParameters.inAppEnabled
+        ) {
             return
         }
 
         if (System.currentTimeMillis() >= prefs.inAppMessageFetchTime) {
             val networkRequest = NetworkRequest(
-                    NetworkUrlUtils.getInAppMessagesRequestUrl(context, sdkParameters.accountName, subscription),
+                    NetworkUrlUtils.getInAppMessagesRequestUrl(
+                            context,
+                            sdkParameters.accountName,
+                            subscription
+                    ),
                     Utils.getUserAgent(context), object : NetworkRequestCallback {
                 override fun responseFetched(response: String?) {
-                    val fetchedInAppMessages = GsonHolder.fromJson<MutableList<InAppMessage>>(response)
+                    val listType = object : TypeToken<MutableList<InAppMessage>>() {}.type
+                    val fetchedInAppMessages =
+                            GsonHolder.gson.fromJson<MutableList<InAppMessage>>(response, listType)
                     prefs.inAppMessageFetchTime = System.currentTimeMillis() + 3600000
 
                     if (!fetchedInAppMessages.isNullOrEmpty()) {
@@ -75,7 +85,8 @@ class InAppMessageManager(
                 override fun requestError(error: DengageError) {
                     prefs.inAppMessageFetchTime = System.currentTimeMillis()
                 }
-            }, 5000)
+            }, 5000
+            )
             networkRequest.executeTask()
         }
     }
@@ -87,14 +98,18 @@ class InAppMessageManager(
         // control in app message enabled
         val sdkParameters = prefs.sdkParameters
         if (sdkParameters?.accountName == null || sdkParameters.inAppEnabled == null ||
-                !sdkParameters.inAppEnabled) {
+                !sdkParameters.inAppEnabled
+        ) {
             return
         }
 
         val networkRequest = NetworkRequest(
-                NetworkUrlUtils.getInAppMessageAsDisplayedRequestUrl(context, inAppMessageDetails,
-                        sdkParameters.accountName, subscription),
-                Utils.getUserAgent(context), null, 5000)
+                NetworkUrlUtils.getInAppMessageAsDisplayedRequestUrl(
+                        context, inAppMessageDetails,
+                        sdkParameters.accountName, subscription
+                ),
+                Utils.getUserAgent(context), null, 5000
+        )
         networkRequest.executeTask()
     }
 
@@ -105,7 +120,8 @@ class InAppMessageManager(
         // control in app message enabled
         val sdkParameters = prefs.sdkParameters
         if (sdkParameters?.accountName == null || sdkParameters.inAppEnabled == null ||
-                !sdkParameters.inAppEnabled) {
+                !sdkParameters.inAppEnabled
+        ) {
             return
         }
 
@@ -113,9 +129,12 @@ class InAppMessageManager(
         removeInAppMessageFromCache(inAppMessageId)
 
         val networkRequest = NetworkRequest(
-                NetworkUrlUtils.getInAppMessageAsClickedRequestUrl(context, inAppMessageDetails,
-                        sdkParameters.accountName, subscription),
-                Utils.getUserAgent(context), null, 5000)
+                NetworkUrlUtils.getInAppMessageAsClickedRequestUrl(
+                        context, inAppMessageDetails,
+                        sdkParameters.accountName, subscription
+                ),
+                Utils.getUserAgent(context), null, 5000
+        )
         networkRequest.executeTask()
     }
 
@@ -126,14 +145,18 @@ class InAppMessageManager(
         // control in app message enabled
         val sdkParameters = prefs.sdkParameters
         if (sdkParameters?.accountName == null || sdkParameters.inAppEnabled == null ||
-                !sdkParameters.inAppEnabled) {
+                !sdkParameters.inAppEnabled
+        ) {
             return
         }
 
         val networkRequest = NetworkRequest(
-                NetworkUrlUtils.getInAppMessageAsDismissedRequestUrl(context, inAppMessageDetails,
-                        sdkParameters.accountName, subscription),
-                Utils.getUserAgent(context), null, 5000)
+                NetworkUrlUtils.getInAppMessageAsDismissedRequestUrl(
+                        context, inAppMessageDetails,
+                        sdkParameters.accountName, subscription
+                ),
+                Utils.getUserAgent(context), null, 5000
+        )
         networkRequest.executeTask()
     }
 
@@ -145,7 +168,8 @@ class InAppMessageManager(
                 inAppMessageDetails = inAppMessage.data.messageDetails
         )
         if (inAppMessage.data.displayTiming.showEveryXMinutes != null) {
-            inAppMessage.data.nextDisplayTime = inAppMessage.data.displayTiming.showEveryXMinutes * 60000L
+            inAppMessage.data.nextDisplayTime =
+                    inAppMessage.data.displayTiming.showEveryXMinutes * 60000L
             updateInAppMessageOnCache(inAppMessage)
         } else {
             removeInAppMessageFromCache(inAppMessageId = inAppMessage.id)
@@ -183,7 +207,11 @@ class InAppMessageManager(
                 inAppMessageId = inAppMessage.id,
                 inAppMessageDetails = inAppMessage.data.messageDetails
         )
-        NotificationReceiver.launchActivity(context, null, inAppMessage.data.content.params.targetUrl)
+        NotificationReceiver.launchActivity(
+                context,
+                null,
+                inAppMessage.data.content.params.targetUrl
+        )
     }
 
     override fun inAppMessageDismissed(inAppMessage: InAppMessage) {

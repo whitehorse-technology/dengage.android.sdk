@@ -19,7 +19,11 @@ object InAppMessageUtils {
      *
      * @param inAppMessages in app messages that will be filtered with expire date
      */
-    fun findNotExpiredInAppMessages(logger: Logger?, untilDate: Date, inAppMessages: List<InAppMessage>?): MutableList<InAppMessage>? {
+    fun findNotExpiredInAppMessages(
+            logger: Logger?,
+            untilDate: Date,
+            inAppMessages: List<InAppMessage>?
+    ): MutableList<InAppMessage>? {
         if (inAppMessages == null) return null
         val notExpiredMessages = mutableListOf<InAppMessage>()
         val expireDateFormat = SimpleDateFormat(Constants.DATE_FORMAT, Locale.getDefault())
@@ -30,8 +34,9 @@ object InAppMessageUtils {
                     notExpiredMessages.add(inAppMessage)
                 }
             } catch (e: ParseException) {
-                logger?.Error("removeExpiredInAppMessages: " + e.message)
+                logger?.Error("expireDateFormatError: " + e.message)
                 e.printStackTrace()
+                notExpiredMessages.add(inAppMessage)
             }
         }
         return notExpiredMessages
@@ -40,7 +45,10 @@ object InAppMessageUtils {
     /**
      * Find prior in app message to show with respect to priority and expireDate parameters
      */
-    fun findPriorInAppMessage(inAppMessages: List<InAppMessage>, screenName: String? = null): InAppMessage? {
+    fun findPriorInAppMessage(
+            inAppMessages: List<InAppMessage>,
+            screenName: String? = null
+    ): InAppMessage? {
         // sort list with comparator
         val sortedInAppMessages = inAppMessages.sortedWith(InAppMessageComparator())
 
@@ -58,13 +66,21 @@ object InAppMessageUtils {
             sortedInAppMessages.firstOrNull { inAppMessage: InAppMessage ->
                 inAppMessage.data.displayTiming.triggerBy != TriggerBy.EVENT.triggerBy &&
                         inAppMessage.data.displayCondition.screenNameFilters?.firstOrNull { screenNameFilter ->
-                            operateScreenValues(screenNameFilter.value, screenName, screenNameFilter.operator)
+                            operateScreenValues(
+                                    screenNameFilter.value,
+                                    screenName,
+                                    screenNameFilter.operator
+                            )
                         } != null && isDisplayTimeAvailable(inAppMessage)
             }
         }
     }
 
-    fun operateScreenValues(screenNameFilterValue: String, screenName: String, operator: String): Boolean {
+    fun operateScreenValues(
+            screenNameFilterValue: String,
+            screenName: String,
+            operator: String
+    ): Boolean {
         when (operator) {
             Operator.EQUALS.operator -> {
                 return screenNameFilterValue == screenName
