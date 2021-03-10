@@ -72,8 +72,6 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
             tvInAppMessage.setTextColor(Color.parseColor("#${contentParams.secondaryColor}"))
         }
 
-        cardInAppMessageImage.visibility =
-                if (contentParams.showImage) View.VISIBLE else View.GONE
         if (contentParams.showImage && !contentParams.imageUrl.isNullOrEmpty()) {
             ImageDownloader(contentParams.imageUrl, object : ImageDownloader.OnImageLoaderListener {
                 override fun onError(error: ImageDownloader.ImageError) {
@@ -81,6 +79,7 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
                 }
 
                 override fun onComplete(bitmap: Bitmap) {
+                    cardInAppMessageImage.visibility = View.VISIBLE
                     ivInAppMessage.setImageBitmap(bitmap)
                 }
             }).start()
