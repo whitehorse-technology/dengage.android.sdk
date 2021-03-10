@@ -77,42 +77,41 @@ object InAppMessageUtils {
     }
 
     fun operateScreenValues(
-            screenNameFilterValue: String,
+            screenNameFilterValue: List<String>,
             screenName: String,
             operator: String
     ): Boolean {
+        val screenNameFilterValueSafe = screenNameFilterValue.firstOrNull() ?: ""
         when (operator) {
             Operator.EQUALS.operator -> {
-                return screenNameFilterValue == screenName
+                return screenNameFilterValueSafe == screenName
             }
             Operator.NOT_EQUALS.operator -> {
-                return screenNameFilterValue != screenName
+                return screenNameFilterValueSafe != screenName
             }
             Operator.LIKE.operator -> {
-                return screenName.contains(screenNameFilterValue, true)
+                return screenName.contains(screenNameFilterValueSafe, true)
             }
             Operator.NOT_LIKE.operator -> {
-                return !screenName.contains(screenNameFilterValue, true)
+                return !screenName.contains(screenNameFilterValueSafe, true)
             }
             Operator.STARTS_WITH.operator -> {
-                return screenName.startsWith(screenNameFilterValue, true)
+                return screenName.startsWith(screenNameFilterValueSafe, true)
             }
             Operator.NOT_STARTS_WITH.operator -> {
-                return !screenName.startsWith(screenNameFilterValue, true)
+                return !screenName.startsWith(screenNameFilterValueSafe, true)
             }
             Operator.ENDS_WITH.operator -> {
-                return screenName.endsWith(screenNameFilterValue, true)
+                return screenName.endsWith(screenNameFilterValueSafe, true)
             }
             Operator.NOT_ENDS_WITH.operator -> {
-                return !screenName.endsWith(screenNameFilterValue, true)
+                return !screenName.endsWith(screenNameFilterValueSafe, true)
             }
             Operator.IN.operator -> {
-                val screenNameFilterValues = screenNameFilterValue.split("|")
-                return screenNameFilterValues.contains(screenName)
+                return screenNameFilterValue.contains(screenName)
             }
             Operator.NOT_IN.operator -> {
-                val screenNameFilterValues = screenNameFilterValue.split("|")
-                return !screenNameFilterValues.contains(screenName)
+                return !screenNameFilterValue.contains(screenName)
             }
         }
         return true

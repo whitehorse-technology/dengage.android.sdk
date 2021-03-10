@@ -17,13 +17,13 @@ class ScreenDataFilterTest {
         val screenDataFilter = ScreenDataFilter(
                 dataName = dataName,
                 type = type,
-                value = screenName,
+                value = listOf(screenName),
                 operator = operator
         )
 
         Assert.assertEquals(screenDataFilter.dataName, dataName)
         Assert.assertEquals(screenDataFilter.type, type)
-        Assert.assertEquals(screenDataFilter.value, screenName)
+        Assert.assertEquals(screenDataFilter.value[0], screenName)
         Assert.assertEquals(screenDataFilter.operator, operator)
     }
 

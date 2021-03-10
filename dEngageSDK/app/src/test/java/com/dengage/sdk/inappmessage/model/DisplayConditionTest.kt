@@ -14,12 +14,12 @@ class DisplayConditionTest {
         val operator = Operator.STARTS_WITH.operator
         val displayCondition = DisplayCondition(
                 screenNameFilters = listOf(ScreenNameFilter(
-                        value = screenName,
+                        value = listOf(screenName),
                         operator = operator
                 )),
                 screenDataFilters = null
         )
-        Assert.assertEquals(displayCondition.screenNameFilters?.get(0)?.value, screenName)
+        Assert.assertEquals(displayCondition.screenNameFilters?.get(0)?.value?.get(0), screenName)
         Assert.assertEquals(displayCondition.screenNameFilters?.get(0)?.operator, operator)
     }
 

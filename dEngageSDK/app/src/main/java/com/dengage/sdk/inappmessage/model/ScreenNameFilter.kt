@@ -8,5 +8,5 @@ import java.io.Serializable
  */
 class ScreenNameFilter(
         @SerializedName("operator") val operator: String,
-        @SerializedName("value") val value: String
+        @SerializedName("value") val value: List<String>
 ) : Serializable

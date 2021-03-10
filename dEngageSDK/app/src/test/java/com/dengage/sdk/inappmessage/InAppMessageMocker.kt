@@ -29,7 +29,7 @@ object InAppMessageMocker {
 
         val displayCondition = DisplayCondition(
                 screenNameFilters = if (screenName != null && operator != null) listOf(ScreenNameFilter(
-                        value = screenName,
+                        value = listOf(screenName),
                         operator = operator.operator
                 ))
                 else null,

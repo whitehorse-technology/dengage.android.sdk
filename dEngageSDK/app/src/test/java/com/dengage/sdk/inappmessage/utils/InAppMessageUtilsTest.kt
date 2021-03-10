@@ -273,7 +273,7 @@ class InAppMessageUtilsTest {
         val screenNameValue = "screenName"
         val screenName = "screenName"
         val operator = Operator.EQUALS.operator
-        Assert.assertTrue(InAppMessageUtils.operateScreenValues(screenNameValue, screenName, operator))
+        Assert.assertTrue(InAppMessageUtils.operateScreenValues(listOf(screenNameValue), screenName, operator))
     }
 
     @Test
@@ -281,7 +281,7 @@ class InAppMessageUtilsTest {
         val screenNameValue = "screenName"
         val screenName = "screenName"
         val operator = Operator.NOT_EQUALS.operator
-        Assert.assertFalse(InAppMessageUtils.operateScreenValues(screenNameValue, screenName, operator))
+        Assert.assertFalse(InAppMessageUtils.operateScreenValues(listOf(screenNameValue), screenName, operator))
     }
 
     @Test
@@ -289,7 +289,7 @@ class InAppMessageUtilsTest {
         val screenNameValue = "screenName"
         val screenName = "screenNameLike"
         val operator = Operator.LIKE.operator
-        Assert.assertTrue(InAppMessageUtils.operateScreenValues(screenNameValue, screenName, operator))
+        Assert.assertTrue(InAppMessageUtils.operateScreenValues(listOf(screenNameValue), screenName, operator))
     }
 
     @Test
@@ -297,7 +297,7 @@ class InAppMessageUtilsTest {
         val screenNameValue = "screenName"
         val screenName = "screenNameLike"
         val operator = Operator.NOT_LIKE.operator
-        Assert.assertFalse(InAppMessageUtils.operateScreenValues(screenNameValue, screenName, operator))
+        Assert.assertFalse(InAppMessageUtils.operateScreenValues(listOf(screenNameValue), screenName, operator))
     }
 
     @Test
@@ -305,7 +305,7 @@ class InAppMessageUtilsTest {
         val screenNameValue = "screenName"
         val screenName = "screenNameStartsWith"
         val operator = Operator.STARTS_WITH.operator
-        Assert.assertTrue(InAppMessageUtils.operateScreenValues(screenNameValue, screenName, operator))
+        Assert.assertTrue(InAppMessageUtils.operateScreenValues(listOf(screenNameValue), screenName, operator))
     }
 
     @Test
@@ -313,7 +313,7 @@ class InAppMessageUtilsTest {
         val screenNameValue = "screenName"
         val screenName = "screenNameStartsWith"
         val operator = Operator.NOT_STARTS_WITH.operator
-        Assert.assertFalse(InAppMessageUtils.operateScreenValues(screenNameValue, screenName, operator))
+        Assert.assertFalse(InAppMessageUtils.operateScreenValues(listOf(screenNameValue), screenName, operator))
     }
 
     @Test
@@ -321,7 +321,7 @@ class InAppMessageUtilsTest {
         val screenNameValue = "EndsWith"
         val screenName = "screenNameEndsWith"
         val operator = Operator.ENDS_WITH.operator
-        Assert.assertTrue(InAppMessageUtils.operateScreenValues(screenNameValue, screenName, operator))
+        Assert.assertTrue(InAppMessageUtils.operateScreenValues(listOf(screenNameValue), screenName, operator))
     }
 
     @Test
@@ -329,23 +329,23 @@ class InAppMessageUtilsTest {
         val screenNameValue = "EndsWith"
         val screenName = "screenNameEndsWith"
         val operator = Operator.NOT_ENDS_WITH.operator
-        Assert.assertFalse(InAppMessageUtils.operateScreenValues(screenNameValue, screenName, operator))
+        Assert.assertFalse(InAppMessageUtils.operateScreenValues(listOf(screenNameValue), screenName, operator))
     }
 
     @Test
     fun `operateScreenValues IN test`() {
-        val screenNameValue = "screenName1|screenName2|screenName3"
         val screenName = "screenName1"
         val operator = Operator.IN.operator
-        Assert.assertTrue(InAppMessageUtils.operateScreenValues(screenNameValue, screenName, operator))
+        Assert.assertTrue(InAppMessageUtils.operateScreenValues(listOf("screenName1", "screenName2", "screenName3"),
+                screenName, operator))
     }
 
     @Test
     fun `operateScreenValues NOT_IN test`() {
-        val screenNameValue = "screenName1|screenName2|screenName3"
         val screenName = "screenName4"
         val operator = Operator.NOT_IN.operator
-        Assert.assertTrue(InAppMessageUtils.operateScreenValues(screenNameValue, screenName, operator))
+        Assert.assertTrue(InAppMessageUtils.operateScreenValues(listOf("screenName1", "screenName2", "screenName3"),
+                screenName, operator))
     }
 
 }

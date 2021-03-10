@@ -13,11 +13,11 @@ class ScreenNameFilterTest {
         val screenName = "screenName"
         val operator = Operator.STARTS_WITH.operator
         val screenNameFilter = ScreenNameFilter(
-                value = screenName,
+                value = listOf(screenName),
                 operator = operator
         )
         
-        Assert.assertEquals(screenNameFilter.value, screenName)
+        Assert.assertEquals(screenNameFilter.value[0], screenName)
         Assert.assertEquals(screenNameFilter.operator, operator)
     }
 
