@@ -670,6 +670,8 @@ public class DengageManager {
         // if 24 hours passed after getting sdk params, you should get again
         if (prefs.getSdkParameters() != null &&
                 System.currentTimeMillis() < prefs.getSdkParameters().getLastFetchTimeInMillis() + 24 * 60 * 60 * 1000) {
+            // fetch in app messages
+            getInAppMessages();
             return;
         }
 
