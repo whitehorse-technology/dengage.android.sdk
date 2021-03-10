@@ -36,7 +36,6 @@ object InAppMessageUtils {
             } catch (e: ParseException) {
                 logger?.Error("expireDateFormatError: " + e.message)
                 e.printStackTrace()
-                notExpiredMessages.add(inAppMessage)
             }
         }
         return notExpiredMessages
@@ -58,9 +57,8 @@ object InAppMessageUtils {
         return if (screenName.isNullOrEmpty()) {
             sortedInAppMessages.firstOrNull { inAppMessage: InAppMessage ->
                 inAppMessage.data.displayTiming.triggerBy != TriggerBy.EVENT.triggerBy &&
-                        inAppMessage.data.displayCondition.screenNameFilters == null &&
+                        inAppMessage.data.displayCondition.screenNameFilters.isNullOrEmpty() &&
                         isDisplayTimeAvailable(inAppMessage)
-
             }
         } else {
             sortedInAppMessages.firstOrNull { inAppMessage: InAppMessage ->
