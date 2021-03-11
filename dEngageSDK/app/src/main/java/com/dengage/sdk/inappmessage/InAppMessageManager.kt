@@ -167,7 +167,8 @@ class InAppMessageManager(
         setInAppMessageAsDisplayed(
                 inAppMessageDetails = inAppMessage.data.messageDetails
         )
-        if (inAppMessage.data.displayTiming.showEveryXMinutes != null) {
+        if (inAppMessage.data.displayTiming.showEveryXMinutes != null &&
+                inAppMessage.data.displayTiming.showEveryXMinutes != 0) {
             inAppMessage.data.nextDisplayTime =
                     inAppMessage.data.displayTiming.showEveryXMinutes * 60000L
             updateInAppMessageOnCache(inAppMessage)
