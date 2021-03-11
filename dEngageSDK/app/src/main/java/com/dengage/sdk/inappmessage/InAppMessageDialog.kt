@@ -60,15 +60,18 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
 
         // set colors
         if (!contentParams.backgroundColor.isNullOrEmpty() &&
-                contentParams.backgroundColor.length == 6) {
+                contentParams.backgroundColor.length == 6
+        ) {
             vInAppMessage.setBackgroundColor(Color.parseColor("#${contentParams.backgroundColor}"))
         }
         if (!contentParams.primaryColor.isNullOrEmpty() &&
-                contentParams.primaryColor.length == 6) {
+                contentParams.primaryColor.length == 6
+        ) {
             tvInAppTitle.setTextColor(Color.parseColor("#${contentParams.primaryColor}"))
         }
         if (!contentParams.secondaryColor.isNullOrEmpty() &&
-                contentParams.secondaryColor.length == 6) {
+                contentParams.secondaryColor.length == 6
+        ) {
             tvInAppMessage.setTextColor(Color.parseColor("#${contentParams.secondaryColor}"))
         }
 

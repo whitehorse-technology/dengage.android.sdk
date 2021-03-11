@@ -4,5 +4,6 @@
     <color name="in_app_message_color_background">#E5E5E5</color>
     <color name="in_app_message_color_title">#004E5A</color>
     <color name="in_app_message_color_message">#80232326</color>
+    <color name="in_app_message_color_status_bar">#80232326</color>
 
 </resources>
