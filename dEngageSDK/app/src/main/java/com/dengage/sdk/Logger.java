@@ -2,13 +2,16 @@ package com.dengage.sdk;
 
 import android.util.Log;
 
-class Logger {
+import androidx.annotation.RestrictTo;
+
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+public class Logger {
 
     private Boolean status = false;
 
     private static Logger _instance = null;
 
-    static Logger getInstance() {
+    public static Logger getInstance() {
         if(_instance == null) _instance = new Logger();
         return _instance;
     }
@@ -17,13 +20,13 @@ class Logger {
         this.status = status;
     }
 
-    void Debug(String message) {
+    public void Debug(String message) {
         if (status) {
             Log.d(Constants.LOG_TAG, message);
         }
     }
 
-    void Error(String message) {
+    public void Error(String message) {
         if (status) {
             Log.e(Constants.LOG_TAG, message);
         }
@@ -41,7 +44,7 @@ class Logger {
         }
     }
 
-    void Verbose(String message) {
+    public void Verbose(String message) {
         if (status) {
             Log.v(Constants.LOG_TAG, message);
         }

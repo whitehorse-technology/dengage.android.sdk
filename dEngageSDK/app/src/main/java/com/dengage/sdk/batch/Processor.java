@@ -1,5 +1,6 @@
 package com.dengage.sdk.batch;
 
+import com.dengage.sdk.Logger;
 import com.dengage.sdk.batch.database.DengageDatabase;
 import com.dengage.sdk.batch.database.ModelEntity;
 import com.dengage.sdk.batch.database.dao.ModelDao;
@@ -83,11 +84,9 @@ public class Processor {
             }
 
             return true;
-                throw new Exception("The remote server returned an error with the status code: " + responseCode);
-
         } catch (Exception e) {
-            return false;
             logger.Error( "sendRequest: "+ e.getMessage());
+            return false;
         }
     }
 

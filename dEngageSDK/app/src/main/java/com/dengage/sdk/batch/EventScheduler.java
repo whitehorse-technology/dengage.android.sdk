@@ -34,8 +34,11 @@ public class EventScheduler {
     }
 
     public void flush() {
-        executorService.submit(() -> {
-            processor.flushAll();
+        executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                processor.flushAll();
+            }
         });
     }
 
@@ -51,11 +54,14 @@ public class EventScheduler {
     }
 
     public void schedule(final Event model) {
-        executorService.submit(() -> {
-            try {
-                processor.save(model);
-            } catch (Exception e) {
-                Log.e("Scheduler", "Error while caching event", e);
+        executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    processor.save(model);
+                } catch (Exception e) {
+                    Log.e("Scheduler", "Error while caching event", e);
+                }
             }
         });
     }

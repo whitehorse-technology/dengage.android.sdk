@@ -230,15 +230,15 @@ public class DengageEvent {
                 baseApiUri = Constants.DEN_EVENT_API_URI;
 
             baseApiUri += Constants.EVENT_API_ENDPOINT;
-
-            Subscription subscription = DengageManager.getInstance(_context).getSubscription();
+            DengageManager dengageInstance = DengageManager.getInstance(_context);
+            Subscription subscription = dengageInstance.getSubscription();
             String sessionId = Session.getSession().getSessionId();
 
             data.put("session_id", sessionId);
             Event event = new Event(subscription.getIntegrationKey(), tableName, key, data);
             logger.Debug("sendCustomEvent: " + event.toJson());
 
-            EventScheduler eventScheduler = instance.eventScheduler;
+            EventScheduler eventScheduler = dengageInstance.eventScheduler;
             if (eventScheduler != null) {
                 eventScheduler.schedule(event);
             } else {
