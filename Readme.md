@@ -8,7 +8,7 @@ This repo makes it easy to integrate your native Android app with dEngage. It pr
 *Supports Android API level 4.1.x or higher.*
 
 ## Installation
-Visit [dEngage's Android SDK Setup Guide](hhttps://dev.dengage.com/mobile-sdk/android) page in order to view documentation.
+Visit [dEngage's Android SDK Setup Guide](https://dev.dengage.com/mobile-sdk/android) page in order to view documentation.
 
 ## Support
 Visit [dEngage support](https://dengage.com) page for account issues.
