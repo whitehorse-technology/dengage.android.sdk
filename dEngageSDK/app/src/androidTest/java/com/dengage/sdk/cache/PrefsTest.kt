@@ -36,6 +36,8 @@ class PrefsTest {
         val inboxEnabled = true
         val inAppEnabled = true
         val subscriptionEnabled = true
+        val inAppFetchIntervalInMin = 10
+        val inAppMinSecBetweenMessages = 10
         val lastFetchTimeInMillis = 10L
 
         val sdkParameters = SdkParameters(
@@ -45,6 +47,8 @@ class PrefsTest {
                 inboxEnabled = inboxEnabled,
                 inAppEnabled = inAppEnabled,
                 subscriptionEnabled = subscriptionEnabled,
+                inAppFetchIntervalInMin = inAppFetchIntervalInMin,
+                inAppMinSecBetweenMessages = inAppMinSecBetweenMessages,
                 lastFetchTimeInMillis = lastFetchTimeInMillis
         )
         prefs.sdkParameters = sdkParameters
@@ -55,6 +59,8 @@ class PrefsTest {
         Assert.assertEquals(prefs.sdkParameters?.inboxEnabled, inboxEnabled)
         Assert.assertEquals(prefs.sdkParameters?.inAppEnabled, inAppEnabled)
         Assert.assertEquals(prefs.sdkParameters?.subscriptionEnabled, subscriptionEnabled)
+        Assert.assertEquals(prefs.sdkParameters?.inAppFetchIntervalInMin, inAppFetchIntervalInMin)
+        Assert.assertEquals(prefs.sdkParameters?.inAppMinSecBetweenMessages, inAppMinSecBetweenMessages)
         Assert.assertEquals(prefs.sdkParameters?.lastFetchTimeInMillis, lastFetchTimeInMillis)
     }
 

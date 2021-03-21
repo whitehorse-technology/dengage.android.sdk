@@ -13,5 +13,7 @@ class SdkParameters(
         @SerializedName("inboxEnabled") val inboxEnabled: Boolean?,
         @SerializedName("inAppEnabled") val inAppEnabled: Boolean?,
         @SerializedName("subscriptionEnabled") val subscriptionEnabled: Boolean?,
+        @SerializedName("inAppFetchIntervalInMin") val inAppFetchIntervalInMin: Int?,
+        @SerializedName("inAppMinSecBetweenMessages") val inAppMinSecBetweenMessages: Int?,
         @SerializedName("lastFetchTimeInMillis") var lastFetchTimeInMillis: Long = 0
 ) : Serializable

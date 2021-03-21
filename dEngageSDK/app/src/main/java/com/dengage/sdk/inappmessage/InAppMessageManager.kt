@@ -57,7 +57,8 @@ class InAppMessageManager(
         }
 
         if (System.currentTimeMillis() >= prefs.inAppMessageFetchTime) {
-            prefs.inAppMessageFetchTime = System.currentTimeMillis() + 3600000
+            val nextFetchTimePlus = (sdkParameters.inAppFetchIntervalInMin ?: 0) * 60000
+            prefs.inAppMessageFetchTime = System.currentTimeMillis() + nextFetchTimePlus
             val networkRequest = NetworkRequest(
                     NetworkUrlUtils.getInAppMessagesRequestUrl(
                             context,
