@@ -72,6 +72,13 @@ class PrefsTest {
     }
 
     @Test
+    fun saveInAppMessageShowTimeToPrefsTest() {
+        val time = 20L
+        prefs.inAppMessageShowTime = time
+        Assert.assertEquals(prefs.inAppMessageShowTime, time)
+    }
+
+    @Test
     fun saveInAppMessagesToPrefsTest() {
         val id = Math.random().toString()
         val contentParams = ContentParams(

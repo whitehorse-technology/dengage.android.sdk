@@ -18,6 +18,7 @@ class Prefs(context: Context) {
         const val IN_APP_MESSAGES = "IN_APP_MESSAGES"
         const val SDK_PARAMETERS = "SDK_PARAMETERS"
         const val IN_APP_MESSAGE_FETCH_TIME = "IN_APP_MESSAGE_FETCH_TIME"
+        const val IN_APP_MESSAGE_SHOW_TIME = "IN_APP_MESSAGE_SHOW_TIME"
 
         fun getSharedPreferences(context: Context): SharedPreferences =
                 context.getSharedPreferences(Constants.DEN_DEVICE_UNIQUE_ID, Context.MODE_PRIVATE)
@@ -34,6 +35,10 @@ class Prefs(context: Context) {
     var inAppMessageFetchTime: Long
         get() = preferences.get(IN_APP_MESSAGE_FETCH_TIME, 0) ?: 0
         set(value) = preferences.set(IN_APP_MESSAGE_FETCH_TIME, value)
+
+    var inAppMessageShowTime: Long
+        get() = preferences.get(IN_APP_MESSAGE_SHOW_TIME, 0) ?: 0
+        set(value) = preferences.set(IN_APP_MESSAGE_SHOW_TIME, value)
 
     fun clear() {
         preferences.edit().clear().apply()

@@ -32,6 +32,9 @@ class InAppMessageManager(
      *Call this method for the pages that you should show in app message if available
      */
     fun setNavigation(activity: AppCompatActivity, screenName: String? = null) {
+        // control next in app message show time
+        if (System.currentTimeMillis() < prefs.inAppMessageShowTime) return
+
         val inAppMessages =
                 InAppMessageUtils.findNotExpiredInAppMessages(logger, Date(), prefs.inAppMessages)
         prefs.inAppMessages = inAppMessages
@@ -56,40 +59,41 @@ class InAppMessageManager(
             return
         }
 
-        if (System.currentTimeMillis() >= prefs.inAppMessageFetchTime) {
-            val nextFetchTimePlus = (sdkParameters.inAppFetchIntervalInMin ?: 0) * 60000
-            prefs.inAppMessageFetchTime = System.currentTimeMillis() + nextFetchTimePlus
-            val networkRequest = NetworkRequest(
-                    NetworkUrlUtils.getInAppMessagesRequestUrl(
-                            context,
-                            sdkParameters.accountName,
-                            subscription
-                    ),
-                    Utils.getUserAgent(context), object : NetworkRequestCallback {
-                override fun responseFetched(response: String?) {
-                    val listType = object : TypeToken<MutableList<InAppMessage>>() {}.type
-                    val fetchedInAppMessages =
-                            GsonHolder.gson.fromJson<MutableList<InAppMessage>>(response, listType)
+        // control next in app message fetch time
+        if (System.currentTimeMillis() < prefs.inAppMessageFetchTime) return
 
-                    if (!fetchedInAppMessages.isNullOrEmpty()) {
-                        // get existing in app messages and save with fetched in app messages
-                        var existingInAppMessages = prefs.inAppMessages
-                        if (existingInAppMessages == null) {
-                            existingInAppMessages = mutableListOf()
-                        }
-                        existingInAppMessages.addAll(fetchedInAppMessages)
+        val nextFetchTimePlus = (sdkParameters.inAppFetchIntervalInMin ?: 0) * 60000
+        prefs.inAppMessageFetchTime = System.currentTimeMillis() + nextFetchTimePlus
+        val networkRequest = NetworkRequest(
+                NetworkUrlUtils.getInAppMessagesRequestUrl(
+                        context,
+                        sdkParameters.accountName,
+                        subscription
+                ),
+                Utils.getUserAgent(context), object : NetworkRequestCallback {
+            override fun responseFetched(response: String?) {
+                val listType = object : TypeToken<MutableList<InAppMessage>>() {}.type
+                val fetchedInAppMessages =
+                        GsonHolder.gson.fromJson<MutableList<InAppMessage>>(response, listType)
 
-                        prefs.inAppMessages = existingInAppMessages
+                if (!fetchedInAppMessages.isNullOrEmpty()) {
+                    // get existing in app messages and save with fetched in app messages
+                    var existingInAppMessages = prefs.inAppMessages
+                    if (existingInAppMessages == null) {
+                        existingInAppMessages = mutableListOf()
                     }
-                }
+                    existingInAppMessages.addAll(fetchedInAppMessages)
 
-                override fun requestError(error: DengageError) {
-                    prefs.inAppMessageFetchTime = System.currentTimeMillis()
+                    prefs.inAppMessages = existingInAppMessages
                 }
-            }, 5000
-            )
-            networkRequest.executeTask()
-        }
+            }
+
+            override fun requestError(error: DengageError) {
+                prefs.inAppMessageFetchTime = System.currentTimeMillis()
+            }
+        }, 5000
+        )
+        networkRequest.executeTask()
     }
 
     /**
@@ -176,6 +180,10 @@ class InAppMessageManager(
         } else {
             removeInAppMessageFromCache(inAppMessageId = inAppMessage.id)
         }
+
+        // update next in app message show time
+        prefs.inAppMessageShowTime = System.currentTimeMillis() +
+                ((prefs.sdkParameters?.inAppMinSecBetweenMessages ?: 0) * 1000)
 
         // set delay for showing in app message
         val delay = (inAppMessage.data.displayTiming.delay ?: 0) * 1000L
