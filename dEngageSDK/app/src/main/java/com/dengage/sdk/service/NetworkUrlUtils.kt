@@ -159,4 +159,16 @@ object NetworkUrlUtils {
         return uriWithQueryParams.toString()
     }
 
+    fun setTagsRequestUrl(context: Context): String {
+        var baseApiUri = Utils.getMetaData(context, "den_push_api_url")
+        if (TextUtils.isEmpty(baseApiUri)) {
+            baseApiUri = Constants.DEN_PUSH_API_URI
+        }
+        baseApiUri += "/api/setTags"
+        val uriWithQueryParams = Uri.parse(baseApiUri)
+                .buildUpon()
+                .build()
+        return uriWithQueryParams.toString()
+    }
+
 }

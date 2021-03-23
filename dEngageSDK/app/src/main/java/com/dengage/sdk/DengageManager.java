@@ -17,6 +17,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.text.TextUtils;
 
+import com.dengage.sdk.cache.GsonHolder;
 import com.dengage.sdk.cache.Prefs;
 import com.dengage.sdk.callback.DengageCallback;
 import com.dengage.sdk.inappmessage.InAppMessageManager;
@@ -26,6 +27,7 @@ import com.dengage.sdk.models.Message;
 import com.dengage.sdk.models.Open;
 import com.dengage.sdk.models.SdkParameters;
 import com.dengage.sdk.models.Subscription;
+import com.dengage.sdk.models.TagsRequest;
 import com.dengage.sdk.models.TransactionalOpen;
 import com.dengage.sdk.service.NetworkRequest;
 import com.dengage.sdk.service.NetworkRequestCallback;
@@ -39,6 +41,7 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -376,8 +379,8 @@ public class DengageManager {
 
 
     /**
-     * Deprecated method, Subscription will send after changing contact key, permission or device
-     * id automatically
+     * Deprecated method, Subscription will send after changing contact key, permission or device id
+     * automatically
      */
     @Deprecated
     public void syncSubscription() {
@@ -689,7 +692,7 @@ public class DengageManager {
             @Override
             public void responseFetched(@Nullable String response) {
                 if (response != null) {
-                    SdkParameters sdkParameters = new Gson().fromJson(response, SdkParameters.class);
+                    SdkParameters sdkParameters = GsonHolder.INSTANCE.getGson().fromJson(response, SdkParameters.class);
                     sdkParameters.setLastFetchTimeInMillis(System.currentTimeMillis());
                     prefs.setSdkParameters(sdkParameters);
 
@@ -704,29 +707,6 @@ public class DengageManager {
             }
         });
         networkRequest.executeTask();
-    }
-
-    public void getInAppMessages() {
-        inAppMessageManager.fetchInAppMessages();
-    }
-
-    /**
-     * Show in app message if any available
-     *
-     * @param activity for showing dialog fragment as in app message
-     */
-    public void setNavigation(@NonNull AppCompatActivity activity) {
-        setNavigation(activity, null);
-    }
-
-    /**
-     * Show in app message if any available
-     *
-     * @param activity   for showing dialog fragment as in app message
-     * @param screenName for showing screen specific in app message
-     */
-    public void setNavigation(@NonNull AppCompatActivity activity, @Nullable String screenName) {
-        inAppMessageManager.setNavigation(activity, screenName);
     }
 
     /**
@@ -755,7 +735,7 @@ public class DengageManager {
                     inboxMessageFetchMillis = System.currentTimeMillis();
                     Type listType = new TypeToken<List<InboxMessage>>() {
                     }.getType();
-                    List<InboxMessage> fetchedInboxMessages = new Gson().fromJson(response, listType);
+                    List<InboxMessage> fetchedInboxMessages = GsonHolder.INSTANCE.getGson().fromJson(response, listType);
                     if (offset == 0) {
                         inboxMessages = fetchedInboxMessages;
                     }
@@ -831,6 +811,54 @@ public class DengageManager {
                 NetworkUrlUtils.INSTANCE.setInboxMessageAsClickedRequestUrl(_context, id,
                         sdkParameters.getAccountName(), _subscription),
                 Utils.getUserAgent(_context), null);
+        networkRequest.executeTask();
+    }
+
+    public void getInAppMessages() {
+        inAppMessageManager.fetchInAppMessages();
+    }
+
+    /**
+     * Show in app message if any available
+     *
+     * @param activity for showing dialog fragment as in app message
+     */
+    public void setNavigation(@NonNull AppCompatActivity activity) {
+        setNavigation(activity, null);
+    }
+
+    /**
+     * Show in app message if any available
+     *
+     * @param activity   for showing dialog fragment as in app message
+     * @param screenName for showing screen specific in app message
+     */
+    public void setNavigation(@NonNull AppCompatActivity activity, @Nullable String screenName) {
+        inAppMessageManager.setNavigation(activity, screenName);
+    }
+
+    /**
+     * Send tags
+     *
+     * @param tags will be send to api
+     */
+    public void setTags(@NonNull List<HashMap<String, String>> tags) {
+        SdkParameters sdkParameters = prefs.getSdkParameters();
+
+        // convert tags request to json string
+        TagsRequest tagsRequest = new TagsRequest(
+                sdkParameters.getAccountName(),
+                _subscription.getDeviceId(),
+                tags
+        );
+        String postData = GsonHolder.INSTANCE.getGson().toJson(tagsRequest, TagsRequest.class);
+
+        // call http request
+        NetworkRequest networkRequest = new NetworkRequest(
+                NetworkUrlUtils.INSTANCE.setTagsRequestUrl(_context),
+                Utils.getUserAgent(_context),
+                postData,
+                null);
         networkRequest.executeTask();
     }
 }
