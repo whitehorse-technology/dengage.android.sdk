@@ -195,6 +195,14 @@ public class DengageManager {
     }
 
     /**
+     * Deprecated method, use setUserPermission method
+     */
+    @Deprecated
+    public void setPermission(Boolean permission) {
+        setUserPermission(permission);
+    }
+
+    /**
      * Set User Push Permission
      * <p>
      * Use to set permission to a user
@@ -202,18 +210,18 @@ public class DengageManager {
      *
      * @param permission True/False
      */
-    public void setPermission(Boolean permission) {
-        logger.Verbose("setPermission method is called");
+    public void setUserPermission(Boolean permission) {
+        logger.Verbose("setUserPermission method is called");
         try {
             // control the last permission flag equals to new permission flag then send subscription
-            if (_subscription.getPermission() == null || _subscription.getPermission() != permission) {
-                _subscription.setPermission(permission);
+            if (_subscription.getUserPermission() == null || _subscription.getUserPermission() != permission) {
+                _subscription.setUserPermission(permission);
                 logger.Debug("permission: " + permission);
                 saveSubscription();
                 sendSubscription();
             }
         } catch (Exception e) {
-            logger.Error("setPermission: " + e.getMessage());
+            logger.Error("setUserPermission: " + e.getMessage());
         }
     }
 
@@ -368,7 +376,7 @@ public class DengageManager {
 
 
     /**
-     * Deprecated function Subscription will send after changing contact key, permission or device
+     * Deprecated method, Subscription will send after changing contact key, permission or device
      * id automatically
      */
     @Deprecated
