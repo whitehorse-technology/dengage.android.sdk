@@ -40,7 +40,10 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -337,7 +340,10 @@ public class DengageManager {
             _subscription.setSdkVersion(Utils.getSdkVersion());
             _subscription.setUserAgent(Utils.getUserAgent(_context));
             _subscription.setLanguage(Locale.getDefault().getLanguage());
-            _subscription.setTimezone(TimeZone.getDefault().getDisplayName());
+
+            Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"), Locale.getDefault());
+            DateFormat date = new SimpleDateFormat("z", Locale.getDefault());
+            _subscription.setTimezone(date.format(calendar.getTime()));
 
             String json = _subscription.toJson();
             logger.Debug("subscriptionJson: " + json);
