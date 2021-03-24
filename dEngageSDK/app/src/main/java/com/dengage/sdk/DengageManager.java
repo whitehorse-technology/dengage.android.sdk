@@ -208,28 +208,6 @@ public class DengageManager {
         setUserPermission(permission);
     }
 
-    /**
-     * Set User Push Permission
-     * <p>
-     * Use to set permission to a user
-     * </p>
-     *
-     * @param permission True/False
-     */
-    public void setUserPermission(Boolean permission) {
-        logger.Verbose("setUserPermission method is called");
-        try {
-            // control the last permission flag equals to new permission flag then send subscription
-            if (_subscription.getUserPermission() == null || _subscription.getUserPermission() != permission) {
-                _subscription.setUserPermission(permission);
-                logger.Debug("permission: " + permission);
-                saveSubscription();
-                sendSubscription();
-            }
-        } catch (Exception e) {
-            logger.Error("setUserPermission: " + e.getMessage());
-        }
-    }
 
     /**
      * Set contact key of the user.
@@ -713,6 +691,68 @@ public class DengageManager {
             }
         });
         networkRequest.executeTask();
+    }
+
+    /**
+     * Set User Push Permission
+     * <p>
+     * Use to set permission of current subscription
+     * </p>
+     *
+     * @param permission True/False
+     */
+    public void setUserPermission(Boolean permission) {
+        logger.Verbose("setUserPermission method is called");
+        try {
+            // control the last permission flag equals to new permission flag then send subscription
+            if (_subscription.getUserPermission() == null || _subscription.getUserPermission() != permission) {
+                _subscription.setUserPermission(permission);
+                logger.Debug("permission: " + permission);
+                saveSubscription();
+                sendSubscription();
+            }
+        } catch (Exception e) {
+            logger.Error("setUserPermission: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Get User Push Permission
+     * <p>
+     * Use to get permission of current subscription
+     * </p>
+     */
+    public @Nullable
+    Boolean getUserPermission() {
+        return _subscription == null ? null : _subscription.getUserPermission();
+    }
+
+    /**
+     * Set Token method
+     * <p>
+     * Use to set token of current subscription
+     * </p>
+     */
+    public void setToken(@NonNull String token) {
+        logger.Verbose("setToken method is called");
+        try {
+            _subscription.setToken(token);
+            saveSubscription();
+            sendSubscription();
+        } catch (Exception e) {
+            logger.Error("setToken: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Get Token method
+     * <p>
+     * Use to get token of current subscription
+     * </p>
+     */
+    public @Nullable
+    String getToken() {
+        return _subscription == null ? null : _subscription.getToken();
     }
 
     /**
