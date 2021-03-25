@@ -34,6 +34,8 @@ import java.util.Locale;
 import java.util.TimeZone;
 import java.util.UUID;
 
+import androidx.annotation.Nullable;
+
 public class Utils {
 
     private static String installationID = null;
@@ -201,15 +203,14 @@ public class Utils {
         return (String) (lApplicationInfo != null ? lPackageManager.getApplicationLabel(lApplicationInfo) : defaultText);
     }
 
-    public static Uri getSound(Context context, String sound) {
-        //int id = context.getResources().getIdentifier(sound, "raw", context.getPackageName());
-        Uri res = null;
-        if (!TextUtils.isEmpty(sound)) {
-            res = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + "/raw/" + sound);
+    public static Uri getSound(Context context, @Nullable String sound) {
+        int id = TextUtils.isEmpty(sound) ? 0
+                : context.getResources().getIdentifier(sound, "raw", context.getPackageName());
+        if (id != 0) {
+            return Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + "/" + id);
         } else {
-            res =  RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            return RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         }
-        return res;
     }
 
     public static Bitmap drawableToBitmap(Drawable drawable) {
