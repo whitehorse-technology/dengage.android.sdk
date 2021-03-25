@@ -17,6 +17,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 import android.widget.RemoteViews;
@@ -201,12 +202,14 @@ public class Utils {
     }
 
     public static Uri getSound(Context context, String sound) {
-        int id = context.getResources().getIdentifier(sound, "raw", context.getPackageName());
-        if (id != 0) {
-            return Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + "/" + id);
+        //int id = context.getResources().getIdentifier(sound, "raw", context.getPackageName());
+        Uri res = null;
+        if (!TextUtils.isEmpty(sound)) {
+            res = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + "/raw/" + sound);
         } else {
-            return RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            res =  RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         }
+        return res;
     }
 
     public static Bitmap drawableToBitmap(Drawable drawable) {

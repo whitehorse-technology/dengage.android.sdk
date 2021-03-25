@@ -14,6 +14,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.AudioAttributes;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
@@ -153,7 +154,6 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         String channelId = null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel notificationChannel = getNotificationChannel();
             createNotificationChannel(context, notificationChannel);
             channelId = notificationChannel.getId();
         }
@@ -184,9 +184,11 @@ public class NotificationReceiver extends BroadcastReceiver {
             notificationBuilder.setContentText(message.getMessage());
         }
 
-        if (!TextUtils.isEmpty(message.getSound())) {
+        if (!TextUtils.isEmpty(message.getSound()) && android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES. O ) {
             notificationBuilder.setSound(Utils.getSound(context, message.getSound()));
-        } else {
+        }
+
+        if(TextUtils.isEmpty(message.getSound())){
             Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             notificationBuilder.setSound(sound);
         }
@@ -436,9 +438,16 @@ public class NotificationReceiver extends BroadcastReceiver {
     }
 
     @TargetApi(Build.VERSION_CODES.O)
-    protected NotificationChannel getNotificationChannel() {
+    protected NotificationChannel getNotificationChannel(Context context, Message message) {
+        AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                .setContentType(AudioAttributes. CONTENT_TYPE_SONIFICATION )
+                .setUsage(AudioAttributes. USAGE_ALARM )
+                .build();
         NotificationChannel channel = new NotificationChannel(Constants.CHANNEL_ID, Constants.CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
         channel.setDescription(Constants.CHANNEL_DESCRIPTION);
+        if (!TextUtils.isEmpty(message.getSound())) {
+            channel.setSound(Utils.getSound(context, message.getSound()), audioAttributes);
+        }
         return channel;
     }
 
