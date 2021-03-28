@@ -673,8 +673,10 @@ public class DengageManager {
             public void responseFetched(@Nullable String response) {
                 if (response != null) {
                     SdkParameters sdkParameters = new Gson().fromJson(response, SdkParameters.class);
-                    sdkParameters.setLastFetchTimeInMillis(System.currentTimeMillis());
-                    prefs.setSdkParameters(sdkParameters);
+                    if (sdkParameters != null) {
+                        sdkParameters.setLastFetchTimeInMillis(System.currentTimeMillis());
+                        prefs.setSdkParameters(sdkParameters);
+                    }
                 }
             }
 
