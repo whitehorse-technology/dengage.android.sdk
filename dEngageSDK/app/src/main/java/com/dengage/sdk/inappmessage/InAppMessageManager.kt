@@ -72,9 +72,15 @@ class InAppMessageManager(
                 ),
                 Utils.getUserAgent(context), object : NetworkRequestCallback {
             override fun responseFetched(response: String?) {
+                logger.Error("in app messages response fetched: $response")
+
                 val listType = object : TypeToken<MutableList<InAppMessage>>() {}.type
-                val fetchedInAppMessages =
-                        GsonHolder.gson.fromJson<MutableList<InAppMessage>>(response, listType)
+                val fetchedInAppMessages = try {
+                    GsonHolder.gson.fromJson<MutableList<InAppMessage>>(response, listType)
+                } catch (e: Exception) {
+                    logger.Error("in app messages response error: ${e.message}")
+                    null
+                }
 
                 if (!fetchedInAppMessages.isNullOrEmpty()) {
                     // get existing in app messages and save with fetched in app messages
@@ -89,6 +95,7 @@ class InAppMessageManager(
             }
 
             override fun requestError(error: DengageError) {
+                logger.Error("in app messages request error: ${error.errorMessage}")
                 prefs.inAppMessageFetchTime = System.currentTimeMillis()
             }
         }, 5000

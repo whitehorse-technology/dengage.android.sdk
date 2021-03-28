@@ -676,13 +676,17 @@ public class DengageManager {
             @Override
             public void responseFetched(@Nullable String response) {
                 if (response != null) {
-                    SdkParameters sdkParameters = GsonHolder.INSTANCE.getGson().fromJson(response, SdkParameters.class);
-                    if (sdkParameters != null) {
-                        sdkParameters.setLastFetchTimeInMillis(System.currentTimeMillis());
-                        prefs.setSdkParameters(sdkParameters);
+                    try {
+                        SdkParameters sdkParameters = new Gson().fromJson(response, SdkParameters.class);
+                        if (sdkParameters != null) {
+                            sdkParameters.setLastFetchTimeInMillis(System.currentTimeMillis());
+                            prefs.setSdkParameters(sdkParameters);
 
-                        // after fetching sdk parameters, fetch in app messages
-                        getInAppMessages();
+                            // after fetching sdk parameters, fetch in app messages
+                            getInAppMessages();
+                        }
+                    } catch (Exception e) {
+                        logger.Error("sdkParameters response error: " + e.getMessage());
                     }
                 }
             }
@@ -781,13 +785,18 @@ public class DengageManager {
                 @Override
                 public void responseFetched(@Nullable String response) {
                     inboxMessageFetchMillis = System.currentTimeMillis();
-                    Type listType = new TypeToken<List<InboxMessage>>() {
-                    }.getType();
-                    List<InboxMessage> fetchedInboxMessages = GsonHolder.INSTANCE.getGson().fromJson(response, listType);
-                    if (offset == 0) {
-                        inboxMessages = fetchedInboxMessages;
+                    try {
+                        Type listType = new TypeToken<List<InboxMessage>>() {
+                        }.getType();
+                        List<InboxMessage> fetchedInboxMessages = new Gson().fromJson(response, listType);
+                        if (offset == 0) {
+                            inboxMessages = fetchedInboxMessages;
+                        }
+                        dengageCallback.onResult(fetchedInboxMessages);
+                    } catch (Exception e) {
+                        dengageCallback.onError(new DengageError(e.getMessage()));
+                        logger.Error("inbox messages response error: " + e.getMessage());
                     }
-                    dengageCallback.onResult(fetchedInboxMessages);
                 }
 
                 @Override
@@ -891,7 +900,11 @@ public class DengageManager {
      * @param tags will be send to api
      */
     public void setTags(@NonNull List<HashMap<String, String>> tags) {
+        // control account name is available
         SdkParameters sdkParameters = prefs.getSdkParameters();
+        if (sdkParameters == null || sdkParameters.getAccountName() == null) {
+            return;
+        }
 
         // convert tags request to json string
         TagsRequest tagsRequest = new TagsRequest(
