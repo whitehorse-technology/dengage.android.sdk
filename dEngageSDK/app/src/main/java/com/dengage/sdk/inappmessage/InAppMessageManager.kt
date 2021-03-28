@@ -189,12 +189,14 @@ class InAppMessageManager(
         val delay = (inAppMessage.data.displayTiming.delay ?: 0) * 1000L
         Timer().schedule(object : TimerTask() {
             override fun run() {
-                val inAppMessageDialog = InAppMessageDialog.newInstance(inAppMessage)
-                inAppMessageDialog.setInAppMessageCallback(this@InAppMessageManager)
-                inAppMessageDialog.show(
-                        activity.supportFragmentManager,
-                        InAppMessageDialog::class.java.simpleName
-                )
+                activity.runOnUiThread {
+                    val inAppMessageDialog = InAppMessageDialog.newInstance(inAppMessage)
+                    inAppMessageDialog.setInAppMessageCallback(this@InAppMessageManager)
+                    inAppMessageDialog.show(
+                            activity.supportFragmentManager,
+                            InAppMessageDialog::class.java.simpleName
+                    )
+                }
             }
         }, delay)
     }
