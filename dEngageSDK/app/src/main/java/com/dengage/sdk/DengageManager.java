@@ -27,6 +27,7 @@ import com.dengage.sdk.models.Message;
 import com.dengage.sdk.models.Open;
 import com.dengage.sdk.models.SdkParameters;
 import com.dengage.sdk.models.Subscription;
+import com.dengage.sdk.models.TagItem;
 import com.dengage.sdk.models.TagsRequest;
 import com.dengage.sdk.models.TransactionalOpen;
 import com.dengage.sdk.service.NetworkRequest;
@@ -44,7 +45,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -899,8 +899,7 @@ public class DengageManager {
      *
      * @param tags will be send to api
      */
-    public void setTags(@NonNull List<HashMap<String, String>> tags) {
-        // control account name is available
+    public void setTags(@NonNull List<TagItem> tags) {
         SdkParameters sdkParameters = prefs.getSdkParameters();
         if (sdkParameters == null || sdkParameters.getAccountName() == null) {
             return;
