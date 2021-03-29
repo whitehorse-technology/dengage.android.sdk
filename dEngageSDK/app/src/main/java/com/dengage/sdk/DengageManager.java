@@ -672,9 +672,15 @@ public class DengageManager {
             @Override
             public void responseFetched(@Nullable String response) {
                 if (response != null) {
-                    SdkParameters sdkParameters = new Gson().fromJson(response, SdkParameters.class);
-                    sdkParameters.setLastFetchTimeInMillis(System.currentTimeMillis());
-                    prefs.setSdkParameters(sdkParameters);
+                    try {
+                        SdkParameters sdkParameters = new Gson().fromJson(response, SdkParameters.class);
+                        if (sdkParameters != null) {
+                            sdkParameters.setLastFetchTimeInMillis(System.currentTimeMillis());
+                            prefs.setSdkParameters(sdkParameters);
+                        }
+                    } catch (Exception e) {
+                        logger.Error("sdkParameters response error: " + e.getMessage());
+                    }
                 }
             }
 
@@ -710,13 +716,18 @@ public class DengageManager {
                 @Override
                 public void responseFetched(@Nullable String response) {
                     inboxMessageFetchMillis = System.currentTimeMillis();
-                    Type listType = new TypeToken<List<InboxMessage>>() {
-                    }.getType();
-                    List<InboxMessage> fetchedInboxMessages = new Gson().fromJson(response, listType);
-                    if (offset == 0) {
-                        inboxMessages = fetchedInboxMessages;
+                    try {
+                        Type listType = new TypeToken<List<InboxMessage>>() {
+                        }.getType();
+                        List<InboxMessage> fetchedInboxMessages = new Gson().fromJson(response, listType);
+                        if (offset == 0) {
+                            inboxMessages = fetchedInboxMessages;
+                        }
+                        dengageCallback.onResult(fetchedInboxMessages);
+                    } catch (Exception e) {
+                        dengageCallback.onError(new DengageError(e.getMessage()));
+                        logger.Error("inbox messages response error: " + e.getMessage());
                     }
-                    dengageCallback.onResult(fetchedInboxMessages);
                 }
 
                 @Override
