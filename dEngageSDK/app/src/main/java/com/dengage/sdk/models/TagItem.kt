@@ -18,7 +18,7 @@ class TagItem(
     var changeTime: String? = null
 
     @SerializedName("changeValue")
-    var changeValue: Boolean? = null
+    var changeValue: String? = null
 
     @SerializedName("removeTime")
     var removeTime: String? = null
@@ -27,7 +27,7 @@ class TagItem(
             tag: String,
             value: String,
             changeTime: Date?,
-            changeValue: Boolean?,
+            changeValue: String?,
             removeTime: Date?
     ) : this(tag, value) {
         val simpleDateFormat = SimpleDateFormat(Constants.DATE_FORMAT, Locale.getDefault())
