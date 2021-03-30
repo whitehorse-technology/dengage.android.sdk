@@ -194,9 +194,6 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         if (!TextUtils.isEmpty(message.getTitle())) {
             notificationBuilder.setContentTitle(message.getTitle());
-        } else {
-            String label = Utils.getAppLabel(context, "");
-            notificationBuilder.setContentTitle(label);
         }
 
         if (!TextUtils.isEmpty(message.getSubText())) {
