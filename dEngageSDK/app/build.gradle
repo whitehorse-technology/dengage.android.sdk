@@ -40,6 +40,10 @@ dependencies {
     implementation 'com.huawei.hms:push:4.0.3.301'
     implementation 'com.huawei.hms:ads-identifier:3.4.28.305'
     implementation 'com.google.code.gson:gson:2.8.6'
+    def room_version = "2.2.6"
+
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
 }
 
 repositories {

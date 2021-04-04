@@ -17,14 +17,32 @@ import android.os.Build;
 import android.os.Handler;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RestrictTo;
+import androidx.room.Room;
+
+import com.dengage.sdk.callback.DengageCallback;
+import com.dengage.sdk.batch.Processor;
+import com.dengage.sdk.batch.EventScheduler;
+import com.dengage.sdk.batch.database.DengageDatabase;
+import com.dengage.sdk.models.AbstractOpen;
 import com.dengage.sdk.callback.DengageCallback;
 import com.dengage.sdk.models.DengageError;
 import com.dengage.sdk.models.InboxMessage;
 import com.dengage.sdk.models.Message;
+import com.dengage.sdk.models.ModelBase;
 import com.dengage.sdk.models.Open;
 import com.dengage.sdk.models.SdkParameters;
 import com.dengage.sdk.models.Subscription;
 import com.dengage.sdk.models.TransactionalOpen;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+import com.google.gson.Gson;
 import com.dengage.sdk.service.NetworkRequest;
 import com.dengage.sdk.service.NetworkRequestCallback;
 import com.dengage.sdk.service.NetworkUrlUtils;
@@ -50,6 +68,8 @@ import kotlin.jvm.functions.Function1;
 public class DengageManager {
 
     private static Logger logger = Logger.getInstance();
+    public static DengageDatabase db;
+
     @SuppressLint("StaticFieldLeak")
     private static DengageManager _instance = null;
     private Context _context;
@@ -58,6 +78,14 @@ public class DengageManager {
 
     private List<InboxMessage> inboxMessages = new ArrayList<>();
     private Long inboxMessageFetchMillis = 0L;
+
+    private int _period = 60;
+
+    private boolean _eventBatchingEnabled = true;
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    public EventScheduler eventScheduler = null;
+
 
     private DengageManager(Context context) {
         _context = context;
@@ -129,6 +157,8 @@ public class DengageManager {
         try {
             if (_context == null) throw new Exception("_context is null.");
 
+            createScheduler();
+
             if (isGooglePlayServicesAvailable() && isHuaweiMobileServicesAvailable()) {
                 logger.Verbose("Google Play Services and Huawei Mobile Service are available. Firebase services will be used.");
                 initFirebase();
@@ -145,6 +175,24 @@ public class DengageManager {
             logger.Error("initialization:" + e.getMessage());
         }
         return _instance;
+    }
+
+    private void createScheduler() {
+        if (!_eventBatchingEnabled) {
+            return;
+        }
+
+        db = initDatabase();
+        String url = getBaseApiUrl() + Constants.EVENT_API_ENDPOINT;
+        Processor processor = new Processor(url, db, Utils.getUserAgent(_context));
+        eventScheduler = new EventScheduler(processor, _period);
+        eventScheduler.flush();
+    }
+
+    private DengageDatabase initDatabase() {
+        return Room.databaseBuilder(_context.getApplicationContext(),
+                DengageDatabase.class,
+                "dengage-database").build();
     }
 
     public boolean isGooglePlayServicesAvailable() {
@@ -331,7 +379,7 @@ public class DengageManager {
 
     private void sendSubscription() {
         logger.Verbose("sendSubscription method is called");
-        if (isSubscriptionSending) return;
+        if(isSubscriptionSending) return;
         try {
             isSubscriptionSending = true;
             Handler handler = new Handler();
@@ -389,50 +437,67 @@ public class DengageManager {
 
             String source = message.getMessageSource();
             if (!Constants.MESSAGE_SOURCE.equals(source)) return;
+            String transactionId = message.getTransactionId();
+            boolean isTransactional = !TextUtils.isEmpty(transactionId);
+            final String requestUrl = createOpenSignalRequestUrl(isTransactional);
+            final ModelBase effectiveModel = createOpenSignalModel(buttonId,
+                    itemId,
+                    message,
+                    transactionId);
 
-            if (!TextUtils.isEmpty(message.getTransactionId())) {
+            RequestAsync req = new RequestAsync(requestUrl, effectiveModel);
+            req.executeTask();
 
-                String baseApiUri = Utils.getMetaData(_context, "den_push_api_url");
-                if (TextUtils.isEmpty(baseApiUri))
-                    baseApiUri = Constants.DEN_PUSH_API_URI;
-
-                baseApiUri += Constants.TRANSACTIONAL_OPEN_API_ENDPOINT;
-
-                TransactionalOpen openSignal = new TransactionalOpen();
-                openSignal.setUserAgent(Utils.getUserAgent(_context));
-                openSignal.setIntegrationKey(_subscription.getIntegrationKey());
-                openSignal.setMessageId(message.getMessageId());
-                openSignal.setTransactionId(message.getTransactionId());
-                openSignal.setMessageDetails(message.getMessageDetails());
-                openSignal.setButtonId(buttonId);
-                openSignal.setItemId(itemId);
-                RequestAsync req = new RequestAsync(baseApiUri, openSignal);
-                req.executeTask();
-            } else {
-
-                String baseApiUri = Utils.getMetaData(_context, "den_push_api_url");
-                if (TextUtils.isEmpty(baseApiUri))
-                    baseApiUri = Constants.DEN_PUSH_API_URI;
-
-                baseApiUri += Constants.OPEN_API_ENDPOINT;
-
-                Open openSignal = new Open();
-                openSignal.setUserAgent(Utils.getUserAgent(_context));
-                openSignal.setIntegrationKey(_subscription.getIntegrationKey());
-                openSignal.setMessageId(message.getMessageId());
-                openSignal.setMessageDetails(message.getMessageDetails());
-                openSignal.setButtonId(buttonId);
-                openSignal.setItemId(itemId);
-                RequestAsync req = new RequestAsync(baseApiUri, openSignal);
-                req.executeTask();
-
-                // send session start
+            if (isTransactional) {
                 DengageEvent.getInstance(this._context, message.getTargetUrl());
             }
 
         } catch (Exception e) {
             logger.Error("sendOpenEvent: " + e.getMessage());
         }
+    }
+
+    @NonNull
+    private String createOpenSignalRequestUrl(boolean isTransactional) {
+        String requestUrl;
+        final String baseApiUri = getBaseApiUrl();
+        if (isTransactional) {
+            requestUrl = baseApiUri + Constants.TRANSACTIONAL_OPEN_API_ENDPOINT;
+        } else {
+            requestUrl = baseApiUri + Constants.OPEN_API_ENDPOINT;
+        }
+        return requestUrl;
+    }
+
+    @NonNull
+    private ModelBase createOpenSignalModel(String buttonId, String itemId, @NonNull Message message, String transactionId) {
+        AbstractOpen effectiveModel;
+        String userAgent = Utils.getUserAgent(_context);
+        String integrationKey = _subscription.getIntegrationKey();
+        boolean isTransactional = !TextUtils.isEmpty(transactionId);
+
+        if (isTransactional) {
+            TransactionalOpen openSignal = new TransactionalOpen();
+            openSignal.setTransactionId(transactionId);
+            effectiveModel = openSignal;
+        } else {
+            effectiveModel = new Open();
+        }
+
+        effectiveModel.setUserAgent(userAgent);
+        effectiveModel.setIntegrationKey(integrationKey);
+        effectiveModel.setMessageId(message.getMessageId());
+        effectiveModel.setMessageDetails(message.getMessageDetails());
+        effectiveModel.setButtonId(buttonId);
+        effectiveModel.setItemId(itemId);
+        return effectiveModel;
+    }
+
+    private String getBaseApiUrl() {
+        String baseApiUri = Utils.getMetaData(_context, "den_push_api_url");
+        if (TextUtils.isEmpty(baseApiUri))
+            baseApiUri = Constants.DEN_PUSH_API_URI;
+        return baseApiUri;
     }
 
     /**
@@ -483,6 +548,16 @@ public class DengageManager {
         } catch (Exception e) {
             logger.Error("sendDeviceEvent: " + e.getMessage());
         }
+    }
+
+    public DengageManager setEventPeriod(int period) {
+        this._period = period;
+        return this;
+    }
+
+    public DengageManager disableEventBatching() {
+        this._eventBatchingEnabled = false;
+        return this;
     }
 
     private class GmsAdIdWorker extends AsyncTask<Void, String, String> {
