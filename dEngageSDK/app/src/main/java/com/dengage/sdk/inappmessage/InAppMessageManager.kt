@@ -22,14 +22,21 @@ import java.util.*
  */
 class InAppMessageManager(
         private val context: Context,
-        private val subscription: Subscription,
+        private var subscription: Subscription,
         private val logger: Logger
 ) : InAppMessageDialog.InAppMessageCallback {
 
     private val prefs: Prefs = Prefs(context)
 
     /**
-     *Call this method for the pages that you should show in app message if available
+     * Call this function if subscription model is changed
+     */
+    fun updateSubscription(subscription: Subscription) {
+        this.subscription = subscription
+    }
+
+    /**
+     * Call this method for the pages that you should show in app message if available
      */
     fun setNavigation(activity: AppCompatActivity, screenName: String? = null) {
         // control next in app message show time
@@ -179,6 +186,7 @@ class InAppMessageManager(
         setInAppMessageAsDisplayed(
                 inAppMessageDetails = inAppMessage.data.messageDetails
         )
+
         if (inAppMessage.data.displayTiming.showEveryXMinutes != null &&
                 inAppMessage.data.displayTiming.showEveryXMinutes != 0) {
             inAppMessage.data.nextDisplayTime =

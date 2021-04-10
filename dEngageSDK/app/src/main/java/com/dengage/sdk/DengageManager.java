@@ -317,7 +317,6 @@ public class DengageManager {
     public void saveSubscription() {
         logger.Verbose("saveSubscription method is called");
         try {
-
             if (TextUtils.isEmpty(_subscription.getDeviceId()))
                 _subscription.setDeviceId(Utils.getDeviceId(_context));
             _subscription.setCarrierId(Utils.carrier(_context));
@@ -336,6 +335,11 @@ public class DengageManager {
 
         } catch (Exception e) {
             logger.Error("saveSubscription: " + e.getMessage());
+        }
+
+        // update subscription if in app message manager available
+        if (inAppMessageManager != null) {
+            inAppMessageManager.updateSubscription(_subscription);
         }
     }
 
