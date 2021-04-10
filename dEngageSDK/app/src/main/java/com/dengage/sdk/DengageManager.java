@@ -222,6 +222,13 @@ public class DengageManager {
         try {
             // control the last contact key equals to new contact key then send subscription
             if (_subscription.getContactKey() == null || !_subscription.getContactKey().equals(contactKey)) {
+                // clear cache if contact key has been changed
+                prefs.setInAppMessageFetchTime(0);
+                prefs.setInAppMessageShowTime(0);
+                prefs.setInAppMessages(null);
+                inboxMessages = new ArrayList<>();
+                inboxMessageFetchMillis = 0L;
+
                 _subscription.setContactKey(contactKey);
                 logger.Debug("contactKey: " + contactKey);
                 saveSubscription();
