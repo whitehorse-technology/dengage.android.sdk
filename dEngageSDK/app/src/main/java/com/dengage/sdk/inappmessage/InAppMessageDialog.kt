@@ -59,20 +59,40 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
         tvInAppMessage.text = contentParams.message
 
         // set colors
-        if (!contentParams.backgroundColor.isNullOrEmpty() &&
-                contentParams.backgroundColor.length == 6
-        ) {
-            vInAppMessage.setBackgroundColor(Color.parseColor("#${contentParams.backgroundColor}"))
+        try {
+            if (!contentParams.backgroundColor.isNullOrEmpty()) {
+                if (contentParams.backgroundColor.length == 6) {
+                    vInAppMessage.setBackgroundColor(Color.parseColor("#${contentParams.backgroundColor}"))
+                } else if (contentParams.backgroundColor.length == 7 && contentParams.backgroundColor.startsWith("#")) {
+                    vInAppMessage.setBackgroundColor(Color.parseColor(contentParams.backgroundColor))
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-        if (!contentParams.primaryColor.isNullOrEmpty() &&
-                contentParams.primaryColor.length == 6
-        ) {
-            tvInAppTitle.setTextColor(Color.parseColor("#${contentParams.primaryColor}"))
+
+        try {
+            if (!contentParams.primaryColor.isNullOrEmpty()) {
+                if (contentParams.primaryColor.length == 6) {
+                    tvInAppTitle.setTextColor(Color.parseColor("#${contentParams.primaryColor}"))
+                } else if (contentParams.primaryColor.length == 7 && contentParams.primaryColor.startsWith("#")) {
+                    tvInAppTitle.setTextColor(Color.parseColor(contentParams.primaryColor))
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-        if (!contentParams.secondaryColor.isNullOrEmpty() &&
-                contentParams.secondaryColor.length == 6
-        ) {
-            tvInAppMessage.setTextColor(Color.parseColor("#${contentParams.secondaryColor}"))
+
+        try {
+            if (!contentParams.secondaryColor.isNullOrEmpty()) {
+                if (contentParams.secondaryColor.length == 6) {
+                    tvInAppMessage.setTextColor(Color.parseColor("#${contentParams.secondaryColor}"))
+                } else if (contentParams.secondaryColor.length == 7 && contentParams.secondaryColor.startsWith("#")) {
+                    tvInAppMessage.setTextColor(Color.parseColor(contentParams.secondaryColor))
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
 
         if (contentParams.showImage && !contentParams.imageUrl.isNullOrEmpty()) {
