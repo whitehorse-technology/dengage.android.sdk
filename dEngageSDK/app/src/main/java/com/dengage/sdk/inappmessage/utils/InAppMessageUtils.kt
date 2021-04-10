@@ -53,15 +53,17 @@ object InAppMessageUtils {
 
         // if screen name is empty, find in app message that has no screen name filter
         // if screen name is not empty, find in app message that screen name filter has screen name value
+        // if screen name is not empty and could not found in app message with screen name filter, use in app message without screen name filter
         // Also control nextDisplayTime for showEveryXMinutes type in app messages
+        val inAppMessageWithoutScreenName = sortedInAppMessages.firstOrNull { inAppMessage: InAppMessage ->
+            inAppMessage.data.displayTiming.triggerBy != TriggerBy.EVENT.triggerBy &&
+                    inAppMessage.data.displayCondition.screenNameFilters.isNullOrEmpty() &&
+                    isDisplayTimeAvailable(inAppMessage)
+        }
         return if (screenName.isNullOrEmpty()) {
-            sortedInAppMessages.firstOrNull { inAppMessage: InAppMessage ->
-                inAppMessage.data.displayTiming.triggerBy != TriggerBy.EVENT.triggerBy &&
-                        inAppMessage.data.displayCondition.screenNameFilters.isNullOrEmpty() &&
-                        isDisplayTimeAvailable(inAppMessage)
-            }
+            inAppMessageWithoutScreenName
         } else {
-            sortedInAppMessages.firstOrNull { inAppMessage: InAppMessage ->
+            val inAppMessageWithScreenName = sortedInAppMessages.firstOrNull { inAppMessage: InAppMessage ->
                 inAppMessage.data.displayTiming.triggerBy != TriggerBy.EVENT.triggerBy &&
                         inAppMessage.data.displayCondition.screenNameFilters?.firstOrNull { screenNameFilter ->
                             operateScreenValues(
@@ -71,6 +73,7 @@ object InAppMessageUtils {
                             )
                         } != null && isDisplayTimeAvailable(inAppMessage)
             }
+            inAppMessageWithScreenName ?: inAppMessageWithoutScreenName
         }
     }
 
