@@ -119,8 +119,9 @@ object InAppMessageUtils {
     }
 
     private fun isDisplayTimeAvailable(inAppMessage: InAppMessage): Boolean {
-        return (inAppMessage.data.displayTiming.showEveryXMinutes == null ||
-                inAppMessage.data.nextDisplayTime <= System.currentTimeMillis())
+        return inAppMessage.data.displayTiming.showEveryXMinutes == null ||
+                inAppMessage.data.displayTiming.showEveryXMinutes == 0 ||
+                inAppMessage.data.nextDisplayTime <= System.currentTimeMillis()
     }
 
 }

@@ -189,7 +189,7 @@ class InAppMessageManager(
 
         if (inAppMessage.data.displayTiming.showEveryXMinutes != null &&
                 inAppMessage.data.displayTiming.showEveryXMinutes != 0) {
-            inAppMessage.data.nextDisplayTime =
+            inAppMessage.data.nextDisplayTime = System.currentTimeMillis() +
                     inAppMessage.data.displayTiming.showEveryXMinutes * 60000L
             updateInAppMessageOnCache(inAppMessage)
         } else {
