@@ -16,7 +16,6 @@ object InAppMessageMocker {
                 message = "message",
                 showImage = false,
                 imageUrl = null,
-                targetUrl = null,
                 primaryColor = null,
                 secondaryColor = null,
                 backgroundColor = null,
@@ -24,6 +23,7 @@ object InAppMessageMocker {
         )
         val content = Content(
                 type = ContentType.SMALL.type,
+                targetUrl = null,
                 params = contentParams
         )
 

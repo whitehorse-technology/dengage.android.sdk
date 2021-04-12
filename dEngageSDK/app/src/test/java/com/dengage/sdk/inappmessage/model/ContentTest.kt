@@ -11,6 +11,7 @@ class ContentTest {
     @Test
     fun `Content constructor test`() {
         val contentType = ContentType.SMALL.type
+        val targetUrl = "targetUrl"
         val contentParams = ContentParams(
                 position = ContentPosition.BOTTOM.position,
                 showTitle = true,
@@ -18,7 +19,6 @@ class ContentTest {
                 message = "message",
                 showImage = false,
                 imageUrl = null,
-                targetUrl = null,
                 primaryColor = null,
                 secondaryColor = null,
                 backgroundColor = null,
@@ -26,9 +26,11 @@ class ContentTest {
         )
         val content = Content(
                 type = contentType,
+                targetUrl = targetUrl,
                 params = contentParams
         )
         Assert.assertEquals(contentType, content.type)
+        Assert.assertEquals(targetUrl, content.targetUrl)
         Assert.assertEquals(contentParams, content.params)
     }
 

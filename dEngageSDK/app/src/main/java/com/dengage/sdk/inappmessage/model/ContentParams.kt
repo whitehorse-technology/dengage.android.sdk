@@ -13,7 +13,6 @@ class ContentParams(
         @SerializedName("message") val message: String?,
         @SerializedName("showImage") val showImage: Boolean,
         @SerializedName("imageUrl") val imageUrl: String?,
-        @SerializedName("targetUrl") val targetUrl: String?,
         @SerializedName("primaryColor") val primaryColor: String?,
         @SerializedName("secondaryColor") val secondaryColor: String?,
         @SerializedName("backgroundColor") val backgroundColor: String?,

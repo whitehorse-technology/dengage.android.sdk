@@ -18,7 +18,6 @@ class InAppMessageTest {
                 message = "message",
                 showImage = false,
                 imageUrl = null,
-                targetUrl = null,
                 primaryColor = null,
                 secondaryColor = null,
                 backgroundColor = null,
@@ -26,6 +25,7 @@ class InAppMessageTest {
         )
         val content = Content(
                 type = ContentType.SMALL.type,
+                targetUrl = null,
                 params = contentParams
         )
 

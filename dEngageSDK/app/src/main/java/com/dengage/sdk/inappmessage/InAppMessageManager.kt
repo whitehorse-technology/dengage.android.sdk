@@ -237,7 +237,7 @@ class InAppMessageManager(
         NotificationReceiver.launchActivity(
                 context,
                 null,
-                inAppMessage.data.content.params.targetUrl
+                inAppMessage.data.content.targetUrl
         )
     }
 

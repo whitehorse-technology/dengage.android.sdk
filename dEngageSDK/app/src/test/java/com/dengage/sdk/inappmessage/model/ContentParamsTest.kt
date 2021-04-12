@@ -16,7 +16,6 @@ class ContentParamsTest {
         val message = "message"
         val showImage = false
         val imageUrl = "imageUrl"
-        val targetUrl = "targetUrl"
         val primaryColor = "primaryColor"
         val secondaryColor = "secondaryColor"
         val backgroundColor = "backgroundColor"
@@ -29,7 +28,6 @@ class ContentParamsTest {
                 message = message,
                 showImage = showImage,
                 imageUrl = imageUrl,
-                targetUrl = targetUrl,
                 primaryColor = primaryColor,
                 secondaryColor = secondaryColor,
                 backgroundColor = backgroundColor,
@@ -42,7 +40,6 @@ class ContentParamsTest {
         Assert.assertEquals(message, contentParams.message)
         Assert.assertEquals(showImage, contentParams.showImage)
         Assert.assertEquals(imageUrl, contentParams.imageUrl)
-        Assert.assertEquals(targetUrl, contentParams.targetUrl)
         Assert.assertEquals(primaryColor, contentParams.primaryColor)
         Assert.assertEquals(secondaryColor, contentParams.secondaryColor)
         Assert.assertEquals(backgroundColor, contentParams.backgroundColor)
