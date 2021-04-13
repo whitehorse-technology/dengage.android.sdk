@@ -40,7 +40,7 @@ class InAppMessageManager(
      */
     fun setNavigation(activity: AppCompatActivity, screenName: String? = null) {
         // control next in app message show time
-        if (System.currentTimeMillis() < prefs.inAppMessageShowTime) return
+        if (prefs.inAppMessageShowTime != 0L && System.currentTimeMillis() < prefs.inAppMessageShowTime) return
 
         val inAppMessages =
                 InAppMessageUtils.findNotExpiredInAppMessages(logger, Date(), prefs.inAppMessages)
