@@ -2,7 +2,7 @@ package com.dengage.sdk;
 
 import android.util.Log;
 
-class Logger {
+public class Logger {
 
     private Boolean status = false;
 
@@ -23,7 +23,7 @@ class Logger {
         }
     }
 
-    void Error(String message) {
+    public void Error(String message) {
         if (status) {
             Log.e(Constants.LOG_TAG, message);
         }

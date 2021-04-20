@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
 import android.os.Bundle;
-import android.text.TextUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -97,49 +96,52 @@ public class Message {
 
     private void setProperties(@NonNull Map<String, String> bundle) {
 
-        if (bundle.get("notificationType") != null && !TextUtils.isEmpty(bundle.get("notificationType")))
+        if (bundle.get("notificationType") != null && !bundle.get("notificationType").isEmpty())
             notificationType = NotificationType.valueOf(bundle.get("notificationType"));
 
-        if (bundle.get("messageId") != null && !TextUtils.isEmpty(bundle.get("messageId")))
+        if (bundle.get("notificationType") != null && !bundle.get("notificationType").isEmpty())
+            notificationType = NotificationType.valueOf(bundle.get("notificationType"));
+
+        if (bundle.get("messageId") != null && !bundle.get("messageId").isEmpty())
             messageId = Integer.parseInt(bundle.get("messageId"));
 
-        if (bundle.get("dengageCampId") != null && !TextUtils.isEmpty(bundle.get("dengageCampId")))
+        if (bundle.get("dengageCampId") != null && !bundle.get("dengageCampId").isEmpty())
             campaignId = Integer.parseInt(bundle.get("dengageCampId"));
 
-        if (bundle.get("dengageSendId") != null && !TextUtils.isEmpty(bundle.get("dengageSendId")))
+        if (bundle.get("dengageSendId") != null && !bundle.get("dengageSendId").isEmpty())
             sendId = Integer.parseInt(bundle.get("dengageSendId"));
 
-        if (bundle.get("messageSource") != null && !TextUtils.isEmpty(bundle.get("messageSource")))
+        if (bundle.get("messageSource") != null && !bundle.get("messageSource").isEmpty())
             messageSource = bundle.get("messageSource");
 
-        if (bundle.get("messageDetails") != null && !TextUtils.isEmpty(bundle.get("messageDetails")))
+        if (bundle.get("messageDetails") != null && !bundle.get("messageDetails").isEmpty())
             messageDetails = bundle.get("messageDetails");
 
-        if (bundle.get("mediaUrl") != null && !TextUtils.isEmpty(bundle.get("mediaUrl")))
+        if (bundle.get("mediaUrl") != null && !bundle.get("mediaUrl").isEmpty())
             mediaUrl = bundle.get("mediaUrl");
 
-        if (bundle.get("targetUrl") != null && !TextUtils.isEmpty(bundle.get("targetUrl")))
+        if (bundle.get("targetUrl") != null && !bundle.get("targetUrl").isEmpty())
             targetUrl = bundle.get("targetUrl");
 
-        if (bundle.get("title") != null && !TextUtils.isEmpty(bundle.get("title")))
+        if (bundle.get("title") != null && !bundle.get("title").isEmpty())
             title = bundle.get("title");
 
-        if (bundle.get("transactionId") != null && !TextUtils.isEmpty(bundle.get("transactionId")))
+        if (bundle.get("transactionId") != null && !bundle.get("transactionId").isEmpty())
             transactionId = bundle.get("transactionId");
 
-        if (bundle.get("subTitle") != null && !TextUtils.isEmpty(bundle.get("subTitle")))
+        if (bundle.get("subTitle") != null && !bundle.get("subTitle").isEmpty())
             subText = bundle.get("subTitle");
 
-        if (bundle.get("message") != null && !TextUtils.isEmpty(bundle.get("message")))
+        if (bundle.get("message") != null && !bundle.get("message").isEmpty())
             message = bundle.get("message");
 
-        if (bundle.get("badge") != null & !TextUtils.isEmpty(bundle.get("badge")))
+        if (bundle.get("badge") != null && !bundle.get("badge").isEmpty())
             badge = Boolean.parseBoolean(bundle.get("badge"));
 
-        if (bundle.get("badgeCount") != null && !TextUtils.isEmpty(bundle.get("badgeCount")))
+        if (bundle.get("badgeCount") != null && !bundle.get("badgeCount").isEmpty())
             badgeCount = Integer.parseInt(bundle.get("badgeCount"));
 
-        if (bundle.get("sound") != null && !TextUtils.isEmpty(bundle.get("sound")))
+        if (bundle.get("sound") != null && !bundle.get("sound").isEmpty())
             sound = bundle.get("sound");
 
         if (bundle.get("customParams") != null)
@@ -158,10 +160,10 @@ public class Message {
             mediaUrl = media[0].getUrl();
         }
 
-        if (bundle.get("addToInbox") != null & !TextUtils.isEmpty(bundle.get("addToInbox")))
+        if (bundle.get("addToInbox") != null && !bundle.get("addToInbox").isEmpty())
             addToInbox = Boolean.parseBoolean(bundle.get("addToInbox"));
 
-        if (bundle.get("expireDate") != null && !TextUtils.isEmpty(bundle.get("expireDate")))
+        if (bundle.get("expireDate") != null && !bundle.get("expireDate").isEmpty())
             expireDate = bundle.get("expireDate");
     }
 

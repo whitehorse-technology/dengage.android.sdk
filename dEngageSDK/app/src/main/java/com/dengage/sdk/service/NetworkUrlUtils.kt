@@ -46,8 +46,8 @@ object NetworkUrlUtils {
         return uriWithQueryParams.toString()
     }
 
-    fun setAsDeletedRequestUrl(context: Context, messageId: String,
-                               accountName: String, subscription: Subscription): String {
+    fun setInboxMessageAsDeletedRequestUrl(context: Context, messageId: String,
+                                           accountName: String, subscription: Subscription): String {
         var baseApiUri = Utils.getMetaData(context, "den_push_api_url")
         if (TextUtils.isEmpty(baseApiUri)) {
             baseApiUri = Constants.DEN_PUSH_API_URI
@@ -65,8 +65,8 @@ object NetworkUrlUtils {
         return uriWithQueryParams.toString()
     }
 
-    fun setAsClickedRequestUrl(context: Context, messageId: String,
-                               accountName: String, subscription: Subscription): String {
+    fun setInboxMessageAsClickedRequestUrl(context: Context, messageId: String,
+                                           accountName: String, subscription: Subscription): String {
         var baseApiUri = Utils.getMetaData(context, "den_push_api_url")
         if (TextUtils.isEmpty(baseApiUri)) {
             baseApiUri = Constants.DEN_PUSH_API_URI
@@ -80,6 +80,93 @@ object NetworkUrlUtils {
                 .appendQueryParameter("did", subscription.deviceId)
                 .appendQueryParameter("type", if (TextUtils.isEmpty(subscription.contactKey)) "d" else "c")
                 .appendQueryParameter("msgId", messageId)
+                .build()
+        return uriWithQueryParams.toString()
+    }
+
+    fun getInAppMessagesRequestUrl(context: Context, accountName: String,
+                                   subscription: Subscription): String {
+        var baseApiUri = Utils.getMetaData(context, "den_push_api_url")
+        if (TextUtils.isEmpty(baseApiUri)) {
+            baseApiUri = Constants.DEN_PUSH_API_URI
+        }
+        baseApiUri += "/api/inapp/getMessages"
+        val uriWithQueryParams = Uri.parse(baseApiUri)
+                .buildUpon()
+                .appendQueryParameter("acc", accountName)
+                .appendQueryParameter("cdkey", if (TextUtils.isEmpty(subscription.contactKey)) subscription.deviceId
+                else subscription.contactKey)
+                .appendQueryParameter("did", subscription.deviceId)
+                .appendQueryParameter("type", if (TextUtils.isEmpty(subscription.contactKey)) "d" else "c")
+                .build()
+        return uriWithQueryParams.toString()
+    }
+
+    fun getInAppMessageAsDisplayedRequestUrl(context: Context, inAppMessageDetails: String?,
+                                             accountName: String, subscription: Subscription): String {
+        var baseApiUri = Utils.getMetaData(context, "den_push_api_url")
+        if (TextUtils.isEmpty(baseApiUri)) {
+            baseApiUri = Constants.DEN_PUSH_API_URI
+        }
+        baseApiUri += "/api/inapp/setAsDisplayed"
+        val uriWithQueryParams = Uri.parse(baseApiUri)
+                .buildUpon()
+                .appendQueryParameter("acc", accountName)
+                .appendQueryParameter("cdkey", if (TextUtils.isEmpty(subscription.contactKey)) subscription.deviceId
+                else subscription.contactKey)
+                .appendQueryParameter("did", subscription.deviceId)
+                .appendQueryParameter("type", if (TextUtils.isEmpty(subscription.contactKey)) "d" else "c")
+                .appendQueryParameter("message_details", inAppMessageDetails)
+                .build()
+        return uriWithQueryParams.toString()
+    }
+
+    fun getInAppMessageAsClickedRequestUrl(context: Context, inAppMessageDetails: String?,
+                                           accountName: String, subscription: Subscription): String {
+        var baseApiUri = Utils.getMetaData(context, "den_push_api_url")
+        if (TextUtils.isEmpty(baseApiUri)) {
+            baseApiUri = Constants.DEN_PUSH_API_URI
+        }
+        baseApiUri += "/api/inapp/setAsClicked"
+        val uriWithQueryParams = Uri.parse(baseApiUri)
+                .buildUpon()
+                .appendQueryParameter("acc", accountName)
+                .appendQueryParameter("cdkey", if (TextUtils.isEmpty(subscription.contactKey)) subscription.deviceId
+                else subscription.contactKey)
+                .appendQueryParameter("did", subscription.deviceId)
+                .appendQueryParameter("type", if (TextUtils.isEmpty(subscription.contactKey)) "d" else "c")
+                .appendQueryParameter("message_details", inAppMessageDetails)
+                .build()
+        return uriWithQueryParams.toString()
+    }
+
+    fun getInAppMessageAsDismissedRequestUrl(context: Context, inAppMessageDetails: String?,
+                                             accountName: String, subscription: Subscription): String {
+        var baseApiUri = Utils.getMetaData(context, "den_push_api_url")
+        if (TextUtils.isEmpty(baseApiUri)) {
+            baseApiUri = Constants.DEN_PUSH_API_URI
+        }
+        baseApiUri += "/api/inapp/setAsDismissed"
+        val uriWithQueryParams = Uri.parse(baseApiUri)
+                .buildUpon()
+                .appendQueryParameter("acc", accountName)
+                .appendQueryParameter("cdkey", if (TextUtils.isEmpty(subscription.contactKey)) subscription.deviceId
+                else subscription.contactKey)
+                .appendQueryParameter("did", subscription.deviceId)
+                .appendQueryParameter("type", if (TextUtils.isEmpty(subscription.contactKey)) "d" else "c")
+                .appendQueryParameter("message_details", inAppMessageDetails)
+                .build()
+        return uriWithQueryParams.toString()
+    }
+
+    fun setTagsRequestUrl(context: Context): String {
+        var baseApiUri = Utils.getMetaData(context, "den_push_api_url")
+        if (TextUtils.isEmpty(baseApiUri)) {
+            baseApiUri = Constants.DEN_PUSH_API_URI
+        }
+        baseApiUri += "/api/setTags"
+        val uriWithQueryParams = Uri.parse(baseApiUri)
+                .buildUpon()
                 .build()
         return uriWithQueryParams.toString()
     }

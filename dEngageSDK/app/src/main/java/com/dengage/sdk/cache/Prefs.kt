@@ -1,10 +1,11 @@
-package com.dengage.sdk
+package com.dengage.sdk.cache
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
+import com.dengage.sdk.Constants
+import com.dengage.sdk.inappmessage.model.InAppMessage
 import com.dengage.sdk.models.SdkParameters
-import com.google.gson.Gson
 
 /**
  * Created by Batuhan Coskun on 30 November 2020
@@ -14,7 +15,10 @@ class Prefs(context: Context) {
     private val preferences = getSharedPreferences(context)
 
     companion object {
+        const val IN_APP_MESSAGES = "IN_APP_MESSAGES"
         const val SDK_PARAMETERS = "SDK_PARAMETERS"
+        const val IN_APP_MESSAGE_FETCH_TIME = "IN_APP_MESSAGE_FETCH_TIME"
+        const val IN_APP_MESSAGE_SHOW_TIME = "IN_APP_MESSAGE_SHOW_TIME"
 
         fun getSharedPreferences(context: Context): SharedPreferences =
                 context.getSharedPreferences(Constants.DEN_DEVICE_UNIQUE_ID, Context.MODE_PRIVATE)
@@ -23,6 +27,22 @@ class Prefs(context: Context) {
     var sdkParameters: SdkParameters?
         get() = preferences.get(SDK_PARAMETERS)
         set(value) = preferences.set(SDK_PARAMETERS, value)
+
+    var inAppMessages: MutableList<InAppMessage>?
+        get() = preferences.get(IN_APP_MESSAGES)
+        set(value) = preferences.set(IN_APP_MESSAGES, value)
+
+    var inAppMessageFetchTime: Long
+        get() = preferences.get(IN_APP_MESSAGE_FETCH_TIME, 0) ?: 0
+        set(value) = preferences.set(IN_APP_MESSAGE_FETCH_TIME, value)
+
+    var inAppMessageShowTime: Long
+        get() = preferences.get(IN_APP_MESSAGE_SHOW_TIME, 0) ?: 0
+        set(value) = preferences.set(IN_APP_MESSAGE_SHOW_TIME, value)
+
+    fun clear() {
+        preferences.edit().clear().apply()
+    }
 
 }
 
@@ -43,7 +63,7 @@ inline fun <reified T : Any> SharedPreferences.get(key: String, defaultValue: T?
         Float::class -> getFloat(key, defaultValue as? Float ?: -1f) as T?
         Long::class -> getLong(key, defaultValue as? Long ?: -1) as T?
         else -> getString(key, null)?.let {
-            Gson().fromJson(it, T::class.java)
+            GsonHolder.fromJson<T>(it)
         }
     }
 }
@@ -61,7 +81,7 @@ fun SharedPreferences.set(key: String, value: Any?, immediately: Boolean = false
         is Boolean -> edit(immediately) { it.putBoolean(key, value) }
         is Float -> edit(immediately) { it.putFloat(key, value) }
         is Long -> edit(immediately) { it.putLong(key, value) }
-        else -> edit(immediately) { it.putString(key, Gson().toJson(value)) }
+        else -> edit(immediately) { it.putString(key, GsonHolder.toJson(value)) }
     }
 }
 

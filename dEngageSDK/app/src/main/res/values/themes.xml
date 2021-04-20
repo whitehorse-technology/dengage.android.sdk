@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Theme.FullViewDialogFragment" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:statusBarColor" tools:targetApi="lollipop">
+            @color/in_app_message_color_status_bar
+        </item>
+    </style>
+
+</resources>

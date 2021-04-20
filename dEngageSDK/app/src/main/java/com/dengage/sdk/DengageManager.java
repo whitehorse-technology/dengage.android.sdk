@@ -17,13 +17,18 @@ import android.os.Build;
 import android.os.Handler;
 import android.text.TextUtils;
 
+import com.dengage.sdk.cache.GsonHolder;
+import com.dengage.sdk.cache.Prefs;
 import com.dengage.sdk.callback.DengageCallback;
+import com.dengage.sdk.inappmessage.InAppMessageManager;
 import com.dengage.sdk.models.DengageError;
 import com.dengage.sdk.models.InboxMessage;
 import com.dengage.sdk.models.Message;
 import com.dengage.sdk.models.Open;
 import com.dengage.sdk.models.SdkParameters;
 import com.dengage.sdk.models.Subscription;
+import com.dengage.sdk.models.TagItem;
+import com.dengage.sdk.models.TagsRequest;
 import com.dengage.sdk.models.TransactionalOpen;
 import com.dengage.sdk.service.NetworkRequest;
 import com.dengage.sdk.service.NetworkRequestCallback;
@@ -36,7 +41,10 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -44,23 +52,28 @@ import java.util.TimeZone;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 
 public class DengageManager {
 
-    private static Logger logger = Logger.getInstance();
+    private static final Logger logger = Logger.getInstance();
     @SuppressLint("StaticFieldLeak")
     private static DengageManager _instance = null;
-    private Context _context;
+    private final Context _context;
+    private final Prefs prefs;
     private Subscription _subscription;
     private boolean isSubscriptionSending = false;
 
     private List<InboxMessage> inboxMessages = new ArrayList<>();
     private Long inboxMessageFetchMillis = 0L;
 
+    private InAppMessageManager inAppMessageManager;
+
     private DengageManager(Context context) {
         _context = context;
+        prefs = new Prefs(context);
     }
 
     /**
@@ -127,7 +140,8 @@ public class DengageManager {
      */
     public DengageManager init() {
         try {
-            if (_context == null) throw new Exception("_context is null.");
+            // create in app message manager and start new session
+            inAppMessageManager = new InAppMessageManager(_context, _subscription, logger);
 
             if (isGooglePlayServicesAvailable() && isHuaweiMobileServicesAvailable()) {
                 logger.Verbose("Google Play Services and Huawei Mobile Service are available. Firebase services will be used.");
@@ -187,27 +201,13 @@ public class DengageManager {
     }
 
     /**
-     * Set User Push Permission
-     * <p>
-     * Use to set permission to a user
-     * </p>
-     *
-     * @param permission True/False
+     * Deprecated method, use setUserPermission method
      */
+    @Deprecated
     public void setPermission(Boolean permission) {
-        logger.Verbose("setPermission method is called");
-        try {
-            // control the last permission flag equals to new permission flag then send subscription
-            if (_subscription.getPermission() == null || _subscription.getPermission() != permission) {
-                _subscription.setPermission(permission);
-                logger.Debug("permission: " + permission);
-                saveSubscription();
-                sendSubscription();
-            }
-        } catch (Exception e) {
-            logger.Error("setPermission: " + e.getMessage());
-        }
+        setUserPermission(permission);
     }
+
 
     /**
      * Set contact key of the user.
@@ -222,6 +222,13 @@ public class DengageManager {
         try {
             // control the last contact key equals to new contact key then send subscription
             if (_subscription.getContactKey() == null || !_subscription.getContactKey().equals(contactKey)) {
+                // clear cache if contact key has been changed
+                prefs.setInAppMessageFetchTime(0);
+                prefs.setInAppMessageShowTime(0);
+                prefs.setInAppMessages(null);
+                inboxMessages = new ArrayList<>();
+                inboxMessageFetchMillis = 0L;
+
                 _subscription.setContactKey(contactKey);
                 logger.Debug("contactKey: " + contactKey);
                 saveSubscription();
@@ -310,15 +317,17 @@ public class DengageManager {
     public void saveSubscription() {
         logger.Verbose("saveSubscription method is called");
         try {
-
             if (TextUtils.isEmpty(_subscription.getDeviceId()))
                 _subscription.setDeviceId(Utils.getDeviceId(_context));
             _subscription.setCarrierId(Utils.carrier(_context));
             _subscription.setAppVersion(Utils.appVersion(_context));
-            _subscription.setSdkVersion(com.dengage.sdk.BuildConfig.VERSION_NAME);
+            _subscription.setSdkVersion(Utils.getSdkVersion());
             _subscription.setUserAgent(Utils.getUserAgent(_context));
             _subscription.setLanguage(Locale.getDefault().getLanguage());
-            _subscription.setTimezone(TimeZone.getDefault().getDisplayName());
+
+            Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"), Locale.getDefault());
+            DateFormat date = new SimpleDateFormat("z", Locale.getDefault());
+            _subscription.setTimezone(date.format(calendar.getTime()));
 
             String json = _subscription.toJson();
             logger.Debug("subscriptionJson: " + json);
@@ -326,6 +335,11 @@ public class DengageManager {
 
         } catch (Exception e) {
             logger.Error("saveSubscription: " + e.getMessage());
+        }
+
+        // update subscription if in app message manager available
+        if (inAppMessageManager != null) {
+            inAppMessageManager.updateSubscription(_subscription);
         }
     }
 
@@ -360,8 +374,8 @@ public class DengageManager {
 
 
     /**
-     * Deprecated function Subscription will send after changing contact key, permission or device
-     * id automatically
+     * Deprecated method, Subscription will send after changing contact key, permission or device id
+     * automatically
      */
     @Deprecated
     public void syncSubscription() {
@@ -658,11 +672,12 @@ public class DengageManager {
 
     private void getSdkParameters() {
         if (TextUtils.isEmpty(_subscription.integrationKey)) return;
-        final Prefs prefs = new Prefs(_context);
 
         // if 24 hours passed after getting sdk params, you should get again
         if (prefs.getSdkParameters() != null &&
                 System.currentTimeMillis() < prefs.getSdkParameters().getLastFetchTimeInMillis() + 24 * 60 * 60 * 1000) {
+            // fetch in app messages
+            getInAppMessages();
             return;
         }
 
@@ -677,6 +692,9 @@ public class DengageManager {
                         if (sdkParameters != null) {
                             sdkParameters.setLastFetchTimeInMillis(System.currentTimeMillis());
                             prefs.setSdkParameters(sdkParameters);
+
+                            // after fetching sdk parameters, fetch in app messages
+                            getInAppMessages();
                         }
                     } catch (Exception e) {
                         logger.Error("sdkParameters response error: " + e.getMessage());
@@ -693,12 +711,74 @@ public class DengageManager {
     }
 
     /**
+     * Set User Push Permission
+     * <p>
+     * Use to set permission of current subscription
+     * </p>
+     *
+     * @param permission True/False
+     */
+    public void setUserPermission(Boolean permission) {
+        logger.Verbose("setUserPermission method is called");
+        try {
+            // control the last permission flag equals to new permission flag then send subscription
+            if (_subscription.getUserPermission() == null || _subscription.getUserPermission() != permission) {
+                _subscription.setUserPermission(permission);
+                logger.Debug("permission: " + permission);
+                saveSubscription();
+                sendSubscription();
+            }
+        } catch (Exception e) {
+            logger.Error("setUserPermission: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Get User Push Permission
+     * <p>
+     * Use to get permission of current subscription
+     * </p>
+     */
+    public @Nullable
+    Boolean getUserPermission() {
+        return _subscription == null ? null : _subscription.getUserPermission();
+    }
+
+    /**
+     * Set Token method
+     * <p>
+     * Use to set token of current subscription
+     * </p>
+     */
+    public void setToken(@NonNull String token) {
+        logger.Verbose("setToken method is called");
+        try {
+            _subscription.setToken(token);
+            saveSubscription();
+            sendSubscription();
+        } catch (Exception e) {
+            logger.Error("setToken: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Get Token method
+     * <p>
+     * Use to get token of current subscription
+     * </p>
+     */
+    public @Nullable
+    String getToken() {
+        return _subscription == null ? null : _subscription.getToken();
+    }
+
+    /**
      * Get saved inbox messages
      */
     public void getInboxMessages(@NonNull Integer limit, @NonNull final Integer offset,
                                  @NonNull final DengageCallback<List<InboxMessage>> dengageCallback) {
         // control inbox message enabled
-        SdkParameters sdkParameters = new Prefs(_context).getSdkParameters();
+        SdkParameters sdkParameters = prefs.getSdkParameters();
         if (sdkParameters == null || sdkParameters.getAccountName() == null ||
                 sdkParameters.getInboxEnabled() == null || !sdkParameters.getInboxEnabled()) {
             dengageCallback.onResult(new ArrayList<InboxMessage>());
@@ -746,7 +826,7 @@ public class DengageManager {
      */
     public void deleteInboxMessage(final String id) {
         // control inbox message enabled
-        SdkParameters sdkParameters = new Prefs(_context).getSdkParameters();
+        SdkParameters sdkParameters = prefs.getSdkParameters();
         if (sdkParameters == null || sdkParameters.getAccountName() == null ||
                 sdkParameters.getInboxEnabled() == null || !sdkParameters.getInboxEnabled()) {
             return;
@@ -763,7 +843,7 @@ public class DengageManager {
 
         // call http request
         NetworkRequest networkRequest = new NetworkRequest(
-                NetworkUrlUtils.INSTANCE.setAsDeletedRequestUrl(_context, id,
+                NetworkUrlUtils.INSTANCE.setInboxMessageAsDeletedRequestUrl(_context, id,
                         sdkParameters.getAccountName(), _subscription),
                 Utils.getUserAgent(_context), null);
         networkRequest.executeTask();
@@ -776,7 +856,7 @@ public class DengageManager {
      */
     public void setInboxMessageAsClicked(final String id) {
         // control inbox message enabled
-        SdkParameters sdkParameters = new Prefs(_context).getSdkParameters();
+        SdkParameters sdkParameters = prefs.getSdkParameters();
         if (sdkParameters == null || sdkParameters.getAccountName() == null ||
                 sdkParameters.getInboxEnabled() == null || !sdkParameters.getInboxEnabled()) {
             return;
@@ -796,9 +876,60 @@ public class DengageManager {
 
         // call http request
         NetworkRequest networkRequest = new NetworkRequest(
-                NetworkUrlUtils.INSTANCE.setAsClickedRequestUrl(_context, id,
+                NetworkUrlUtils.INSTANCE.setInboxMessageAsClickedRequestUrl(_context, id,
                         sdkParameters.getAccountName(), _subscription),
                 Utils.getUserAgent(_context), null);
+        networkRequest.executeTask();
+    }
+
+    public void getInAppMessages() {
+        inAppMessageManager.fetchInAppMessages();
+    }
+
+    /**
+     * Show in app message if any available
+     *
+     * @param activity for showing dialog fragment as in app message
+     */
+    public void setNavigation(@NonNull AppCompatActivity activity) {
+        setNavigation(activity, null);
+    }
+
+    /**
+     * Show in app message if any available
+     *
+     * @param activity   for showing dialog fragment as in app message
+     * @param screenName for showing screen specific in app message
+     */
+    public void setNavigation(@NonNull AppCompatActivity activity, @Nullable String screenName) {
+        inAppMessageManager.setNavigation(activity, screenName);
+    }
+
+    /**
+     * Send tags
+     *
+     * @param tags will be send to api
+     */
+    public void setTags(@NonNull List<TagItem> tags) {
+        SdkParameters sdkParameters = prefs.getSdkParameters();
+        if (sdkParameters == null || sdkParameters.getAccountName() == null) {
+            return;
+        }
+
+        // convert tags request to json string
+        TagsRequest tagsRequest = new TagsRequest(
+                sdkParameters.getAccountName(),
+                _subscription.getDeviceId(),
+                tags
+        );
+        String postData = GsonHolder.INSTANCE.getGson().toJson(tagsRequest, TagsRequest.class);
+
+        // call http request
+        NetworkRequest networkRequest = new NetworkRequest(
+                NetworkUrlUtils.INSTANCE.setTagsRequestUrl(_context),
+                Utils.getUserAgent(_context),
+                postData,
+                null);
         networkRequest.executeTask();
     }
 }

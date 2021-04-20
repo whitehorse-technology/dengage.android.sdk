@@ -122,11 +122,27 @@ public class Subscription extends ModelBase {
         this.contactKey = contactKey;
     }
 
+    /**
+     * Deprecated method, use getUserPermission method
+     */
+    @Deprecated
     public Boolean getPermission() {
+        return getUserPermission();
+    }
+
+    /**
+     * Deprecated method, use setUserPermission method
+     */
+    @Deprecated
+    public void setPermission(Boolean permission) {
+        setUserPermission(permission);
+    }
+
+    public Boolean getUserPermission() {
         return this.permission;
     }
 
-    public void setPermission(Boolean permission) {
+    public void setUserPermission(Boolean permission) {
         this.permission = permission;
     }
 

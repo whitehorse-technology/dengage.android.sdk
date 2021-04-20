@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
+import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 public class NotificationReceiver extends BroadcastReceiver {
@@ -70,8 +71,8 @@ public class NotificationReceiver extends BroadcastReceiver {
         onRenderStart(context, intent);
     }
 
-    private void launchActivity(Context context, Intent intent, String uri) {
-        Class<? extends Activity> cls = getActivity(context, intent);
+    public static void launchActivity(Context context, @Nullable Intent intent, String uri) {
+        Class<? extends Activity> cls = getActivity(context);
         if (cls == null) return;
 
         Intent activityIntent;
@@ -81,8 +82,9 @@ public class NotificationReceiver extends BroadcastReceiver {
             activityIntent = new Intent(context, cls);
         }
 
-        if (intent.getExtras() != null)
+        if (intent != null && intent.getExtras() != null) {
             activityIntent.putExtras(intent.getExtras());
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             startActivities(context, cls, activityIntent);
@@ -380,7 +382,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         }
     }
 
-    protected Class<? extends Activity> getActivity(Context context, Intent intent) {
+    private static Class<? extends Activity> getActivity(Context context) {
         String packageName = context.getPackageName();
         Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(packageName);
         if (launchIntent == null) {

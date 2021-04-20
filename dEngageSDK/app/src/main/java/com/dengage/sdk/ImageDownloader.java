@@ -13,7 +13,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-class ImageDownloader {
+public class ImageDownloader {
 
     private String imageUrl;
     private OnImageLoaderListener mImageLoaderListener;

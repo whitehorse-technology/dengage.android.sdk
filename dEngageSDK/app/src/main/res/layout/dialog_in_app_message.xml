@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/vInAppMessageContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardInAppMessage"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/in_app_message_height"
+            android:layout_margin="30dp"
+            app:cardCornerRadius="6dp"
+            app:cardElevation="8dp">
+
+            <RelativeLayout
+                android:id="@+id/vInAppMessage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/in_app_message_color_background"
+                android:gravity="center_vertical"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="14dp"
+                    android:layout_toEndOf="@+id/cardInAppMessageImage"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvInAppTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/font_in_app_title"
+                        android:maxLines="1"
+                        android:textColor="@color/in_app_message_color_title"
+                        android:textSize="@dimen/in_app_message_text_size_title"
+                        tools:text="Burası Title" />
+
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvInAppMessage"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:fontFamily="@font/font_in_app_message"
+                        android:maxLines="2"
+                        android:textColor="@color/in_app_message_color_message"
+                        android:textSize="@dimen/in_app_message_text_size_message"
+                        tools:text="Burası Mesaj Burası Mesaj Burası Mesaj Burası Mesaj Burası Mesaj Burası Mesaj Burası Mesaj" />
+
+                </LinearLayout>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardInAppMessageImage"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_centerVertical="true"
+                    android:visibility="gone"
+                    app:cardCornerRadius="6dp">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/ivInAppMessage"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+                </androidx.cardview.widget.CardView>
+
+            </RelativeLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </RelativeLayout>
+
+</RelativeLayout>

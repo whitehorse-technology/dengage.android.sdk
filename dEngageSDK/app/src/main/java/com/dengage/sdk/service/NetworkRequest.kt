@@ -7,13 +7,37 @@ import com.dengage.sdk.models.DengageError
 /**
  * Created by Batuhan Coskun on 26 January 2021
  */
-class NetworkRequest(private val url: String, private val userAgent: String,
-                     private val networkRequestCallback: NetworkRequestCallback?)
-    : AsyncTask<Void, Any?, Any>() {
+class NetworkRequest(
+        private val url: String,
+        private val userAgent: String,
+        private val postData: String?,
+        private val networkRequestCallback: NetworkRequestCallback?,
+        private val connectionTimeOut: Int
+) : AsyncTask<Void, Any?, Any>() {
+
+    constructor(
+            url: String,
+            userAgent: String,
+            networkRequestCallback: NetworkRequestCallback?
+    ) : this(url, userAgent, null, networkRequestCallback, 10000)
+
+    constructor(
+            url: String,
+            userAgent: String,
+            postData: String,
+            networkRequestCallback: NetworkRequestCallback?
+    ) : this(url, userAgent, postData, networkRequestCallback, 10000)
+
+    constructor(
+            url: String,
+            userAgent: String,
+            networkRequestCallback: NetworkRequestCallback?,
+            connectionTimeOut: Int
+    ) : this(url, userAgent, null, networkRequestCallback, connectionTimeOut)
 
     override fun doInBackground(vararg params: Void?): Any? {
         return try {
-            Request().sendRequest(url, userAgent)
+            Request().sendRequest(url, userAgent, postData, connectionTimeOut)
         } catch (e: Exception) {
             e
         }

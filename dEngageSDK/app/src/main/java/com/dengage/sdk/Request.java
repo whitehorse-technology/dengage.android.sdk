@@ -14,6 +14,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import androidx.annotation.Nullable;
+
 public class Request {
 
     private Logger logger = Logger.getInstance();
@@ -62,13 +64,13 @@ public class Request {
         }
     }
 
-    public String sendRequest(String url, String userAgent) throws Exception {
+    public String sendRequest(String url, String userAgent,
+                              @Nullable String postData, int connectionTimeOut) throws Exception {
         logger.Verbose("requestUrl: " + url);
-        return sendHttpRequest(url, "GET", userAgent, null, 10000);
+        return sendHttpRequest(url, postData == null ? "GET" : "POST", userAgent, postData, connectionTimeOut);
     }
 
-    void sendRequestSafe(String url, String userAgent,
-                         String data) {
+    void sendRequestSafe(String url, String userAgent, String data) {
         try {
             sendHttpRequest(url, "POST", userAgent, data, 15000);
         } catch (Exception e) {

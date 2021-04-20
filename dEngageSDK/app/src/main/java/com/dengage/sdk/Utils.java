@@ -185,7 +185,7 @@ public class Utils {
         }
     }
 
-    static String getUserAgent(Context context) {
+    public static String getUserAgent(Context context) {
         return Utils.getAppLabel(context, "An Android App") + "/" + Utils.appVersion(context) + " " + Build.MANUFACTURER + "/" + Build.MODEL + " " + System.getProperty("http.agent") + " Mobile/" + Build.ID + "";
     }
 
