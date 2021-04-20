@@ -14,7 +14,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.RingtoneManager;
+import android.media.AudioAttributes;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -27,7 +27,9 @@ import com.dengage.sdk.models.Message;
 import com.dengage.sdk.models.NotificationType;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -137,7 +139,11 @@ public class NotificationReceiver extends BroadcastReceiver {
         }
     }
 
-    private NotificationCompat.Builder getNotificationBuilder(Context context, Intent intent, Message message) {
+    private NotificationCompat.Builder getNotificationBuilder(
+            Context context,
+            Intent intent,
+            Message message
+    ) {
         Bundle extras = intent.getExtras();
 
         Random random = new Random();
@@ -153,14 +159,31 @@ public class NotificationReceiver extends BroadcastReceiver {
         PendingIntent pDeleteIntent = PendingIntent.getBroadcast(context, deleteIntentRequestCode,
                 deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        String channelId = null;
+        Uri soundUri = Utils.getSound(context, message.getSound());
+        // generate new channel id for different sounds
+        String channelId = UUID.randomUUID().toString();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel notificationChannel = getNotificationChannel();
-            createNotificationChannel(context, notificationChannel);
-            channelId = notificationChannel.getId();
+            NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            // delete old notification channels
+            List<NotificationChannel> channels = notificationManager.getNotificationChannels();
+            if (channels != null && channels.size() > 0) {
+                for (NotificationChannel channel : channels) {
+                    notificationManager.deleteNotificationChannel(channel.getId());
+                }
+            }
+            NotificationChannel notificationChannel = new NotificationChannel(
+                    channelId,
+                    Constants.CHANNEL_NAME,
+                    NotificationManager.IMPORTANCE_DEFAULT
+            );
+            AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                    .build();
+            notificationChannel.setSound(soundUri, audioAttributes);
+            notificationManager.createNotificationChannel(notificationChannel);
         }
 
-        @SuppressWarnings("ConstantConditions")
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, channelId);
 
         notificationBuilder
@@ -173,9 +196,6 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         if (!TextUtils.isEmpty(message.getTitle())) {
             notificationBuilder.setContentTitle(message.getTitle());
-        } else {
-            String label = Utils.getAppLabel(context, "");
-            notificationBuilder.setContentTitle(label);
         }
 
         if (!TextUtils.isEmpty(message.getSubText())) {
@@ -186,12 +206,7 @@ public class NotificationReceiver extends BroadcastReceiver {
             notificationBuilder.setContentText(message.getMessage());
         }
 
-        if (!TextUtils.isEmpty(message.getSound())) {
-            notificationBuilder.setSound(Utils.getSound(context, message.getSound()));
-        } else {
-            Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            notificationBuilder.setSound(sound);
-        }
+        notificationBuilder.setSound(soundUri);
 
         if (message.getBadgeCount() > 0) {
             notificationBuilder.setBadgeIconType(NotificationCompat.BADGE_ICON_SMALL);
@@ -434,21 +449,6 @@ public class NotificationReceiver extends BroadcastReceiver {
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         if (manager != null) {
             manager.cancel(message.getMessageSource(), message.getMessageId());
-        }
-    }
-
-    @TargetApi(Build.VERSION_CODES.O)
-    protected NotificationChannel getNotificationChannel() {
-        NotificationChannel channel = new NotificationChannel(Constants.CHANNEL_ID, Constants.CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
-        channel.setDescription(Constants.CHANNEL_DESCRIPTION);
-        return channel;
-    }
-
-    @TargetApi(Build.VERSION_CODES.O)
-    protected void createNotificationChannel(Context context, NotificationChannel notificationChannel) {
-        NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        if (nm != null) {
-            nm.createNotificationChannel(notificationChannel);
         }
     }
 

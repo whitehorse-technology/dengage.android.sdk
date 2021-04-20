@@ -17,6 +17,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 import android.widget.RemoteViews;
@@ -32,6 +33,8 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.UUID;
+
+import androidx.annotation.Nullable;
 
 public class Utils {
 
@@ -200,8 +203,9 @@ public class Utils {
         return (String) (lApplicationInfo != null ? lPackageManager.getApplicationLabel(lApplicationInfo) : defaultText);
     }
 
-    public static Uri getSound(Context context, String sound) {
-        int id = context.getResources().getIdentifier(sound, "raw", context.getPackageName());
+    public static Uri getSound(Context context, @Nullable String sound) {
+        int id = TextUtils.isEmpty(sound) ? 0
+                : context.getResources().getIdentifier(sound, "raw", context.getPackageName());
         if (id != 0) {
             return Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + "/" + id);
         } else {
