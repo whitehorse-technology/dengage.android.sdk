@@ -11,7 +11,7 @@ object GsonHolder {
 
     val gson: Gson by lazy {
         GsonBuilder()
-                .create()
+            .create()
     }
 
     fun toJson(source: Any?): String {
@@ -27,6 +27,5 @@ object GsonHolder {
             null
         }
     }
-
 
 }

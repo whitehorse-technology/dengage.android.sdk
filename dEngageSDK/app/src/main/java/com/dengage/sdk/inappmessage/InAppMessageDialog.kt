@@ -54,7 +54,7 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
 
         inAppMessage = requireArguments().getSerializable(EXTRA_IN_APP_MESSAGE) as InAppMessage
         val contentParams = inAppMessage.data.content.params
-        tvInAppTitle.visibility = if (contentParams.showTitle) View.VISIBLE else View.GONE
+        tvInAppTitle.visibility = if (contentParams.showTitle == true) View.VISIBLE else View.GONE
         tvInAppTitle.text = contentParams.title
         tvInAppMessage.text = contentParams.message
 
@@ -95,7 +95,7 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
             e.printStackTrace()
         }
 
-        if (contentParams.showImage && !contentParams.imageUrl.isNullOrEmpty()) {
+        if (contentParams.showImage == true && !contentParams.imageUrl.isNullOrEmpty()) {
             ImageDownloader(contentParams.imageUrl, object : ImageDownloader.OnImageLoaderListener {
                 override fun onError(error: ImageDownloader.ImageError) {
                     cardInAppMessageImage.visibility = View.GONE

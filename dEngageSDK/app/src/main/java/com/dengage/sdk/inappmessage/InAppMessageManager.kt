@@ -21,9 +21,9 @@ import java.util.*
  * Created by Batuhan Coskun on 26 December 2020
  */
 class InAppMessageManager(
-        private val context: Context,
-        private var subscription: Subscription,
-        private val logger: Logger
+    private val context: Context,
+    private var subscription: Subscription,
+    private val logger: Logger
 ) : InAppMessageDialog.InAppMessageCallback {
 
     private val prefs: Prefs = Prefs(context)
@@ -43,11 +43,11 @@ class InAppMessageManager(
         if (prefs.inAppMessageShowTime != 0L && System.currentTimeMillis() < prefs.inAppMessageShowTime) return
 
         val inAppMessages =
-                InAppMessageUtils.findNotExpiredInAppMessages(logger, Date(), prefs.inAppMessages)
+            InAppMessageUtils.findNotExpiredInAppMessages(logger, Date(), prefs.inAppMessages)
         prefs.inAppMessages = inAppMessages
         if (!inAppMessages.isNullOrEmpty()) {
             val priorInAppMessage =
-                    InAppMessageUtils.findPriorInAppMessage(inAppMessages, screenName)
+                InAppMessageUtils.findPriorInAppMessage(inAppMessages, screenName)
             if (priorInAppMessage != null) {
                 showInAppMessage(activity, priorInAppMessage)
             }
@@ -61,7 +61,7 @@ class InAppMessageManager(
         // control in app message enabled
         val sdkParameters = prefs.sdkParameters
         if (sdkParameters?.accountName == null || sdkParameters.inAppEnabled == null ||
-                !sdkParameters.inAppEnabled
+            !sdkParameters.inAppEnabled
         ) {
             return
         }
@@ -72,12 +72,12 @@ class InAppMessageManager(
         val nextFetchTimePlus = (sdkParameters.inAppFetchIntervalInMin ?: 0) * 60000
         prefs.inAppMessageFetchTime = System.currentTimeMillis() + nextFetchTimePlus
         val networkRequest = NetworkRequest(
-                NetworkUrlUtils.getInAppMessagesRequestUrl(
-                        context,
-                        sdkParameters.accountName,
-                        subscription
-                ),
-                Utils.getUserAgent(context), object : NetworkRequestCallback {
+            NetworkUrlUtils.getInAppMessagesRequestUrl(
+                context,
+                sdkParameters.accountName,
+                subscription
+            ),
+            Utils.getUserAgent(context), object : NetworkRequestCallback {
             override fun responseFetched(response: String?) {
                 logger.Error("in app messages response fetched: $response")
 
@@ -117,17 +117,17 @@ class InAppMessageManager(
         // control in app message enabled
         val sdkParameters = prefs.sdkParameters
         if (sdkParameters?.accountName == null || sdkParameters.inAppEnabled == null ||
-                !sdkParameters.inAppEnabled
+            !sdkParameters.inAppEnabled
         ) {
             return
         }
 
         val networkRequest = NetworkRequest(
-                NetworkUrlUtils.getInAppMessageAsDisplayedRequestUrl(
-                        context, inAppMessageDetails,
-                        sdkParameters.accountName, subscription
-                ),
-                Utils.getUserAgent(context), null, 5000
+            NetworkUrlUtils.getInAppMessageAsDisplayedRequestUrl(
+                context, inAppMessageDetails,
+                sdkParameters.accountName, subscription
+            ),
+            Utils.getUserAgent(context), null, 5000
         )
         networkRequest.executeTask()
     }
@@ -139,7 +139,7 @@ class InAppMessageManager(
         // control in app message enabled
         val sdkParameters = prefs.sdkParameters
         if (sdkParameters?.accountName == null || sdkParameters.inAppEnabled == null ||
-                !sdkParameters.inAppEnabled
+            !sdkParameters.inAppEnabled
         ) {
             return
         }
@@ -148,11 +148,11 @@ class InAppMessageManager(
         removeInAppMessageFromCache(inAppMessageId)
 
         val networkRequest = NetworkRequest(
-                NetworkUrlUtils.getInAppMessageAsClickedRequestUrl(
-                        context, inAppMessageDetails,
-                        sdkParameters.accountName, subscription
-                ),
-                Utils.getUserAgent(context), null, 5000
+            NetworkUrlUtils.getInAppMessageAsClickedRequestUrl(
+                context, inAppMessageDetails,
+                sdkParameters.accountName, subscription
+            ),
+            Utils.getUserAgent(context), null, 5000
         )
         networkRequest.executeTask()
     }
@@ -164,17 +164,17 @@ class InAppMessageManager(
         // control in app message enabled
         val sdkParameters = prefs.sdkParameters
         if (sdkParameters?.accountName == null || sdkParameters.inAppEnabled == null ||
-                !sdkParameters.inAppEnabled
+            !sdkParameters.inAppEnabled
         ) {
             return
         }
 
         val networkRequest = NetworkRequest(
-                NetworkUrlUtils.getInAppMessageAsDismissedRequestUrl(
-                        context, inAppMessageDetails,
-                        sdkParameters.accountName, subscription
-                ),
-                Utils.getUserAgent(context), null, 5000
+            NetworkUrlUtils.getInAppMessageAsDismissedRequestUrl(
+                context, inAppMessageDetails,
+                sdkParameters.accountName, subscription
+            ),
+            Utils.getUserAgent(context), null, 5000
         )
         networkRequest.executeTask()
     }
@@ -184,13 +184,13 @@ class InAppMessageManager(
      */
     private fun showInAppMessage(activity: AppCompatActivity, inAppMessage: InAppMessage) {
         setInAppMessageAsDisplayed(
-                inAppMessageDetails = inAppMessage.data.messageDetails
+            inAppMessageDetails = inAppMessage.data.messageDetails
         )
 
         if (inAppMessage.data.displayTiming.showEveryXMinutes != null &&
-                inAppMessage.data.displayTiming.showEveryXMinutes != 0) {
+            inAppMessage.data.displayTiming.showEveryXMinutes != 0) {
             inAppMessage.data.nextDisplayTime = System.currentTimeMillis() +
-                    inAppMessage.data.displayTiming.showEveryXMinutes * 60000L
+                inAppMessage.data.displayTiming.showEveryXMinutes * 60000L
             updateInAppMessageOnCache(inAppMessage)
         } else {
             removeInAppMessageFromCache(inAppMessageId = inAppMessage.id)
@@ -198,7 +198,7 @@ class InAppMessageManager(
 
         // update next in app message show time
         prefs.inAppMessageShowTime = System.currentTimeMillis() +
-                ((prefs.sdkParameters?.inAppMinSecBetweenMessages ?: 0) * 1000)
+            ((prefs.sdkParameters?.inAppMinSecBetweenMessages ?: 0) * 1000)
 
         // set delay for showing in app message
         val delay = (inAppMessage.data.displayTiming.delay ?: 0) * 1000L
@@ -208,8 +208,8 @@ class InAppMessageManager(
                     val inAppMessageDialog = InAppMessageDialog.newInstance(inAppMessage)
                     inAppMessageDialog.setInAppMessageCallback(this@InAppMessageManager)
                     inAppMessageDialog.show(
-                            activity.supportFragmentManager,
-                            InAppMessageDialog::class.java.simpleName
+                        activity.supportFragmentManager,
+                        InAppMessageDialog::class.java.simpleName
                     )
                 }
             }
@@ -231,19 +231,19 @@ class InAppMessageManager(
 
     override fun inAppMessageClicked(inAppMessage: InAppMessage) {
         setInAppMessageAsClicked(
-                inAppMessageId = inAppMessage.id,
-                inAppMessageDetails = inAppMessage.data.messageDetails
+            inAppMessageId = inAppMessage.id,
+            inAppMessageDetails = inAppMessage.data.messageDetails
         )
         NotificationReceiver.launchActivity(
-                context,
-                null,
-                inAppMessage.data.content.targetUrl
+            context,
+            null,
+            inAppMessage.data.content.targetUrl
         )
     }
 
     override fun inAppMessageDismissed(inAppMessage: InAppMessage) {
         setInAppMessageAsDismissed(
-                inAppMessageDetails = inAppMessage.data.messageDetails
+            inAppMessageDetails = inAppMessage.data.messageDetails
         )
     }
 

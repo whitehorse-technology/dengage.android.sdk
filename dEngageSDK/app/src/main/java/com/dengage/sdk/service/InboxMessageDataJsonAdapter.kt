@@ -1,9 +1,14 @@
 package com.dengage.sdk.service
 
 import com.dengage.sdk.models.InboxMessageData
-import com.google.gson.*
+import com.google.gson.Gson
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
+import com.google.gson.JsonParseException
+import com.google.gson.JsonSerializationContext
+import com.google.gson.JsonSerializer
 import java.lang.reflect.Type
-
 
 /**
  * Created by Batuhan Coskun on 02 February 2021

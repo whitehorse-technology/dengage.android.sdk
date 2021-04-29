@@ -41,15 +41,15 @@ class PrefsTest {
         val lastFetchTimeInMillis = 10L
 
         val sdkParameters = SdkParameters(
-                accountId = accountId,
-                accountName = accountName,
-                eventsEnabled = eventsEnabled,
-                inboxEnabled = inboxEnabled,
-                inAppEnabled = inAppEnabled,
-                subscriptionEnabled = subscriptionEnabled,
-                inAppFetchIntervalInMin = inAppFetchIntervalInMin,
-                inAppMinSecBetweenMessages = inAppMinSecBetweenMessages,
-                lastFetchTimeInMillis = lastFetchTimeInMillis
+            accountId = accountId,
+            accountName = accountName,
+            eventsEnabled = eventsEnabled,
+            inboxEnabled = inboxEnabled,
+            inAppEnabled = inAppEnabled,
+            subscriptionEnabled = subscriptionEnabled,
+            inAppFetchIntervalInMin = inAppFetchIntervalInMin,
+            inAppMinSecBetweenMessages = inAppMinSecBetweenMessages,
+            lastFetchTimeInMillis = lastFetchTimeInMillis
         )
         prefs.sdkParameters = sdkParameters
 
@@ -82,47 +82,50 @@ class PrefsTest {
     fun saveInAppMessagesToPrefsTest() {
         val id = Math.random().toString()
         val contentParams = ContentParams(
-                position = ContentPosition.BOTTOM.position,
-                showTitle = true,
-                title = "title",
-                message = "message",
-                showImage = false,
-                imageUrl = null,
-                primaryColor = null,
-                secondaryColor = null,
-                backgroundColor = null,
-                shouldAnimate = true
+            position = ContentPosition.BOTTOM.position,
+            showTitle = true,
+            title = "title",
+            message = "message",
+            showImage = false,
+            imageUrl = null,
+            primaryColor = null,
+            secondaryColor = null,
+            backgroundColor = null,
+            shouldAnimate = true,
+            html = null,
+            maxWidth = null,
+            radius = null
         )
         val content = Content(
-                type = ContentType.SMALL.type,
-                targetUrl = null,
-                params = contentParams
+            type = ContentType.SMALL.type,
+            targetUrl = null,
+            params = contentParams
         )
 
         val displayCondition = DisplayCondition(
-                screenNameFilters = null,
-                screenDataFilters = null
+            screenNameFilters = null,
+            screenDataFilters = null
         )
         val displayTiming = DisplayTiming(
-                triggerBy = TriggerBy.NAVIGATION.triggerBy,
-                delay = 10,
-                showEveryXMinutes = 5
+            triggerBy = TriggerBy.NAVIGATION.triggerBy,
+            delay = 10,
+            showEveryXMinutes = 5
         )
         val inAppMessageData = InAppMessageData(
-                messageId = Math.random().toString(),
-                messageDetails = "messageDetails",
-                expireDate = "expireDate",
-                priority = Priority.LOW.priority,
-                dengageSendId = Math.random().toInt(),
-                dengageCampId = Math.random().toInt(),
-                content = content,
-                displayCondition = displayCondition,
-                displayTiming = displayTiming
+            messageId = Math.random().toString(),
+            messageDetails = "messageDetails",
+            expireDate = "expireDate",
+            priority = Priority.LOW.priority,
+            dengageSendId = Math.random().toInt(),
+            dengageCampId = Math.random().toInt(),
+            content = content,
+            displayCondition = displayCondition,
+            displayTiming = displayTiming
         )
 
         val inAppMessage = InAppMessage(
-                id = id,
-                data = inAppMessageData
+            id = id,
+            data = inAppMessageData
         )
 
         prefs.inAppMessages = mutableListOf(inAppMessage)

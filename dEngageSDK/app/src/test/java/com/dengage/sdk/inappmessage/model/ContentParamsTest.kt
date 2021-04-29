@@ -20,18 +20,24 @@ class ContentParamsTest {
         val secondaryColor = "secondaryColor"
         val backgroundColor = "backgroundColor"
         val shouldAnimate = true
+        val html = "html"
+        val maxWidth = 100
+        val radius = 5
 
         val contentParams = ContentParams(
-                position = position,
-                showTitle = showTitle,
-                title = title,
-                message = message,
-                showImage = showImage,
-                imageUrl = imageUrl,
-                primaryColor = primaryColor,
-                secondaryColor = secondaryColor,
-                backgroundColor = backgroundColor,
-                shouldAnimate = shouldAnimate
+            position = position,
+            showTitle = showTitle,
+            title = title,
+            message = message,
+            showImage = showImage,
+            imageUrl = imageUrl,
+            primaryColor = primaryColor,
+            secondaryColor = secondaryColor,
+            backgroundColor = backgroundColor,
+            shouldAnimate = shouldAnimate,
+            html = html,
+            maxWidth = maxWidth,
+            radius = radius
         )
 
         Assert.assertEquals(position, contentParams.position)
@@ -44,6 +50,9 @@ class ContentParamsTest {
         Assert.assertEquals(secondaryColor, contentParams.secondaryColor)
         Assert.assertEquals(backgroundColor, contentParams.backgroundColor)
         Assert.assertEquals(shouldAnimate, contentParams.shouldAnimate)
+        Assert.assertEquals(html, contentParams.html)
+        Assert.assertEquals(maxWidth, contentParams.maxWidth)
+        Assert.assertEquals(radius, contentParams.radius)
     }
 
 }
