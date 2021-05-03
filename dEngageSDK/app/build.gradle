@@ -40,6 +40,7 @@ dependencies {
 
     api 'androidx.appcompat:appcompat:1.2.0'
     api 'androidx.cardview:cardview:1.0.0'
+    api 'androidx.constraintlayout:constraintlayout:2.0.4'
 
     // test dependencies
     testImplementation "junit:junit:4.13.1"

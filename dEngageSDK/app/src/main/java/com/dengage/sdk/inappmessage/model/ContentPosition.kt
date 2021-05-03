@@ -6,5 +6,6 @@ package com.dengage.sdk.inappmessage.model
 enum class ContentPosition(val position: String) {
     TOP("TOP"),
     MIDDLE("MIDDLE"),
-    BOTTOM("BOTTOM")
+    BOTTOM("BOTTOM"),
+    FULL("FULL")
 }

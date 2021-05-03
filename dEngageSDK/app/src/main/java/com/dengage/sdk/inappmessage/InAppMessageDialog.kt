@@ -1,21 +1,28 @@
 package com.dengage.sdk.inappmessage
 
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.webkit.WebView
 import android.widget.RelativeLayout
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.DialogFragment
 import com.dengage.sdk.ImageDownloader
 import com.dengage.sdk.R
+import com.dengage.sdk.inappmessage.model.ContentParams
 import com.dengage.sdk.inappmessage.model.ContentPosition
+import com.dengage.sdk.inappmessage.model.ContentType
 import com.dengage.sdk.inappmessage.model.InAppMessage
+import kotlin.math.roundToInt
 
 /**
  * Created by Batuhan Coskun on 26 February 2021
@@ -31,8 +38,8 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         return inflater.inflate(R.layout.dialog_in_app_message, container, false)
     }
@@ -44,6 +51,73 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
             inAppMessageDismissed()
         }
 
+        inAppMessage = requireArguments().getSerializable(EXTRA_IN_APP_MESSAGE) as InAppMessage
+        val content = inAppMessage.data.content
+        val contentParams = inAppMessage.data.content.params
+
+        if (content.type == ContentType.HTML.type) {
+            setHtmlContent(view, contentParams)
+        } else {
+            setNativeContent(view, contentParams)
+        }
+    }
+
+    @SuppressLint("SetJavaScriptEnabled")
+    private fun setHtmlContent(view: View, contentParams: ContentParams) {
+        val vHtmlContent = view.findViewById<View>(R.id.vHtmlContent)
+        val webView = view.findViewById<WebView>(R.id.webView)
+        val vHtmlWidthContainer = view.findViewById<RelativeLayout>(R.id.vHtmlWidthContainer)
+        val cardInAppMessage = view.findViewById<CardView>(R.id.cardInAppMessage)
+
+        // set height for content type full
+        if (contentParams.position == ContentPosition.FULL.position) {
+            val params = RelativeLayout.LayoutParams(
+                MATCH_PARENT,
+                MATCH_PARENT
+            )
+            webView.layoutParams = params
+        }
+
+        // set radius of card view
+        cardInAppMessage.radius = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            (contentParams.radius ?: 0).toFloat(),
+            resources.displayMetrics
+        )
+
+        // set max width for container
+        contentParams.maxWidth?.let {
+            val params = vHtmlWidthContainer.layoutParams as ConstraintLayout.LayoutParams
+            params.matchConstraintMaxWidth = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                it.toFloat(),
+                resources.displayMetrics
+            ).roundToInt()
+            vHtmlWidthContainer.layoutParams = params
+        }
+
+        vHtmlContent.visibility = View.VISIBLE
+
+        webView.apply {
+            loadDataWithBaseURL(
+                null,
+                contentParams.html, "text/html", "UTF-8", null
+            )
+            settings.loadWithOverviewMode = true
+            settings.useWideViewPort = true
+            settings.displayZoomControls = false
+            settings.builtInZoomControls = true
+            settings.setSupportZoom(true)
+            setBackgroundColor(Color.TRANSPARENT)
+            settings.domStorageEnabled = true
+            settings.javaScriptEnabled = true
+            settings.javaScriptCanOpenWindowsAutomatically = true
+//            addJavascriptInterface(JavaScriptInterface(context), "DengageInterface")
+        }
+    }
+
+    private fun setNativeContent(view: View, contentParams: ContentParams) {
+        val vNativeContent = view.findViewById<View>(R.id.vNativeContent)
         val tvInAppTitle = view.findViewById<AppCompatTextView>(R.id.tvInAppTitle)
         val tvInAppMessage = view.findViewById<AppCompatTextView>(R.id.tvInAppMessage)
         val cardInAppMessageImage = view.findViewById<CardView>(R.id.cardInAppMessageImage)
@@ -52,8 +126,7 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
         val vInAppMessage = view.findViewById<RelativeLayout>(R.id.vInAppMessage)
         val vInAppMessageContainer = view.findViewById<RelativeLayout>(R.id.vInAppMessageContainer)
 
-        inAppMessage = requireArguments().getSerializable(EXTRA_IN_APP_MESSAGE) as InAppMessage
-        val contentParams = inAppMessage.data.content.params
+        vNativeContent.visibility = View.VISIBLE
         tvInAppTitle.visibility = if (contentParams.showTitle == true) View.VISIBLE else View.GONE
         tvInAppTitle.text = contentParams.title
         tvInAppMessage.text = contentParams.message
@@ -109,8 +182,8 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
         }
 
         val params = RelativeLayout.LayoutParams(
-                MATCH_PARENT,
-                resources.getDimensionPixelSize(R.dimen.in_app_message_height)
+            MATCH_PARENT,
+            resources.getDimensionPixelSize(R.dimen.in_app_message_height)
         )
         val marginTop = resources.getDimensionPixelSize(R.dimen.in_app_message_margin_top)
         val marginBottom = resources.getDimensionPixelSize(R.dimen.in_app_message_margin_bottom)
