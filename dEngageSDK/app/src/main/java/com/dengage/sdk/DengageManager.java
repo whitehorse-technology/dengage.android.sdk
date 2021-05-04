@@ -1,14 +1,5 @@
 package com.dengage.sdk;
 
-import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +7,10 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
 import android.text.TextUtils;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.dengage.sdk.cache.GsonHolder;
 import com.dengage.sdk.cache.Prefs;
@@ -33,6 +28,14 @@ import com.dengage.sdk.models.TransactionalOpen;
 import com.dengage.sdk.service.NetworkRequest;
 import com.dengage.sdk.service.NetworkRequestCallback;
 import com.dengage.sdk.service.NetworkUrlUtils;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.huawei.agconnect.config.AGConnectServicesConfig;
 import com.huawei.hms.aaid.HmsInstanceId;
 import com.huawei.hms.api.HuaweiApiAvailability;
@@ -50,9 +53,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 
@@ -85,16 +85,12 @@ public class DengageManager {
      * </p>
      */
     public static DengageManager getInstance(Context context) {
-
         if (context == null) {
             throw new IllegalArgumentException("Argument null: context");
         }
-
         if (_instance == null)
             _instance = new DengageManager(context);
-
         _instance.buildSubscription();
-
         return _instance;
     }
 
@@ -142,7 +138,6 @@ public class DengageManager {
         try {
             // create in app message manager and start new session
             inAppMessageManager = new InAppMessageManager(_context, _subscription, logger);
-
             if (isGooglePlayServicesAvailable() && isHuaweiMobileServicesAvailable()) {
                 logger.Verbose("Google Play Services and Huawei Mobile Service are available. Firebase services will be used.");
                 initFirebase();
@@ -152,7 +147,35 @@ public class DengageManager {
             } else if (isGooglePlayServicesAvailable()) {
                 initFirebase();
             }
+            sendSubscription();
+            getSdkParameters();
+        } catch (Exception e) {
+            logger.Error("initialization:" + e.getMessage());
+        }
+        return _instance;
+    }
 
+    /**
+     * FirebaseApp Initiator method
+     * <p>
+     * Use to init Firebase Messaging with instance
+     *
+     * @return DengageManager
+     * </p>
+     */
+    public DengageManager initWithFirebaseInstance(@NonNull FirebaseApp firebaseApp) {
+        try {
+            // create in app message manager and start new session
+            inAppMessageManager = new InAppMessageManager(_context, _subscription, logger);
+            if (isGooglePlayServicesAvailable() && isHuaweiMobileServicesAvailable()) {
+                logger.Verbose("Google Play Services and Huawei Mobile Service are available. Firebase services will be used.");
+                initFirebaseWithInstance(firebaseApp);
+            } else if (isHuaweiMobileServicesAvailable()) {
+                logger.Verbose("Huawei Mobile Services is available.");
+                initHuawei();
+            } else if (isGooglePlayServicesAvailable()) {
+                initFirebaseWithInstance(firebaseApp);
+            }
             sendSubscription();
             getSdkParameters();
         } catch (Exception e) {
@@ -194,7 +217,17 @@ public class DengageManager {
         _subscription.setIntegrationKey(_subscription.getFirebaseIntegrationKey());
         saveSubscription();
         FirebaseApp.initializeApp(_context);
-        GmsTokenWorker gmsTokenWorker = new GmsTokenWorker();
+        GmsTokenWorker gmsTokenWorker = new GmsTokenWorker(null);
+        gmsTokenWorker.executeTask();
+        GmsAdIdWorker gmsAdIdWorker = new GmsAdIdWorker();
+        gmsAdIdWorker.executeTask();
+    }
+
+    private void initFirebaseWithInstance(@NonNull FirebaseApp firebaseApp) {
+        _subscription.setTokenType(Constants.FIREBASE_TOKEN_TYPE);
+        _subscription.setIntegrationKey(_subscription.getFirebaseIntegrationKey());
+        saveSubscription();
+        GmsTokenWorker gmsTokenWorker = new GmsTokenWorker(firebaseApp);
         gmsTokenWorker.executeTask();
         GmsAdIdWorker gmsAdIdWorker = new GmsAdIdWorker();
         gmsAdIdWorker.executeTask();
@@ -207,7 +240,6 @@ public class DengageManager {
     public void setPermission(Boolean permission) {
         setUserPermission(permission);
     }
-
 
     /**
      * Set contact key of the user.
@@ -228,7 +260,6 @@ public class DengageManager {
                 prefs.setInAppMessages(null);
                 inboxMessages = new ArrayList<>();
                 inboxMessageFetchMillis = 0L;
-
                 _subscription.setContactKey(contactKey);
                 logger.Debug("contactKey: " + contactKey);
                 saveSubscription();
@@ -239,14 +270,11 @@ public class DengageManager {
         }
     }
 
-
     public DengageManager setFirebaseIntegrationKey(String key) {
         logger.Verbose("setFirebaseIntegrationKey method is called");
-
         if (key == null || TextUtils.isEmpty(key)) {
             throw new IllegalArgumentException("Argument null: key");
         }
-
         try {
             logger.Debug("setFirebaseIntegrationKey: " + key);
             _subscription.setFirebaseIntegrationKey(key);
@@ -258,11 +286,9 @@ public class DengageManager {
 
     public DengageManager setHuaweiIntegrationKey(String key) {
         logger.Verbose("setHuaweiIntegrationKey method is called");
-
         if (key == null || TextUtils.isEmpty(key)) {
             throw new IllegalArgumentException("Argument null: key");
         }
-
         try {
             logger.Debug("setHuaweiIntegrationKey: " + key);
             _subscription.setHuaweiIntegrationKey(key);
@@ -300,7 +326,6 @@ public class DengageManager {
         return _subscription;
     }
 
-
     public void buildSubscription() {
         try {
             if (Utils.hasSubscription(_context)) {
@@ -324,11 +349,9 @@ public class DengageManager {
             _subscription.setSdkVersion(Utils.getSdkVersion());
             _subscription.setUserAgent(Utils.getUserAgent(_context));
             _subscription.setLanguage(Locale.getDefault().getLanguage());
-
             Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"), Locale.getDefault());
             DateFormat date = new SimpleDateFormat("z", Locale.getDefault());
             _subscription.setTimezone(date.format(calendar.getTime()));
-
             String json = _subscription.toJson();
             logger.Debug("subscriptionJson: " + json);
             Utils.saveSubscription(_context, json);
@@ -336,7 +359,6 @@ public class DengageManager {
         } catch (Exception e) {
             logger.Error("saveSubscription: " + e.getMessage());
         }
-
         // update subscription if in app message manager available
         if (inAppMessageManager != null) {
             inAppMessageManager.updateSubscription(_subscription);
@@ -372,14 +394,12 @@ public class DengageManager {
         }
     }
 
-
     /**
      * Deprecated method, Subscription will send after changing contact key, permission or device id
      * automatically
      */
     @Deprecated
     public void syncSubscription() {
-
     }
 
     /**
@@ -398,20 +418,14 @@ public class DengageManager {
         logger.Verbose(message.toJson());
         try {
             getSubscription();
-
             if (message == null) throw new IllegalArgumentException("Argument null: message");
-
             String source = message.getMessageSource();
             if (!Constants.MESSAGE_SOURCE.equals(source)) return;
-
             if (!TextUtils.isEmpty(message.getTransactionId())) {
-
                 String baseApiUri = Utils.getMetaData(_context, "den_push_api_url");
                 if (TextUtils.isEmpty(baseApiUri))
                     baseApiUri = Constants.DEN_PUSH_API_URI;
-
                 baseApiUri += Constants.TRANSACTIONAL_OPEN_API_ENDPOINT;
-
                 TransactionalOpen openSignal = new TransactionalOpen();
                 openSignal.setUserAgent(Utils.getUserAgent(_context));
                 openSignal.setIntegrationKey(_subscription.getIntegrationKey());
@@ -423,13 +437,10 @@ public class DengageManager {
                 RequestAsync req = new RequestAsync(baseApiUri, openSignal);
                 req.executeTask();
             } else {
-
                 String baseApiUri = Utils.getMetaData(_context, "den_push_api_url");
                 if (TextUtils.isEmpty(baseApiUri))
                     baseApiUri = Constants.DEN_PUSH_API_URI;
-
                 baseApiUri += Constants.OPEN_API_ENDPOINT;
-
                 Open openSignal = new Open();
                 openSignal.setUserAgent(Utils.getUserAgent(_context));
                 openSignal.setIntegrationKey(_subscription.getIntegrationKey());
@@ -439,7 +450,6 @@ public class DengageManager {
                 openSignal.setItemId(itemId);
                 RequestAsync req = new RequestAsync(baseApiUri, openSignal);
                 req.executeTask();
-
                 // send session start
                 DengageEvent.getInstance(this._context, message.getTargetUrl());
             }
@@ -535,16 +545,24 @@ public class DengageManager {
 
     private class GmsTokenWorker {
 
+        @Nullable
+        private final FirebaseApp firebaseApp;
+
+        public GmsTokenWorker(@Nullable FirebaseApp firebaseApp) {
+            this.firebaseApp = firebaseApp;
+        }
+
         void executeTask() {
             try {
-                FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                FirebaseInstanceId firebaseInstanceId = firebaseApp == null ? FirebaseInstanceId.getInstance()
+                    : FirebaseInstanceId.getInstance(firebaseApp);
+                firebaseInstanceId.getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
                     @Override
                     public void onComplete(@NonNull Task<InstanceIdResult> task) {
                         if (!task.isSuccessful()) {
                             logger.Error("Firebase InstanceId Failed: " + task.getException().getMessage());
                             return;
                         }
-
                         if (task.getResult() != null) {
                             String token = task.getResult().getToken();
                             logger.Debug("GMS Token retrieved: " + token);
@@ -567,8 +585,8 @@ public class DengageManager {
             String advertisingId = "";
             try {
                 com.huawei.hms.ads.identifier.AdvertisingIdClient.Info adInfo
-                        = com.huawei.hms.ads.identifier.AdvertisingIdClient.
-                        getAdvertisingIdInfo(_context);
+                    = com.huawei.hms.ads.identifier.AdvertisingIdClient.
+                    getAdvertisingIdInfo(_context);
                 if (!adInfo.isLimitAdTrackingEnabled())
                     advertisingId = adInfo.getId();
             } catch (Exception e) {
@@ -640,12 +658,10 @@ public class DengageManager {
     public void onMessageReceived(Map<String, String> data) {
         logger.Verbose("onMessageReceived method is called.");
         logger.Verbose("Raw Message: " + new JSONObject(data).toString());
-
         if ((data != null && data.size() > 0)) {
             Message pushMessage = new Message(data);
             String json = pushMessage.toJson();
             logger.Verbose("Message Json: " + json);
-
             String source = pushMessage.getMessageSource();
             if (Constants.MESSAGE_SOURCE.equals(source)) {
                 logger.Debug("There is a message that received from dEngage");
@@ -672,18 +688,16 @@ public class DengageManager {
 
     private void getSdkParameters() {
         if (TextUtils.isEmpty(_subscription.integrationKey)) return;
-
         // if 24 hours passed after getting sdk params, you should get again
         if (prefs.getSdkParameters() != null &&
-                System.currentTimeMillis() < prefs.getSdkParameters().getLastFetchTimeInMillis() + 24 * 60 * 60 * 1000) {
+            System.currentTimeMillis() < prefs.getSdkParameters().getLastFetchTimeInMillis() + 24 * 60 * 60 * 1000) {
             // fetch in app messages
             getInAppMessages();
             return;
         }
-
         NetworkRequest networkRequest = new NetworkRequest(
-                NetworkUrlUtils.INSTANCE.getSdkParametersRequestUrl(_context, _subscription.integrationKey),
-                Utils.getUserAgent(_context), new NetworkRequestCallback() {
+            NetworkUrlUtils.INSTANCE.getSdkParametersRequestUrl(_context, _subscription.integrationKey),
+            Utils.getUserAgent(_context), new NetworkRequestCallback() {
             @Override
             public void responseFetched(@Nullable String response) {
                 if (response != null) {
@@ -692,7 +706,6 @@ public class DengageManager {
                         if (sdkParameters != null) {
                             sdkParameters.setLastFetchTimeInMillis(System.currentTimeMillis());
                             prefs.setSdkParameters(sdkParameters);
-
                             // after fetching sdk parameters, fetch in app messages
                             getInAppMessages();
                         }
@@ -780,19 +793,18 @@ public class DengageManager {
         // control inbox message enabled
         SdkParameters sdkParameters = prefs.getSdkParameters();
         if (sdkParameters == null || sdkParameters.getAccountName() == null ||
-                sdkParameters.getInboxEnabled() == null || !sdkParameters.getInboxEnabled()) {
+            sdkParameters.getInboxEnabled() == null || !sdkParameters.getInboxEnabled()) {
             dengageCallback.onResult(new ArrayList<InboxMessage>());
             return;
         }
-
         if (inboxMessages != null && !inboxMessages.isEmpty() && offset == 0 &&
-                System.currentTimeMillis() < inboxMessageFetchMillis + 600000) {
+            System.currentTimeMillis() < inboxMessageFetchMillis + 600000) {
             dengageCallback.onResult(inboxMessages);
         } else {
             NetworkRequest networkRequest = new NetworkRequest(
-                    NetworkUrlUtils.INSTANCE.getInboxMessagesRequestUrl(_context,
-                            sdkParameters.getAccountName(), _subscription, limit, offset),
-                    Utils.getUserAgent(_context), new NetworkRequestCallback() {
+                NetworkUrlUtils.INSTANCE.getInboxMessagesRequestUrl(_context,
+                    sdkParameters.getAccountName(), _subscription, limit, offset),
+                Utils.getUserAgent(_context), new NetworkRequestCallback() {
                 @Override
                 public void responseFetched(@Nullable String response) {
                     inboxMessageFetchMillis = System.currentTimeMillis();
@@ -828,10 +840,9 @@ public class DengageManager {
         // control inbox message enabled
         SdkParameters sdkParameters = prefs.getSdkParameters();
         if (sdkParameters == null || sdkParameters.getAccountName() == null ||
-                sdkParameters.getInboxEnabled() == null || !sdkParameters.getInboxEnabled()) {
+            sdkParameters.getInboxEnabled() == null || !sdkParameters.getInboxEnabled()) {
             return;
         }
-
         // remove cached inbox message with id
         CollectionsKt.removeAll(inboxMessages, new Function1<InboxMessage, Boolean>() {
             @Override
@@ -840,12 +851,11 @@ public class DengageManager {
                 return inboxMessage.getId().equals(id);
             }
         });
-
         // call http request
         NetworkRequest networkRequest = new NetworkRequest(
-                NetworkUrlUtils.INSTANCE.setInboxMessageAsDeletedRequestUrl(_context, id,
-                        sdkParameters.getAccountName(), _subscription),
-                Utils.getUserAgent(_context), null);
+            NetworkUrlUtils.INSTANCE.setInboxMessageAsDeletedRequestUrl(_context, id,
+                sdkParameters.getAccountName(), _subscription),
+            Utils.getUserAgent(_context), null);
         networkRequest.executeTask();
     }
 
@@ -858,10 +868,9 @@ public class DengageManager {
         // control inbox message enabled
         SdkParameters sdkParameters = prefs.getSdkParameters();
         if (sdkParameters == null || sdkParameters.getAccountName() == null ||
-                sdkParameters.getInboxEnabled() == null || !sdkParameters.getInboxEnabled()) {
+            sdkParameters.getInboxEnabled() == null || !sdkParameters.getInboxEnabled()) {
             return;
         }
-
         // find cached inbox message with id and set clicked
         InboxMessage inboxMessage = CollectionsKt.firstOrNull(inboxMessages, new Function1<InboxMessage, Boolean>() {
             @Override
@@ -873,12 +882,11 @@ public class DengageManager {
         if (inboxMessage != null) {
             inboxMessage.setClicked(true);
         }
-
         // call http request
         NetworkRequest networkRequest = new NetworkRequest(
-                NetworkUrlUtils.INSTANCE.setInboxMessageAsClickedRequestUrl(_context, id,
-                        sdkParameters.getAccountName(), _subscription),
-                Utils.getUserAgent(_context), null);
+            NetworkUrlUtils.INSTANCE.setInboxMessageAsClickedRequestUrl(_context, id,
+                sdkParameters.getAccountName(), _subscription),
+            Utils.getUserAgent(_context), null);
         networkRequest.executeTask();
     }
 
@@ -915,21 +923,19 @@ public class DengageManager {
         if (sdkParameters == null || sdkParameters.getAccountName() == null) {
             return;
         }
-
         // convert tags request to json string
         TagsRequest tagsRequest = new TagsRequest(
-                sdkParameters.getAccountName(),
-                _subscription.getDeviceId(),
-                tags
+            sdkParameters.getAccountName(),
+            _subscription.getDeviceId(),
+            tags
         );
         String postData = GsonHolder.INSTANCE.getGson().toJson(tagsRequest, TagsRequest.class);
-
         // call http request
         NetworkRequest networkRequest = new NetworkRequest(
-                NetworkUrlUtils.INSTANCE.setTagsRequestUrl(_context),
-                Utils.getUserAgent(_context),
-                postData,
-                null);
+            NetworkUrlUtils.INSTANCE.setTagsRequestUrl(_context),
+            Utils.getUserAgent(_context),
+            postData,
+            null);
         networkRequest.executeTask();
     }
 }
