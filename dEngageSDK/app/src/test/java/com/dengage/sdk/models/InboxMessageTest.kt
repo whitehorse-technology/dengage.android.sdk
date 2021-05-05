@@ -15,33 +15,27 @@ class InboxMessageTest {
         val title = "title"
         val message = "message"
         val mediaUrl = "mediaUrl"
-        val androidMediaUrl = "androidMediaUrl"
         val targetUrl = "targetUrl"
-        val androidTargetUrl = "androidTargetUrl"
         val receiveDate = "receiveDate"
         val isClicked = false
         val inboxMessageData = InboxMessageData(
-            title = title,
-            message = message,
-            mediaUrl = mediaUrl,
-            androidMediaUrl = androidMediaUrl,
-            targetUrl = targetUrl,
-            androidTargetUrl = androidTargetUrl,
-            receiveDate = receiveDate
+                title = title,
+                message = message,
+                mediaUrl = mediaUrl,
+                targetUrl = targetUrl,
+                receiveDate = receiveDate
         )
         val inboxMessage = InboxMessage(
-            id = id,
-            isClicked = isClicked,
-            data = inboxMessageData
+                id = id,
+                isClicked = isClicked,
+                data = inboxMessageData
         )
 
         Assert.assertEquals(id, inboxMessage.id)
         Assert.assertEquals(title, inboxMessage.data.title)
         Assert.assertEquals(message, inboxMessage.data.message)
         Assert.assertEquals(mediaUrl, inboxMessage.data.mediaUrl)
-        Assert.assertEquals(androidMediaUrl, inboxMessage.data.androidMediaUrl)
         Assert.assertEquals(targetUrl, inboxMessage.data.targetUrl)
-        Assert.assertEquals(androidTargetUrl, inboxMessage.data.androidTargetUrl)
         Assert.assertEquals(receiveDate, inboxMessage.data.receiveDate)
         Assert.assertEquals(isClicked, inboxMessage.isClicked)
     }
