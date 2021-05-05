@@ -8,8 +8,10 @@ import java.io.Serializable
  */
 class InboxMessageData(
     @SerializedName("title") val title: String?,
-    @SerializedName("message")  val message: String?,
-    @SerializedName("androidMediaUrl") val mediaUrl: String?,
-    @SerializedName("androidTargetUrl") val targetUrl: String?,
-    @SerializedName("receiveDate")  val receiveDate: String?
+    @SerializedName("message") val message: String?,
+    @SerializedName("mediaUrl") var mediaUrl: String?,
+    @SerializedName("androidMediaUrl") val androidMediaUrl: String?,
+    @SerializedName("targetUrl") var targetUrl: String?,
+    @SerializedName("androidTargetUrl") val androidTargetUrl: String?,
+    @SerializedName("receiveDate") val receiveDate: String?
 ) : Serializable
