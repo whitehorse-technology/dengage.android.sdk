@@ -55,11 +55,37 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
         val content = inAppMessage.data.content
         val contentParams = inAppMessage.data.content.params
 
+        setContentPosition(view, contentParams)
         if (content.type == ContentType.HTML.type) {
             setHtmlContent(view, contentParams)
         } else {
             setNativeContent(view, contentParams)
         }
+    }
+
+    private fun setContentPosition(view: View, contentParams: ContentParams) {
+        val cardInAppMessage = view.findViewById<CardView>(R.id.cardInAppMessage)
+        val params = RelativeLayout.LayoutParams(
+            MATCH_PARENT,
+            resources.getDimensionPixelSize(R.dimen.in_app_message_height)
+        )
+        val marginTop = resources.getDimensionPixelSize(R.dimen.in_app_message_margin_top)
+        val marginBottom = resources.getDimensionPixelSize(R.dimen.in_app_message_margin_bottom)
+        val marginStart = resources.getDimensionPixelSize(R.dimen.in_app_message_margin_start)
+        val marginEnd = resources.getDimensionPixelSize(R.dimen.in_app_message_margin_end)
+        params.setMargins(marginStart, marginTop, marginEnd, marginBottom)
+        when (contentParams.position) {
+            ContentPosition.BOTTOM.position -> {
+                params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+            }
+            ContentPosition.MIDDLE.position -> {
+                params.addRule(RelativeLayout.CENTER_VERTICAL)
+            }
+            ContentPosition.TOP.position -> {
+                params.addRule(RelativeLayout.ALIGN_PARENT_TOP)
+            }
+        }
+        cardInAppMessage.layoutParams = params
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -180,28 +206,6 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
                 }
             }).start()
         }
-
-        val params = RelativeLayout.LayoutParams(
-            MATCH_PARENT,
-            resources.getDimensionPixelSize(R.dimen.in_app_message_height)
-        )
-        val marginTop = resources.getDimensionPixelSize(R.dimen.in_app_message_margin_top)
-        val marginBottom = resources.getDimensionPixelSize(R.dimen.in_app_message_margin_bottom)
-        val marginStart = resources.getDimensionPixelSize(R.dimen.in_app_message_margin_start)
-        val marginEnd = resources.getDimensionPixelSize(R.dimen.in_app_message_margin_end)
-        params.setMargins(marginStart, marginTop, marginEnd, marginBottom)
-        when (contentParams.position) {
-            ContentPosition.BOTTOM.position -> {
-                params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
-            }
-            ContentPosition.MIDDLE.position -> {
-                params.addRule(RelativeLayout.CENTER_VERTICAL)
-            }
-            ContentPosition.TOP.position -> {
-                params.addRule(RelativeLayout.ALIGN_PARENT_TOP)
-            }
-        }
-        cardInAppMessage.layoutParams = params
 
         vInAppMessageContainer.setOnClickListener(this)
         cardInAppMessage.setOnClickListener(this)
