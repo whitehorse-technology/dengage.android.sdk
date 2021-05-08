@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.widget.RelativeLayout
 import androidx.appcompat.widget.AppCompatImageView
@@ -17,11 +18,13 @@ import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.DialogFragment
 import com.dengage.sdk.ImageDownloader
+import com.dengage.sdk.NotificationReceiver
 import com.dengage.sdk.R
 import com.dengage.sdk.inappmessage.model.ContentParams
 import com.dengage.sdk.inappmessage.model.ContentPosition
 import com.dengage.sdk.inappmessage.model.ContentType
 import com.dengage.sdk.inappmessage.model.InAppMessage
+import com.dengage.sdk.models.TagItem
 import kotlin.math.roundToInt
 
 /**
@@ -138,7 +141,7 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
             settings.domStorageEnabled = true
             settings.javaScriptEnabled = true
             settings.javaScriptCanOpenWindowsAutomatically = true
-//            addJavascriptInterface(JavaScriptInterface(context), "DengageInterface")
+            addJavascriptInterface(JavaScriptInterface(), "Dn")
         }
     }
 
@@ -244,6 +247,7 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
     interface InAppMessageCallback {
         fun inAppMessageClicked(inAppMessage: InAppMessage)
         fun inAppMessageDismissed(inAppMessage: InAppMessage)
+        fun sendTags(tags: List<TagItem>?)
     }
 
     companion object {
@@ -254,6 +258,38 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
             arguments.putSerializable(EXTRA_IN_APP_MESSAGE, inAppMessage)
             inAppMessageDialog.arguments = arguments
             return inAppMessageDialog
+        }
+    }
+
+    private inner class JavaScriptInterface {
+        @JavascriptInterface
+        fun dismiss() {
+            this@InAppMessageDialog.dismiss()
+            inAppMessageDismissed()
+        }
+
+        @JavascriptInterface
+        fun androidUrl(targetUrl: String) {
+            NotificationReceiver.launchActivity(
+                context,
+                null,
+                targetUrl
+            )
+        }
+
+        @JavascriptInterface
+        fun sendClick(buttonId: String) {
+            // todo add action
+        }
+
+        @JavascriptInterface
+        fun close() {
+            this@InAppMessageDialog.dismiss()
+        }
+
+        @JavascriptInterface
+        fun setTags(tags: List<TagItem>) {
+            inAppMessageCallback?.sendTags(tags)
         }
     }
 

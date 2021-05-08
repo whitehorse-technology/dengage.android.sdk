@@ -2,6 +2,7 @@ package com.dengage.sdk.inappmessage
 
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
+import com.dengage.sdk.DengageManager
 import com.dengage.sdk.Logger
 import com.dengage.sdk.NotificationReceiver
 import com.dengage.sdk.Utils
@@ -11,6 +12,7 @@ import com.dengage.sdk.inappmessage.model.*
 import com.dengage.sdk.inappmessage.utils.InAppMessageUtils
 import com.dengage.sdk.models.DengageError
 import com.dengage.sdk.models.Subscription
+import com.dengage.sdk.models.TagItem
 import com.dengage.sdk.service.NetworkRequest
 import com.dengage.sdk.service.NetworkRequestCallback
 import com.dengage.sdk.service.NetworkUrlUtils
@@ -21,6 +23,7 @@ import java.util.*
  * Created by Batuhan Coskun on 26 December 2020
  */
 class InAppMessageManager(
+    private val dengageManager: DengageManager,
     private val context: Context,
     private var subscription: Subscription,
     private val logger: Logger
@@ -245,6 +248,12 @@ class InAppMessageManager(
         setInAppMessageAsDismissed(
             inAppMessageDetails = inAppMessage.data.messageDetails
         )
+    }
+
+    override fun sendTags(tags: List<TagItem>?) {
+        tags?.let {
+            dengageManager.setTags(tags)
+        }
     }
 
 }

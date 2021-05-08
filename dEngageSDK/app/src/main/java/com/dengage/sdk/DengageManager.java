@@ -141,7 +141,7 @@ public class DengageManager {
     public DengageManager init() {
         try {
             // create in app message manager and start new session
-            inAppMessageManager = new InAppMessageManager(_context, _subscription, logger);
+            inAppMessageManager = new InAppMessageManager(this, _context, _subscription, logger);
 
             if (isGooglePlayServicesAvailable() && isHuaweiMobileServicesAvailable()) {
                 logger.Verbose("Google Play Services and Huawei Mobile Service are available. Firebase services will be used.");
