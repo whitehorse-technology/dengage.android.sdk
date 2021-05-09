@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.widget.RelativeLayout
@@ -58,7 +59,7 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
         val content = inAppMessage.data.content
         val contentParams = inAppMessage.data.content.params
 
-        setContentPosition(view, contentParams)
+        setContentPosition(view, contentParams, content.type)
         if (content.type == ContentType.HTML.type) {
             setHtmlContent(view, contentParams)
         } else {
@@ -66,11 +67,15 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
         }
     }
 
-    private fun setContentPosition(view: View, contentParams: ContentParams) {
+    private fun setContentPosition(
+        view: View, contentParams: ContentParams,
+        contentType: String
+    ) {
         val cardInAppMessage = view.findViewById<CardView>(R.id.cardInAppMessage)
         val params = RelativeLayout.LayoutParams(
             MATCH_PARENT,
-            resources.getDimensionPixelSize(R.dimen.in_app_message_height)
+            if (contentType == ContentType.HTML.type) WRAP_CONTENT
+            else resources.getDimensionPixelSize(R.dimen.in_app_message_height)
         )
         val marginTop = resources.getDimensionPixelSize(R.dimen.in_app_message_margin_top)
         val marginBottom = resources.getDimensionPixelSize(R.dimen.in_app_message_margin_bottom)
@@ -115,7 +120,7 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
         )
 
         // set max width for container
-        contentParams.maxWidth?.let {
+        /*contentParams.maxWidth?.let {
             val params = vHtmlWidthContainer.layoutParams as ConstraintLayout.LayoutParams
             params.matchConstraintMaxWidth = TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP,
@@ -123,7 +128,7 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
                 resources.displayMetrics
             ).roundToInt()
             vHtmlWidthContainer.layoutParams = params
-        }
+        }*/
 
         vHtmlContent.visibility = View.VISIBLE
 
