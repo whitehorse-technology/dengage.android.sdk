@@ -73,7 +73,7 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
     ) {
         val cardInAppMessage = view.findViewById<CardView>(R.id.cardInAppMessage)
         val params = RelativeLayout.LayoutParams(
-            MATCH_PARENT,
+            WRAP_CONTENT,
             if (contentType == ContentType.HTML.type) WRAP_CONTENT
             else resources.getDimensionPixelSize(R.dimen.in_app_message_height)
         )
@@ -82,6 +82,7 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
         val marginStart = resources.getDimensionPixelSize(R.dimen.in_app_message_margin_start)
         val marginEnd = resources.getDimensionPixelSize(R.dimen.in_app_message_margin_end)
         params.setMargins(marginStart, marginTop, marginEnd, marginBottom)
+        params.addRule(RelativeLayout.CENTER_HORIZONTAL)
         when (contentParams.position) {
             ContentPosition.BOTTOM.position -> {
                 params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
@@ -120,7 +121,7 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
         )
 
         // set max width for container
-        /*contentParams.maxWidth?.let {
+        contentParams.maxWidth?.let {
             val params = vHtmlWidthContainer.layoutParams as ConstraintLayout.LayoutParams
             params.matchConstraintMaxWidth = TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP,
@@ -128,7 +129,7 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
                 resources.displayMetrics
             ).roundToInt()
             vHtmlWidthContainer.layoutParams = params
-        }*/
+        }
 
         vHtmlContent.visibility = View.VISIBLE
 

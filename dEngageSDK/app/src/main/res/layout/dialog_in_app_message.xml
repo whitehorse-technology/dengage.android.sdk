@@ -13,15 +13,16 @@
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardInAppMessage"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
             android:layout_margin="30dp"
             app:cardCornerRadius="6dp"
             app:cardElevation="8dp">
 
             <RelativeLayout
                 android:id="@+id/vInAppMessage"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@color/in_app_message_color_background"
                 android:gravity="center_vertical">
@@ -87,7 +88,7 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/vHtmlContent"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:visibility="visible"
@@ -95,7 +96,7 @@
 
                     <RelativeLayout
                         android:id="@+id/vHtmlWidthContainer"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
