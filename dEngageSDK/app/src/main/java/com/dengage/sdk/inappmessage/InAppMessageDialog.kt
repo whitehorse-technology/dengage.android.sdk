@@ -1,7 +1,6 @@
 package com.dengage.sdk.inappmessage
 
 import android.annotation.SuppressLint
-import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Bundle
 import android.util.TypedValue
@@ -13,12 +12,9 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.widget.RelativeLayout
-import androidx.appcompat.widget.AppCompatImageView
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.DialogFragment
-import com.dengage.sdk.ImageDownloader
 import com.dengage.sdk.NotificationReceiver
 import com.dengage.sdk.R
 import com.dengage.sdk.inappmessage.model.ContentParams
@@ -31,7 +27,7 @@ import kotlin.math.roundToInt
 /**
  * Created by Batuhan Coskun on 26 February 2021
  */
-class InAppMessageDialog : DialogFragment(), View.OnClickListener {
+class InAppMessageDialog : DialogFragment() {
 
     private lateinit var inAppMessage: InAppMessage
     private var inAppMessageCallback: InAppMessageCallback? = null
@@ -60,11 +56,7 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
         val contentParams = inAppMessage.data.content.params
 
         setContentPosition(view, contentParams, content.type)
-        if (content.type == ContentType.HTML.type) {
-            setHtmlContent(view, contentParams)
-        } else {
-            setNativeContent(view, contentParams)
-        }
+        setHtmlContent(view, contentParams)
     }
 
     private fun setContentPosition(
@@ -151,92 +143,6 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
         }
     }
 
-    private fun setNativeContent(view: View, contentParams: ContentParams) {
-        val vNativeContent = view.findViewById<View>(R.id.vNativeContent)
-        val tvInAppTitle = view.findViewById<AppCompatTextView>(R.id.tvInAppTitle)
-        val tvInAppMessage = view.findViewById<AppCompatTextView>(R.id.tvInAppMessage)
-        val cardInAppMessageImage = view.findViewById<CardView>(R.id.cardInAppMessageImage)
-        val ivInAppMessage = view.findViewById<AppCompatImageView>(R.id.ivInAppMessage)
-        val cardInAppMessage = view.findViewById<CardView>(R.id.cardInAppMessage)
-        val vInAppMessage = view.findViewById<RelativeLayout>(R.id.vInAppMessage)
-        val vInAppMessageContainer = view.findViewById<RelativeLayout>(R.id.vInAppMessageContainer)
-
-        vNativeContent.visibility = View.VISIBLE
-        tvInAppTitle.visibility = if (contentParams.showTitle == true) View.VISIBLE else View.GONE
-        tvInAppTitle.text = contentParams.title
-        tvInAppMessage.text = contentParams.message
-
-        // set colors
-        try {
-            if (!contentParams.backgroundColor.isNullOrEmpty()) {
-                if (contentParams.backgroundColor.length == 6) {
-                    vInAppMessage.setBackgroundColor(Color.parseColor("#${contentParams.backgroundColor}"))
-                } else if (contentParams.backgroundColor.length == 7 && contentParams.backgroundColor.startsWith("#")) {
-                    vInAppMessage.setBackgroundColor(Color.parseColor(contentParams.backgroundColor))
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-
-        try {
-            if (!contentParams.primaryColor.isNullOrEmpty()) {
-                if (contentParams.primaryColor.length == 6) {
-                    tvInAppTitle.setTextColor(Color.parseColor("#${contentParams.primaryColor}"))
-                } else if (contentParams.primaryColor.length == 7 && contentParams.primaryColor.startsWith("#")) {
-                    tvInAppTitle.setTextColor(Color.parseColor(contentParams.primaryColor))
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-
-        try {
-            if (!contentParams.secondaryColor.isNullOrEmpty()) {
-                if (contentParams.secondaryColor.length == 6) {
-                    tvInAppMessage.setTextColor(Color.parseColor("#${contentParams.secondaryColor}"))
-                } else if (contentParams.secondaryColor.length == 7 && contentParams.secondaryColor.startsWith("#")) {
-                    tvInAppMessage.setTextColor(Color.parseColor(contentParams.secondaryColor))
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-
-        if (contentParams.showImage == true && !contentParams.imageUrl.isNullOrEmpty()) {
-            ImageDownloader(contentParams.imageUrl, object : ImageDownloader.OnImageLoaderListener {
-                override fun onError(error: ImageDownloader.ImageError) {
-                    cardInAppMessageImage.visibility = View.GONE
-                }
-
-                override fun onComplete(bitmap: Bitmap) {
-                    cardInAppMessageImage.visibility = View.VISIBLE
-                    ivInAppMessage.setImageBitmap(bitmap)
-                }
-            }).start()
-        }
-
-        vInAppMessageContainer.setOnClickListener(this)
-        cardInAppMessage.setOnClickListener(this)
-    }
-
-    override fun onClick(v: View?) {
-        when (v?.id) {
-            R.id.vInAppMessageContainer -> {
-                dismiss()
-                inAppMessageDismissed()
-            }
-            R.id.cardInAppMessage -> {
-                dismiss()
-                inAppMessageClicked()
-            }
-        }
-    }
-
-    private fun inAppMessageClicked() {
-        inAppMessageCallback?.inAppMessageClicked(inAppMessage)
-    }
-
     private fun inAppMessageDismissed() {
         inAppMessageCallback?.inAppMessageDismissed(inAppMessage)
     }
@@ -251,7 +157,7 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
     }
 
     interface InAppMessageCallback {
-        fun inAppMessageClicked(inAppMessage: InAppMessage)
+        fun inAppMessageClicked(inAppMessage: InAppMessage, buttonId: String?)
         fun inAppMessageDismissed(inAppMessage: InAppMessage)
         fun sendTags(tags: List<TagItem>?)
     }
@@ -284,8 +190,8 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
         }
 
         @JavascriptInterface
-        fun sendClick(buttonId: String) {
-            // todo add action
+        fun sendClick(buttonId: String?) {
+            inAppMessageCallback?.inAppMessageClicked(inAppMessage, buttonId)
         }
 
         @JavascriptInterface

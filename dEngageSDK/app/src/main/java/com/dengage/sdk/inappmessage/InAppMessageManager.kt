@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import com.dengage.sdk.DengageManager
 import com.dengage.sdk.Logger
-import com.dengage.sdk.NotificationReceiver
 import com.dengage.sdk.Utils
 import com.dengage.sdk.cache.GsonHolder
 import com.dengage.sdk.cache.Prefs
@@ -138,7 +137,9 @@ class InAppMessageManager(
     /**
      * Call service for setting in app message as clicked
      */
-    private fun setInAppMessageAsClicked(inAppMessageId: String, inAppMessageDetails: String?) {
+    private fun setInAppMessageAsClicked(
+        inAppMessageId: String, inAppMessageDetails: String?, buttonId: String?
+    ) {
         // control in app message enabled
         val sdkParameters = prefs.sdkParameters
         if (sdkParameters?.accountName == null || sdkParameters.inAppEnabled == null ||
@@ -152,7 +153,7 @@ class InAppMessageManager(
 
         val networkRequest = NetworkRequest(
             NetworkUrlUtils.getInAppMessageAsClickedRequestUrl(
-                context, inAppMessageDetails,
+                context, inAppMessageDetails, buttonId,
                 sdkParameters.accountName, subscription
             ),
             Utils.getUserAgent(context), null, 5000
@@ -232,15 +233,11 @@ class InAppMessageManager(
         prefs.inAppMessages = inAppMessages
     }
 
-    override fun inAppMessageClicked(inAppMessage: InAppMessage) {
+    override fun inAppMessageClicked(inAppMessage: InAppMessage, buttonId: String?) {
         setInAppMessageAsClicked(
             inAppMessageId = inAppMessage.id,
-            inAppMessageDetails = inAppMessage.data.messageDetails
-        )
-        NotificationReceiver.launchActivity(
-            context,
-            null,
-            inAppMessage.data.content.targetUrl
+            inAppMessageDetails = inAppMessage.data.messageDetails,
+            buttonId = buttonId
         )
     }
 

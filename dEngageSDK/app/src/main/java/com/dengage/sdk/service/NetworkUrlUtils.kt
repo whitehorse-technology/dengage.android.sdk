@@ -143,7 +143,7 @@ object NetworkUrlUtils {
 
     fun getInAppMessageAsClickedRequestUrl(
         context: Context, inAppMessageDetails: String?,
-        accountName: String, subscription: Subscription
+        buttonId: String?, accountName: String, subscription: Subscription
     ): String {
         var baseApiUri = Utils.getMetaData(context, "den_push_api_url")
         if (TextUtils.isEmpty(baseApiUri)) {
@@ -160,8 +160,11 @@ object NetworkUrlUtils {
             .appendQueryParameter("did", subscription.deviceId)
             .appendQueryParameter("type", if (TextUtils.isEmpty(subscription.contactKey)) "d" else "c")
             .appendQueryParameter("message_details", inAppMessageDetails)
-            .build()
-        return uriWithQueryParams.toString()
+
+        if (buttonId != null) {
+            uriWithQueryParams.appendQueryParameter("button_id", buttonId)
+        }
+        return uriWithQueryParams.build().toString()
     }
 
     fun getInAppMessageAsDismissedRequestUrl(
