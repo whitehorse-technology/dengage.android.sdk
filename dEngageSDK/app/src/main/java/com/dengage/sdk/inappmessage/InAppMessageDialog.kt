@@ -297,6 +297,14 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
         fun setTags(tags: List<TagItem>) {
             inAppMessageCallback?.sendTags(tags)
         }
+
+        @JavascriptInterface
+        fun iosUrl(targetUrl: String) {
+        }
+
+        @JavascriptInterface
+        fun promptPushPermission() {
+        }
     }
 
 }
