@@ -1,5 +1,7 @@
 package com.dengage.sdk.inappmessage.utils
 
+import android.content.Context
+import android.util.TypedValue
 import com.dengage.sdk.Constants
 import com.dengage.sdk.Logger
 import com.dengage.sdk.inappmessage.model.InAppMessage
@@ -122,6 +124,14 @@ object InAppMessageUtils {
         return inAppMessage.data.displayTiming.showEveryXMinutes == null ||
             inAppMessage.data.displayTiming.showEveryXMinutes == 0 ||
             inAppMessage.data.nextDisplayTime <= System.currentTimeMillis()
+    }
+
+    fun pxToDp(px: Int?, context: Context): Float {
+        return TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            (px ?: 0).toFloat(),
+            context.resources.displayMetrics
+        )
     }
 
 }

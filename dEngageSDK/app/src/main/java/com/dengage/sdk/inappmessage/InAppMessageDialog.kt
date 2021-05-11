@@ -3,7 +3,6 @@ package com.dengage.sdk.inappmessage
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,15 +18,15 @@ import com.dengage.sdk.NotificationReceiver
 import com.dengage.sdk.R
 import com.dengage.sdk.inappmessage.model.ContentParams
 import com.dengage.sdk.inappmessage.model.ContentPosition
-import com.dengage.sdk.inappmessage.model.ContentType
 import com.dengage.sdk.inappmessage.model.InAppMessage
+import com.dengage.sdk.inappmessage.utils.InAppMessageUtils
 import com.dengage.sdk.models.TagItem
 import kotlin.math.roundToInt
 
 /**
  * Created by Batuhan Coskun on 26 February 2021
  */
-class InAppMessageDialog : DialogFragment() {
+class InAppMessageDialog : DialogFragment(), View.OnClickListener {
 
     private lateinit var inAppMessage: InAppMessage
     private var inAppMessageCallback: InAppMessageCallback? = null
@@ -46,34 +45,37 @@ class InAppMessageDialog : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        dialog?.setCanceledOnTouchOutside(true)
+        inAppMessage = requireArguments().getSerializable(EXTRA_IN_APP_MESSAGE) as InAppMessage
+        val contentParams = inAppMessage.data.content.params
+
+        dialog?.setCanceledOnTouchOutside(
+            inAppMessage.data.content.params.dismissOnTouchOutside ?: true
+        )
         dialog?.setOnCancelListener {
             inAppMessageDismissed()
         }
 
-        inAppMessage = requireArguments().getSerializable(EXTRA_IN_APP_MESSAGE) as InAppMessage
-        val content = inAppMessage.data.content
-        val contentParams = inAppMessage.data.content.params
-
-        setContentPosition(view, contentParams, content.type)
+        setContentPosition(view, contentParams)
         setHtmlContent(view, contentParams)
+
+        view.findViewById<View>(R.id.vInAppMessageContainer).setOnClickListener(this)
+        view.findViewById<View>(R.id.cardInAppMessage).setOnClickListener(this)
     }
 
     private fun setContentPosition(
-        view: View, contentParams: ContentParams,
-        contentType: String
+        view: View, contentParams: ContentParams
     ) {
         val cardInAppMessage = view.findViewById<CardView>(R.id.cardInAppMessage)
         val params = RelativeLayout.LayoutParams(
             WRAP_CONTENT,
-            if (contentType == ContentType.HTML.type) WRAP_CONTENT
-            else resources.getDimensionPixelSize(R.dimen.in_app_message_height)
+            WRAP_CONTENT
         )
-        val marginTop = resources.getDimensionPixelSize(R.dimen.in_app_message_margin_top)
-        val marginBottom = resources.getDimensionPixelSize(R.dimen.in_app_message_margin_bottom)
-        val marginStart = resources.getDimensionPixelSize(R.dimen.in_app_message_margin_start)
-        val marginEnd = resources.getDimensionPixelSize(R.dimen.in_app_message_margin_end)
-        params.setMargins(marginStart, marginTop, marginEnd, marginBottom)
+        params.setMargins(
+            InAppMessageUtils.pxToDp(contentParams.marginLeft, requireContext()).toInt(),
+            InAppMessageUtils.pxToDp(contentParams.marginTop, requireContext()).toInt(),
+            InAppMessageUtils.pxToDp(contentParams.marginRight, requireContext()).toInt(),
+            InAppMessageUtils.pxToDp(contentParams.marginBottom, requireContext()).toInt()
+        )
         params.addRule(RelativeLayout.CENTER_HORIZONTAL)
         when (contentParams.position) {
             ContentPosition.BOTTOM.position -> {
@@ -106,20 +108,12 @@ class InAppMessageDialog : DialogFragment() {
         }
 
         // set radius of card view
-        cardInAppMessage.radius = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
-            (contentParams.radius ?: 0).toFloat(),
-            resources.displayMetrics
-        )
+        cardInAppMessage.radius = InAppMessageUtils.pxToDp(contentParams.radius, requireContext())
 
         // set max width for container
         contentParams.maxWidth?.let {
             val params = vHtmlWidthContainer.layoutParams as ConstraintLayout.LayoutParams
-            params.matchConstraintMaxWidth = TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                it.toFloat(),
-                resources.displayMetrics
-            ).roundToInt()
+            params.matchConstraintMaxWidth = InAppMessageUtils.pxToDp(it, requireContext()).roundToInt()
             vHtmlWidthContainer.layoutParams = params
         }
 
@@ -140,6 +134,20 @@ class InAppMessageDialog : DialogFragment() {
             settings.javaScriptEnabled = true
             settings.javaScriptCanOpenWindowsAutomatically = true
             addJavascriptInterface(JavaScriptInterface(), "Dn")
+        }
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.vInAppMessageContainer -> {
+                if (inAppMessage.data.content.params.dismissOnTouchOutside != false) {
+                    dismiss()
+                    inAppMessageDismissed()
+                }
+            }
+            R.id.cardInAppMessage -> {
+                // ignore
+            }
         }
     }
 
@@ -200,8 +208,8 @@ class InAppMessageDialog : DialogFragment() {
         }
 
         @JavascriptInterface
-        fun setTags(tags: List<TagItem>) {
-            inAppMessageCallback?.sendTags(tags)
+        fun setTags(tags: Array<TagItem>?) {
+//            inAppMessageCallback?.sendTags(tags)
         }
 
         @JavascriptInterface

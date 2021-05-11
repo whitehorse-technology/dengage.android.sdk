@@ -13,18 +13,15 @@ class InAppMessageTest {
         val id = Math.random().toString()
         val contentParams = ContentParams(
             position = ContentPosition.BOTTOM.position,
-            showTitle = true,
-            title = "title",
-            message = "message",
-            showImage = false,
-            imageUrl = null,
-            primaryColor = null,
-            secondaryColor = null,
-            backgroundColor = null,
             shouldAnimate = true,
             html = null,
             maxWidth = null,
-            radius = null
+            radius = null,
+            marginTop = null,
+            marginBottom = null,
+            marginLeft = null,
+            marginRight = null,
+            dismissOnTouchOutside = false
         )
         val content = Content(
             type = ContentType.SMALL.type,
