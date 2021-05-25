@@ -203,6 +203,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         }
 
         if (!TextUtils.isEmpty(message.getMessage())) {
+            notificationBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(message.getMessage()));
             notificationBuilder.setContentText(message.getMessage());
         }
 
