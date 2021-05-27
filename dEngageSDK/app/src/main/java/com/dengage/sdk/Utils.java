@@ -24,6 +24,7 @@ import android.widget.RemoteViews;
 
 import androidx.annotation.Nullable;
 
+import com.dengage.sdk.callback.DengageCallback;
 import com.dengage.sdk.models.CarouselItem;
 
 import java.io.File;
@@ -359,6 +360,42 @@ public class Utils {
             imageDownloader.start();
         } else {
             carouselView.setImageViewBitmap(imageViewId, cachedFileBitmap);
+        }
+    }
+
+    public static void loadCarouselContents(CarouselItem[] carouselItems, DengageCallback<Bitmap[]> dengageCallback) {
+        Bitmap[] bitmaps = new Bitmap[carouselItems.length];
+        loadCarouselContent(carouselItems, 0, bitmaps, dengageCallback);
+    }
+
+    private static void loadCarouselContent(final CarouselItem[] carouselItems, final int position,
+                                            final Bitmap[] bitmaps, final DengageCallback<Bitmap[]> dengageCallback) {
+        if (position >= carouselItems.length) {
+            dengageCallback.onResult(bitmaps);
+            return;
+        }
+        CarouselItem carouselItem = carouselItems[position];
+        Bitmap cachedFileBitmap = loadImageFromStorage(carouselItem.getMediaFileLocation(), carouselItem.getMediaFileName());
+        if (cachedFileBitmap==null) {
+            ImageDownloader imageDownloader = new ImageDownloader(carouselItem.getMediaUrl(),
+                    new ImageDownloader.OnImageLoaderListener() {
+                        @Override
+                        public void onError(ImageDownloader.ImageError error) {
+                            error.printStackTrace();
+                            bitmaps[position] = null;
+                            loadCarouselContent(carouselItems, position + 1, bitmaps, dengageCallback);
+                        }
+
+                        @Override
+                        public void onComplete(Bitmap bitmap) {
+                            bitmaps[position] = bitmap;
+                            loadCarouselContent(carouselItems, position + 1, bitmaps, dengageCallback);
+                        }
+                    });
+            imageDownloader.start();
+        } else {
+            bitmaps[position] = cachedFileBitmap;
+            loadCarouselContent(carouselItems, position + 1, bitmaps, dengageCallback);
         }
     }
 }
