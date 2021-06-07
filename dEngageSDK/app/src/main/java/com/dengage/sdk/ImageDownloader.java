@@ -1,13 +1,13 @@
 package com.dengage.sdk;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
+
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -25,11 +25,12 @@ public class ImageDownloader {
 
     public interface OnImageLoaderListener {
         void onError(ImageError error);
+
         void onComplete(Bitmap bitmap);
     }
 
     public void start() {
-        if(!TextUtils.isEmpty(this.imageUrl)) {
+        if (!TextUtils.isEmpty(this.imageUrl)) {
             download(this.imageUrl);
         } else {
             ImageError error = new ImageError("imageUrl is empty!")
@@ -58,6 +59,8 @@ public class ImageDownloader {
                     if (!this.isCancelled()) {
                         error = new ImageError(e).setErrorCode(ImageError.ERROR_GENERAL_EXCEPTION);
                         this.cancel(true);
+                    } else {
+                        error = new ImageError("Image Download Canceled");
                     }
                 } finally {
                     try {
@@ -70,6 +73,7 @@ public class ImageDownloader {
                         if (is != null)
                             is.close();
                     } catch (Exception e) {
+                        error = new ImageError(e);
                         e.printStackTrace();
                     }
                 }
@@ -84,8 +88,11 @@ public class ImageDownloader {
             @Override
             protected void onPostExecute(Bitmap result) {
                 if (result == null) {
-                    mImageLoaderListener.onError(new ImageError("downloaded file could not be decoded as bitmap")
-                            .setErrorCode(ImageError.ERROR_DECODE_FAILED));
+                    mImageLoaderListener.onError(
+                            error == null ?
+                                    new ImageError("downloaded file could not be decoded as bitmap")
+                                            .setErrorCode(ImageError.ERROR_DECODE_FAILED):error
+                    );
                 } else {
                     mImageLoaderListener.onComplete(result);
                 }
