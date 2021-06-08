@@ -26,6 +26,7 @@ import androidx.annotation.Nullable;
 
 import com.dengage.sdk.callback.DengageCallback;
 import com.dengage.sdk.models.CarouselItem;
+import com.dengage.sdk.models.DengageError;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,7 +45,7 @@ public class Utils {
     public static int getScreenWith(Context context) {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         WindowManager manager = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE));
-        if (manager!=null) {
+        if (manager != null) {
             manager.getDefaultDisplay().getMetrics(displayMetrics);
             return displayMetrics.widthPixels;
         } else {
@@ -55,7 +56,7 @@ public class Utils {
     public static int getScreenHeight(Context context) {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         WindowManager manager = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE));
-        if (manager!=null) {
+        if (manager != null) {
             manager.getDefaultDisplay().getMetrics(displayMetrics);
             return displayMetrics.heightPixels;
         } else {
@@ -110,10 +111,10 @@ public class Utils {
     }
 
     synchronized static String getDeviceId(Context context) {
-        if (installationID==null) {
+        if (installationID == null) {
             SharedPreferences sharedPrefs = context.getSharedPreferences(Constants.DEN_DEVICE_UNIQUE_ID, Context.MODE_PRIVATE);
             installationID = sharedPrefs.getString(Constants.DEN_DEVICE_UNIQUE_ID, null);
-            if (installationID==null) {
+            if (installationID == null) {
                 installationID = UUID.randomUUID().toString();
                 SharedPreferences.Editor editor = sharedPrefs.edit();
                 editor.putString(Constants.DEN_DEVICE_UNIQUE_ID, installationID);
@@ -165,7 +166,7 @@ public class Utils {
         TelephonyManager manager = (TelephonyManager) context
                 .getSystemService(Context.TELEPHONY_SERVICE);
         try {
-            assert manager!=null;
+            assert manager != null;
             manager.getNetworkOperator();
         } catch (Exception ignored) {
         }
@@ -201,13 +202,13 @@ public class Utils {
             lApplicationInfo = lPackageManager.getApplicationInfo(pContext.getApplicationInfo().packageName, 0);
         } catch (PackageManager.NameNotFoundException ignored) {
         }
-        return (String) (lApplicationInfo!=null ? lPackageManager.getApplicationLabel(lApplicationInfo):defaultText);
+        return (String) (lApplicationInfo != null ? lPackageManager.getApplicationLabel(lApplicationInfo):defaultText);
     }
 
     public static Uri getSound(Context context, @Nullable String sound) {
         int id = TextUtils.isEmpty(sound) ? 0
                 :context.getResources().getIdentifier(sound, "raw", context.getPackageName());
-        if (id!=0) {
+        if (id != 0) {
             return Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + "/" + id);
         } else {
             return RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -219,7 +220,7 @@ public class Utils {
 
         if (drawable instanceof BitmapDrawable) {
             BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
-            if (bitmapDrawable.getBitmap()!=null) {
+            if (bitmapDrawable.getBitmap() != null) {
                 return bitmapDrawable.getBitmap();
             }
         }
@@ -253,7 +254,7 @@ public class Utils {
     public static String getApplicationName(Context context) {
         ApplicationInfo applicationInfo = context.getApplicationInfo();
         int stringId = applicationInfo.labelRes;
-        return stringId==0 ? applicationInfo.nonLocalizedLabel.toString():context.getString(stringId);
+        return stringId == 0 ? applicationInfo.nonLocalizedLabel.toString():context.getString(stringId);
     }
 
     public static String saveBitmapToInternalStorage(Context context, Bitmap bitmapImage, String fileName) {
@@ -271,7 +272,7 @@ public class Utils {
             e.printStackTrace();
         } finally {
             try {
-                if (fos!=null)
+                if (fos != null)
                     fos.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -344,7 +345,7 @@ public class Utils {
     public static void loadCarouselImageToView(final RemoteViews carouselView, final int imageViewId,
                                                final CarouselItem carouselItem) {
         Bitmap cachedFileBitmap = loadImageFromStorage(carouselItem.getMediaFileLocation(), carouselItem.getMediaFileName());
-        if (cachedFileBitmap==null) {
+        if (cachedFileBitmap == null) {
             ImageDownloader imageDownloader = new ImageDownloader(carouselItem.getMediaUrl(),
                     new ImageDownloader.OnImageLoaderListener() {
                         @Override
@@ -368,22 +369,29 @@ public class Utils {
         loadCarouselContent(carouselItems, 0, bitmaps, dengageCallback);
     }
 
+    private static int imageDownloadErrorCount = 0;
+
     private static void loadCarouselContent(final CarouselItem[] carouselItems, final int position,
                                             final Bitmap[] bitmaps, final DengageCallback<Bitmap[]> dengageCallback) {
         if (position >= carouselItems.length) {
             dengageCallback.onResult(bitmaps);
             return;
         }
-        CarouselItem carouselItem = carouselItems[position];
+        final CarouselItem carouselItem = carouselItems[position];
+
         Bitmap cachedFileBitmap = loadImageFromStorage(carouselItem.getMediaFileLocation(), carouselItem.getMediaFileName());
-        if (cachedFileBitmap==null) {
+        if (cachedFileBitmap == null) {
             ImageDownloader imageDownloader = new ImageDownloader(carouselItem.getMediaUrl(),
                     new ImageDownloader.OnImageLoaderListener() {
                         @Override
                         public void onError(ImageDownloader.ImageError error) {
-                            error.printStackTrace();
-                            bitmaps[position] = null;
-                            loadCarouselContent(carouselItems, position + 1, bitmaps, dengageCallback);
+                            imageDownloadErrorCount++;
+                            if (imageDownloadErrorCount >= 3) {
+                                dengageCallback.onError(new DengageError("Image download failed " + carouselItem.getMediaUrl()));
+                                imageDownloadErrorCount = 0;
+                            } else {
+                                loadCarouselContent(carouselItems, position, bitmaps, dengageCallback);
+                            }
                         }
 
                         @Override
