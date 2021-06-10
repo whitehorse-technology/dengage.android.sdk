@@ -17,12 +17,15 @@ class InboxMessageDataJsonAdapter : JsonDeserializer<InboxMessageData>, JsonSeri
 
     @Throws(JsonParseException::class)
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): InboxMessageData {
-        return if (json.isJsonObject) {
+        val inboxMessageData = if (json.isJsonObject) {
             Gson().fromJson(json.asJsonObject, InboxMessageData::class.java)
         } else {
             val str: String = json.asJsonPrimitive.asString
             Gson().fromJson(str, InboxMessageData::class.java)
         }
+        inboxMessageData.mediaUrl = inboxMessageData.androidMediaUrl ?: inboxMessageData.mediaUrl
+        inboxMessageData.targetUrl = inboxMessageData.androidTargetUrl ?: inboxMessageData.targetUrl
+        return inboxMessageData
     }
 
     override fun serialize(src: InboxMessageData?, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
