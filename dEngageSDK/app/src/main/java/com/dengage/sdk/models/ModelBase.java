@@ -1,7 +1,6 @@
 package com.dengage.sdk.models;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.dengage.sdk.cache.GsonHolder;
 import com.google.gson.annotations.SerializedName;
 
 public abstract class ModelBase {
@@ -18,9 +17,11 @@ public abstract class ModelBase {
     }
 
     public String toJson() {
-        Gson gson = new GsonBuilder()
-                .serializeNulls()
-                .create();
-        return gson.toJson(this);
+        try {
+            return GsonHolder.INSTANCE.getGson().toJson(this);
+        } catch (IncompatibleClassChangeError e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
