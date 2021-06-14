@@ -29,6 +29,7 @@ object InAppMessageUtils {
         if (inAppMessages == null) return null
         val notExpiredMessages = mutableListOf<InAppMessage>()
         val expireDateFormat = SimpleDateFormat(Constants.DATE_FORMAT, Locale.getDefault())
+        expireDateFormat.timeZone = TimeZone.getTimeZone("UTC")
         for (inAppMessage in inAppMessages) {
             try {
                 val expireDate = expireDateFormat.parse(inAppMessage.data.expireDate)
