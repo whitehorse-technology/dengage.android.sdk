@@ -21,6 +21,9 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.text.TextUtils;
 
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+
 import com.dengage.sdk.models.ActionButton;
 import com.dengage.sdk.models.CarouselItem;
 import com.dengage.sdk.models.Message;
@@ -30,9 +33,6 @@ import java.net.URL;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
-
-import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
 
 public class NotificationReceiver extends BroadcastReceiver {
 
@@ -154,10 +154,8 @@ public class NotificationReceiver extends BroadcastReceiver {
         Intent contentIntent = getContentIntent(extras, packageName);
         Intent deleteIntent = getDeleteIntent(extras, packageName);
 
-        PendingIntent pContentIntent = PendingIntent.getBroadcast(context, contentIntentRequestCode,
-                contentIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        PendingIntent pDeleteIntent = PendingIntent.getBroadcast(context, deleteIntentRequestCode,
-                deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pContentIntent = getPendingIntent(context, contentIntentRequestCode, contentIntent);
+        PendingIntent pDeleteIntent = getPendingIntent(context, deleteIntentRequestCode, deleteIntent);
 
         Uri soundUri = Utils.getSound(context, message.getSound());
         // generate new channel id for different sounds
@@ -222,7 +220,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                 buttonIntent.putExtra("targetUrl", button.getTargetUrl());
                 buttonIntent.putExtra("RAW_DATA", message.toJson());
                 buttonIntent.setPackage(packageName);
-                PendingIntent btnPendingIntent = PendingIntent.getBroadcast(context, requestCode, buttonIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent btnPendingIntent = getPendingIntent(context, requestCode, buttonIntent);
                 int icon = getResourceId(context, button.getIcon());
                 notificationBuilder.addAction(icon, button.getText(), btnPendingIntent);
             }
@@ -487,6 +485,14 @@ public class NotificationReceiver extends BroadcastReceiver {
             }
             e.printStackTrace();
             return 0;
+        }
+    }
+
+    private PendingIntent getPendingIntent(Context context, int requestCode, Intent intent) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            return PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+        } else {
+            return PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         }
     }
 
