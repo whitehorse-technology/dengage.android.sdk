@@ -135,4 +135,8 @@ object InAppMessageUtils {
         )
     }
 
+    fun getPixelsByPercentage(screenSize: Int, margin: Int?): Int {
+        return (screenSize * (margin ?: 0)) / 100
+    }
+
 }

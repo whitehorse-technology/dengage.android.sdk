@@ -1,6 +1,7 @@
 package com.dengage.sdk.inappmessage
 
 import android.annotation.SuppressLint
+import android.content.res.Resources
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -70,11 +71,13 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
             WRAP_CONTENT,
             WRAP_CONTENT
         )
+        val screenWidth = Resources.getSystem().displayMetrics.widthPixels
+        val screenHeight = Resources.getSystem().displayMetrics.heightPixels
         params.setMargins(
-            InAppMessageUtils.pxToDp(contentParams.marginLeft, requireContext()).toInt(),
-            InAppMessageUtils.pxToDp(contentParams.marginTop, requireContext()).toInt(),
-            InAppMessageUtils.pxToDp(contentParams.marginRight, requireContext()).toInt(),
-            InAppMessageUtils.pxToDp(contentParams.marginBottom, requireContext()).toInt()
+            InAppMessageUtils.getPixelsByPercentage(screenWidth, contentParams.marginLeft),
+            InAppMessageUtils.getPixelsByPercentage(screenHeight, contentParams.marginTop),
+            InAppMessageUtils.getPixelsByPercentage(screenWidth, contentParams.marginRight),
+            InAppMessageUtils.getPixelsByPercentage(screenHeight, contentParams.marginBottom)
         )
         params.addRule(RelativeLayout.CENTER_HORIZONTAL)
         when (contentParams.position) {
