@@ -18,9 +18,6 @@ import com.dengage.sdk.service.NetworkUrlUtils
 import com.google.gson.reflect.TypeToken
 import java.util.*
 
-/**
- * Created by Batuhan Coskun on 26 December 2020
- */
 class InAppMessageManager(
     private val dengageManager: DengageManager,
     private val context: Context,
@@ -80,41 +77,38 @@ class InAppMessageManager(
                 subscription
             ),
             Utils.getUserAgent(context), object : NetworkRequestCallback {
-            override fun responseFetched(response: String?) {
-                logger.Error("in app messages response fetched: $response")
+                override fun responseFetched(response: String?) {
+                    logger.Error("in app messages response fetched: $response")
 
-                val listType = object : TypeToken<MutableList<InAppMessage>>() {}.type
-                val fetchedInAppMessages = try {
-                    GsonHolder.gson.fromJson<MutableList<InAppMessage>>(response, listType)
-                } catch (e: Exception) {
-                    logger.Error("in app messages response error: ${e.message}")
-                    null
-                }
-
-                if (!fetchedInAppMessages.isNullOrEmpty()) {
-                    // get existing in app messages and save with fetched in app messages
-                    var existingInAppMessages = prefs.inAppMessages
-                    if (existingInAppMessages == null) {
-                        existingInAppMessages = mutableListOf()
+                    val listType = object : TypeToken<MutableList<InAppMessage>>() {}.type
+                    val fetchedInAppMessages = try {
+                        GsonHolder.gson.fromJson<MutableList<InAppMessage>>(response, listType)
+                    } catch (e: Exception) {
+                        logger.Error("in app messages response error: ${e.message}")
+                        null
                     }
-                    existingInAppMessages.addAll(fetchedInAppMessages)
 
-                    prefs.inAppMessages = existingInAppMessages
+                    if (!fetchedInAppMessages.isNullOrEmpty()) {
+                        // get existing in app messages and save with fetched in app messages
+                        var existingInAppMessages = prefs.inAppMessages
+                        if (existingInAppMessages == null) {
+                            existingInAppMessages = mutableListOf()
+                        }
+                        existingInAppMessages.addAll(fetchedInAppMessages)
+
+                        prefs.inAppMessages = existingInAppMessages
+                    }
                 }
-            }
 
-            override fun requestError(error: DengageError) {
-                logger.Error("in app messages request error: ${error.errorMessage}")
-                prefs.inAppMessageFetchTime = System.currentTimeMillis()
-            }
-        }, 5000
+                override fun requestError(error: DengageError) {
+                    logger.Error("in app messages request error: ${error.errorMessage}")
+                    prefs.inAppMessageFetchTime = System.currentTimeMillis()
+                }
+            }, 5000
         )
         networkRequest.executeTask()
     }
 
-    /**
-     * Call service for setting in app message as displayed
-     */
     private fun setInAppMessageAsDisplayed(inAppMessageDetails: String?) {
         // control in app message enabled
         val sdkParameters = prefs.sdkParameters
@@ -134,9 +128,6 @@ class InAppMessageManager(
         networkRequest.executeTask()
     }
 
-    /**
-     * Call service for setting in app message as clicked
-     */
     private fun setInAppMessageAsClicked(
         inAppMessageId: String, inAppMessageDetails: String?, buttonId: String?
     ) {
@@ -192,7 +183,8 @@ class InAppMessageManager(
         )
 
         if (inAppMessage.data.displayTiming.showEveryXMinutes != null &&
-            inAppMessage.data.displayTiming.showEveryXMinutes != 0) {
+            inAppMessage.data.displayTiming.showEveryXMinutes != 0
+        ) {
             inAppMessage.data.nextDisplayTime = System.currentTimeMillis() +
                 inAppMessage.data.displayTiming.showEveryXMinutes * 60000L
             updateInAppMessageOnCache(inAppMessage)

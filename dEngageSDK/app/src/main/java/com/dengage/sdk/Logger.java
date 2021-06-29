@@ -8,7 +8,7 @@ public class Logger {
 
     private static Logger _instance = null;
 
-    static Logger getInstance() {
+    public static Logger getInstance() {
         if(_instance == null) _instance = new Logger();
         return _instance;
     }
@@ -41,7 +41,7 @@ public class Logger {
         }
     }
 
-    void Verbose(String message) {
+    public void Verbose(String message) {
         if (status) {
             Log.v(Constants.LOG_TAG, message);
         }

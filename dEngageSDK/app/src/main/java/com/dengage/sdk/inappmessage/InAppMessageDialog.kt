@@ -15,6 +15,7 @@ import android.widget.RelativeLayout
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.DialogFragment
+import com.dengage.sdk.Logger
 import com.dengage.sdk.NotificationReceiver
 import com.dengage.sdk.R
 import com.dengage.sdk.inappmessage.model.ContentParams
@@ -24,13 +25,11 @@ import com.dengage.sdk.inappmessage.utils.InAppMessageUtils
 import com.dengage.sdk.models.TagItem
 import kotlin.math.roundToInt
 
-/**
- * Created by Batuhan Coskun on 26 February 2021
- */
 class InAppMessageDialog : DialogFragment(), View.OnClickListener {
 
     private lateinit var inAppMessage: InAppMessage
     private var inAppMessageCallback: InAppMessageCallback? = null
+    private val logger = Logger.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -163,13 +162,27 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
         super.onDestroy()
     }
 
+    /**
+    Set in app message callback for handling in app message actions
+     */
     fun setInAppMessageCallback(inAppMessageCallback: InAppMessageCallback) {
         this.inAppMessageCallback = inAppMessageCallback
     }
 
     interface InAppMessageCallback {
+        /**
+        Clicked in app message
+         */
         fun inAppMessageClicked(inAppMessage: InAppMessage, buttonId: String?)
+
+        /**
+        Dismissed in app message
+         */
         fun inAppMessageDismissed(inAppMessage: InAppMessage)
+
+        /**
+        Send tags method for using from webview javascript interface
+         */
         fun sendTags(tags: List<TagItem>?)
     }
 
@@ -187,12 +200,14 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
     private inner class JavaScriptInterface {
         @JavascriptInterface
         fun dismiss() {
+            logger.Verbose("In app message: dismiss event")
             this@InAppMessageDialog.dismiss()
             inAppMessageDismissed()
         }
 
         @JavascriptInterface
         fun androidUrl(targetUrl: String) {
+            logger.Verbose("In app message: android target url event $targetUrl")
             NotificationReceiver.launchActivity(
                 context,
                 null,
@@ -202,25 +217,30 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
 
         @JavascriptInterface
         fun sendClick(buttonId: String?) {
+            logger.Verbose("In app message: clicked button $buttonId")
             inAppMessageCallback?.inAppMessageClicked(inAppMessage, buttonId)
         }
 
         @JavascriptInterface
         fun close() {
+            logger.Verbose("In app message: close event")
             this@InAppMessageDialog.dismiss()
         }
 
         @JavascriptInterface
-        fun setTags(tags: Array<TagItem>?) {
+        fun setTags() {
+            logger.Verbose("In app message: set tags event")
 //            inAppMessageCallback?.sendTags(tags)
         }
 
         @JavascriptInterface
         fun iosUrl(targetUrl: String) {
+            logger.Verbose("In app message: ios target url event $targetUrl")
         }
 
         @JavascriptInterface
         fun promptPushPermission() {
+            logger.Verbose("In app message: prompt push permission event")
         }
     }
 
