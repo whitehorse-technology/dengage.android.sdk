@@ -7,54 +7,58 @@ import com.dengage.sdk.inappmessage.model.*
  */
 object InAppMessageMocker {
 
-    fun createInAppMessage(id: String, priority: Priority, expireDate: String,
-                           screenName: String? = null, operator: Operator? = null): InAppMessage {
+    fun createInAppMessage(
+        id: String, priority: Priority, expireDate: String,
+        screenName: String? = null, operator: Operator? = null
+    ): InAppMessage {
         val contentParams = ContentParams(
-                position = ContentPosition.BOTTOM.position,
-                showTitle = true,
-                title = "title",
-                message = "message",
-                showImage = false,
-                imageUrl = null,
-                primaryColor = null,
-                secondaryColor = null,
-                backgroundColor = null,
-                shouldAnimate = true
+            position = ContentPosition.BOTTOM.position,
+            shouldAnimate = true,
+            html = null,
+            maxWidth = null,
+            radius = null,
+            marginTop = null,
+            marginBottom = null,
+            marginLeft = null,
+            marginRight = null,
+            dismissOnTouchOutside = false
         )
         val content = Content(
-                type = ContentType.SMALL.type,
-                targetUrl = null,
-                params = contentParams
+            type = ContentType.SMALL.type,
+            targetUrl = null,
+            params = contentParams
         )
 
         val displayCondition = DisplayCondition(
-                screenNameFilters = if (screenName != null && operator != null) listOf(ScreenNameFilter(
-                        value = listOf(screenName),
-                        operator = operator.operator
-                ))
-                else null,
-                screenDataFilters = null
+            screenNameFilters = if (screenName != null && operator != null) listOf(
+                ScreenNameFilter(
+                    value = listOf(screenName),
+                    operator = operator.operator
+                )
+            )
+            else null,
+            screenDataFilters = null
         )
         val displayTiming = DisplayTiming(
-                triggerBy = TriggerBy.NAVIGATION.triggerBy,
-                delay = 10,
-                showEveryXMinutes = 5
+            triggerBy = TriggerBy.NAVIGATION.triggerBy,
+            delay = 10,
+            showEveryXMinutes = 5
         )
         val inAppMessageData = InAppMessageData(
-                messageId = Math.random().toString(),
-                messageDetails = "messageDetails",
-                expireDate = expireDate,
-                priority = priority.priority,
-                dengageSendId = Math.random().toInt(),
-                dengageCampId = Math.random().toInt(),
-                content = content,
-                displayCondition = displayCondition,
-                displayTiming = displayTiming
+            messageId = Math.random().toString(),
+            messageDetails = "messageDetails",
+            expireDate = expireDate,
+            priority = priority.priority,
+            dengageSendId = Math.random().toInt(),
+            dengageCampId = Math.random().toInt(),
+            content = content,
+            displayCondition = displayCondition,
+            displayTiming = displayTiming
         )
 
         return InAppMessage(
-                id = id,
-                data = inAppMessageData
+            id = id,
+            data = inAppMessageData
         )
     }
 

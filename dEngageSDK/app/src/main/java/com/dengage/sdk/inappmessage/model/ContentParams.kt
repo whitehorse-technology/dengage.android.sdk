@@ -7,14 +7,14 @@ import java.io.Serializable
  * Created by Batuhan Coskun on 26 December 2020
  */
 class ContentParams(
-        @SerializedName("position") val position: String,
-        @SerializedName("showTitle") val showTitle: Boolean,
-        @SerializedName("title") val title: String?,
-        @SerializedName("message") val message: String?,
-        @SerializedName("showImage") val showImage: Boolean,
-        @SerializedName("imageUrl") val imageUrl: String?,
-        @SerializedName("primaryColor") val primaryColor: String?,
-        @SerializedName("secondaryColor") val secondaryColor: String?,
-        @SerializedName("backgroundColor") val backgroundColor: String?,
-        @SerializedName("shouldAnimate") val shouldAnimate: Boolean
+    @SerializedName("position") val position: String,
+    @SerializedName("shouldAnimate") val shouldAnimate: Boolean,
+    @SerializedName("html") val html: String?,
+    @SerializedName("maxWidth") val maxWidth: Int?,
+    @SerializedName("radius") val radius: Int?,
+    @SerializedName("marginTop") val marginTop: Int?,
+    @SerializedName("marginBottom") val marginBottom: Int?,
+    @SerializedName("marginLeft") val marginLeft: Int?,
+    @SerializedName("marginRight") val marginRight: Int?,
+    @SerializedName("dismissOnTouchOutside") val dismissOnTouchOutside: Boolean?
 ) : Serializable

@@ -1,5 +1,7 @@
 package com.dengage.sdk.inappmessage.utils
 
+import android.content.Context
+import android.util.TypedValue
 import com.dengage.sdk.Constants
 import com.dengage.sdk.Logger
 import com.dengage.sdk.inappmessage.model.InAppMessage
@@ -20,13 +22,14 @@ object InAppMessageUtils {
      * @param inAppMessages in app messages that will be filtered with expire date
      */
     fun findNotExpiredInAppMessages(
-            logger: Logger?,
-            untilDate: Date,
-            inAppMessages: List<InAppMessage>?
+        logger: Logger?,
+        untilDate: Date,
+        inAppMessages: List<InAppMessage>?
     ): MutableList<InAppMessage>? {
         if (inAppMessages == null) return null
         val notExpiredMessages = mutableListOf<InAppMessage>()
         val expireDateFormat = SimpleDateFormat(Constants.DATE_FORMAT, Locale.getDefault())
+        expireDateFormat.timeZone = TimeZone.getTimeZone("UTC")
         for (inAppMessage in inAppMessages) {
             try {
                 val expireDate = expireDateFormat.parse(inAppMessage.data.expireDate)
@@ -45,8 +48,8 @@ object InAppMessageUtils {
      * Find prior in app message to show with respect to priority and expireDate parameters
      */
     fun findPriorInAppMessage(
-            inAppMessages: List<InAppMessage>,
-            screenName: String? = null
+        inAppMessages: List<InAppMessage>,
+        screenName: String? = null
     ): InAppMessage? {
         // sort list with comparator
         val sortedInAppMessages = inAppMessages.sortedWith(InAppMessageComparator())
@@ -57,30 +60,30 @@ object InAppMessageUtils {
         // Also control nextDisplayTime for showEveryXMinutes type in app messages
         val inAppMessageWithoutScreenName = sortedInAppMessages.firstOrNull { inAppMessage: InAppMessage ->
             inAppMessage.data.displayTiming.triggerBy != TriggerBy.EVENT.triggerBy &&
-                    inAppMessage.data.displayCondition.screenNameFilters.isNullOrEmpty() &&
-                    isDisplayTimeAvailable(inAppMessage)
+                inAppMessage.data.displayCondition.screenNameFilters.isNullOrEmpty() &&
+                isDisplayTimeAvailable(inAppMessage)
         }
         return if (screenName.isNullOrEmpty()) {
             inAppMessageWithoutScreenName
         } else {
             val inAppMessageWithScreenName = sortedInAppMessages.firstOrNull { inAppMessage: InAppMessage ->
                 inAppMessage.data.displayTiming.triggerBy != TriggerBy.EVENT.triggerBy &&
-                        inAppMessage.data.displayCondition.screenNameFilters?.firstOrNull { screenNameFilter ->
-                            operateScreenValues(
-                                    screenNameFilter.value,
-                                    screenName,
-                                    screenNameFilter.operator
-                            )
-                        } != null && isDisplayTimeAvailable(inAppMessage)
+                    inAppMessage.data.displayCondition.screenNameFilters?.firstOrNull { screenNameFilter ->
+                        operateScreenValues(
+                            screenNameFilter.value,
+                            screenName,
+                            screenNameFilter.operator
+                        )
+                    } != null && isDisplayTimeAvailable(inAppMessage)
             }
             inAppMessageWithScreenName ?: inAppMessageWithoutScreenName
         }
     }
 
     fun operateScreenValues(
-            screenNameFilterValue: List<String>,
-            screenName: String,
-            operator: String
+        screenNameFilterValue: List<String>,
+        screenName: String,
+        operator: String
     ): Boolean {
         val screenNameFilterValueSafe = screenNameFilterValue.firstOrNull() ?: ""
         when (operator) {
@@ -120,8 +123,20 @@ object InAppMessageUtils {
 
     private fun isDisplayTimeAvailable(inAppMessage: InAppMessage): Boolean {
         return inAppMessage.data.displayTiming.showEveryXMinutes == null ||
-                inAppMessage.data.displayTiming.showEveryXMinutes == 0 ||
-                inAppMessage.data.nextDisplayTime <= System.currentTimeMillis()
+            inAppMessage.data.displayTiming.showEveryXMinutes == 0 ||
+            inAppMessage.data.nextDisplayTime <= System.currentTimeMillis()
+    }
+
+    fun pxToDp(px: Int?, context: Context): Float {
+        return TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            (px ?: 0).toFloat(),
+            context.resources.displayMetrics
+        )
+    }
+
+    fun getPixelsByPercentage(screenSize: Int, margin: Int?): Int {
+        return (screenSize * (margin ?: 0)) / 100
     }
 
 }

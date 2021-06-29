@@ -18,42 +18,42 @@ class InAppMessageDataTest {
         val dengageCampId = Math.random().toInt()
 
         val contentParams = ContentParams(
-                position = ContentPosition.BOTTOM.position,
-                showTitle = true,
-                title = "title",
-                message = "message",
-                showImage = false,
-                imageUrl = null,
-                primaryColor = null,
-                secondaryColor = null,
-                backgroundColor = null,
-                shouldAnimate = true
+            position = ContentPosition.BOTTOM.position,
+            shouldAnimate = true,
+            html = null,
+            maxWidth = null,
+            radius = null,
+            marginTop = null,
+            marginBottom = null,
+            marginLeft = null,
+            marginRight = null,
+            dismissOnTouchOutside = false
         )
         val content = Content(
-                type = ContentType.SMALL.type,
-                targetUrl = null,
-                params = contentParams
+            type = ContentType.SMALL.type,
+            targetUrl = null,
+            params = contentParams
         )
 
         val displayCondition = DisplayCondition(
-                screenNameFilters = null,
-                screenDataFilters = null
+            screenNameFilters = null,
+            screenDataFilters = null
         )
         val displayTiming = DisplayTiming(
-                triggerBy = TriggerBy.NAVIGATION.triggerBy,
-                delay = 10,
-                showEveryXMinutes = 5
+            triggerBy = TriggerBy.NAVIGATION.triggerBy,
+            delay = 10,
+            showEveryXMinutes = 5
         )
         val inAppMessageData = InAppMessageData(
-                messageId = messageId,
-                messageDetails = messageDetails,
-                expireDate = expireDate,
-                priority = priority,
-                dengageSendId = dengageSendId,
-                dengageCampId = dengageCampId,
-                content = content,
-                displayCondition = displayCondition,
-                displayTiming = displayTiming
+            messageId = messageId,
+            messageDetails = messageDetails,
+            expireDate = expireDate,
+            priority = priority,
+            dengageSendId = dengageSendId,
+            dengageCampId = dengageCampId,
+            content = content,
+            displayCondition = displayCondition,
+            displayTiming = displayTiming
         )
 
         Assert.assertEquals(messageId, inAppMessageData.messageId)

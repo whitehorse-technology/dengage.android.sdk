@@ -13,21 +13,21 @@ class ContentTest {
         val contentType = ContentType.SMALL.type
         val targetUrl = "targetUrl"
         val contentParams = ContentParams(
-                position = ContentPosition.BOTTOM.position,
-                showTitle = true,
-                title = "title",
-                message = "message",
-                showImage = false,
-                imageUrl = null,
-                primaryColor = null,
-                secondaryColor = null,
-                backgroundColor = null,
-                shouldAnimate = true
+            position = ContentPosition.BOTTOM.position,
+            shouldAnimate = true,
+            html = null,
+            maxWidth = null,
+            radius = null,
+            marginTop = null,
+            marginBottom = null,
+            marginLeft = null,
+            marginRight = null,
+            dismissOnTouchOutside = false
         )
         val content = Content(
-                type = contentType,
-                targetUrl = targetUrl,
-                params = contentParams
+            type = contentType,
+            targetUrl = targetUrl,
+            params = contentParams
         )
         Assert.assertEquals(contentType, content.type)
         Assert.assertEquals(targetUrl, content.targetUrl)

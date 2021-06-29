@@ -1,29 +1,35 @@
 package com.dengage.sdk.inappmessage
 
-import android.graphics.Bitmap
+import android.annotation.SuppressLint
+import android.content.res.Resources
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.webkit.JavascriptInterface
+import android.webkit.WebView
 import android.widget.RelativeLayout
-import androidx.appcompat.widget.AppCompatImageView
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.DialogFragment
-import com.dengage.sdk.ImageDownloader
+import com.dengage.sdk.Logger
+import com.dengage.sdk.NotificationReceiver
 import com.dengage.sdk.R
+import com.dengage.sdk.inappmessage.model.ContentParams
 import com.dengage.sdk.inappmessage.model.ContentPosition
 import com.dengage.sdk.inappmessage.model.InAppMessage
+import com.dengage.sdk.inappmessage.utils.InAppMessageUtils
+import com.dengage.sdk.models.TagItem
+import kotlin.math.roundToInt
 
-/**
- * Created by Batuhan Coskun on 26 February 2021
- */
 class InAppMessageDialog : DialogFragment(), View.OnClickListener {
 
     private lateinit var inAppMessage: InAppMessage
     private var inAppMessageCallback: InAppMessageCallback? = null
+    private val logger = Logger.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,92 +37,48 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         return inflater.inflate(R.layout.dialog_in_app_message, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        dialog?.setCanceledOnTouchOutside(true)
+        inAppMessage = requireArguments().getSerializable(EXTRA_IN_APP_MESSAGE) as InAppMessage
+        val contentParams = inAppMessage.data.content.params
+
+        dialog?.setCanceledOnTouchOutside(
+            inAppMessage.data.content.params.dismissOnTouchOutside ?: true
+        )
         dialog?.setOnCancelListener {
             inAppMessageDismissed()
         }
 
-        val tvInAppTitle = view.findViewById<AppCompatTextView>(R.id.tvInAppTitle)
-        val tvInAppMessage = view.findViewById<AppCompatTextView>(R.id.tvInAppMessage)
-        val cardInAppMessageImage = view.findViewById<CardView>(R.id.cardInAppMessageImage)
-        val ivInAppMessage = view.findViewById<AppCompatImageView>(R.id.ivInAppMessage)
+        setContentPosition(view, contentParams)
+        setHtmlContent(view, contentParams)
+
+        view.findViewById<View>(R.id.vInAppMessageContainer).setOnClickListener(this)
+        view.findViewById<View>(R.id.cardInAppMessage).setOnClickListener(this)
+    }
+
+    private fun setContentPosition(
+        view: View, contentParams: ContentParams
+    ) {
         val cardInAppMessage = view.findViewById<CardView>(R.id.cardInAppMessage)
-        val vInAppMessage = view.findViewById<RelativeLayout>(R.id.vInAppMessage)
-        val vInAppMessageContainer = view.findViewById<RelativeLayout>(R.id.vInAppMessageContainer)
-
-        inAppMessage = requireArguments().getSerializable(EXTRA_IN_APP_MESSAGE) as InAppMessage
-        val contentParams = inAppMessage.data.content.params
-        tvInAppTitle.visibility = if (contentParams.showTitle) View.VISIBLE else View.GONE
-        tvInAppTitle.text = contentParams.title
-        tvInAppMessage.text = contentParams.message
-
-        // set colors
-        try {
-            if (!contentParams.backgroundColor.isNullOrEmpty()) {
-                if (contentParams.backgroundColor.length == 6) {
-                    vInAppMessage.setBackgroundColor(Color.parseColor("#${contentParams.backgroundColor}"))
-                } else if (contentParams.backgroundColor.length == 7 && contentParams.backgroundColor.startsWith("#")) {
-                    vInAppMessage.setBackgroundColor(Color.parseColor(contentParams.backgroundColor))
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-
-        try {
-            if (!contentParams.primaryColor.isNullOrEmpty()) {
-                if (contentParams.primaryColor.length == 6) {
-                    tvInAppTitle.setTextColor(Color.parseColor("#${contentParams.primaryColor}"))
-                } else if (contentParams.primaryColor.length == 7 && contentParams.primaryColor.startsWith("#")) {
-                    tvInAppTitle.setTextColor(Color.parseColor(contentParams.primaryColor))
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-
-        try {
-            if (!contentParams.secondaryColor.isNullOrEmpty()) {
-                if (contentParams.secondaryColor.length == 6) {
-                    tvInAppMessage.setTextColor(Color.parseColor("#${contentParams.secondaryColor}"))
-                } else if (contentParams.secondaryColor.length == 7 && contentParams.secondaryColor.startsWith("#")) {
-                    tvInAppMessage.setTextColor(Color.parseColor(contentParams.secondaryColor))
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-
-        if (contentParams.showImage && !contentParams.imageUrl.isNullOrEmpty()) {
-            ImageDownloader(contentParams.imageUrl, object : ImageDownloader.OnImageLoaderListener {
-                override fun onError(error: ImageDownloader.ImageError) {
-                    cardInAppMessageImage.visibility = View.GONE
-                }
-
-                override fun onComplete(bitmap: Bitmap) {
-                    cardInAppMessageImage.visibility = View.VISIBLE
-                    ivInAppMessage.setImageBitmap(bitmap)
-                }
-            }).start()
-        }
-
         val params = RelativeLayout.LayoutParams(
-                MATCH_PARENT,
-                resources.getDimensionPixelSize(R.dimen.in_app_message_height)
+            WRAP_CONTENT,
+            WRAP_CONTENT
         )
-        val marginTop = resources.getDimensionPixelSize(R.dimen.in_app_message_margin_top)
-        val marginBottom = resources.getDimensionPixelSize(R.dimen.in_app_message_margin_bottom)
-        val marginStart = resources.getDimensionPixelSize(R.dimen.in_app_message_margin_start)
-        val marginEnd = resources.getDimensionPixelSize(R.dimen.in_app_message_margin_end)
-        params.setMargins(marginStart, marginTop, marginEnd, marginBottom)
+        val screenWidth = Resources.getSystem().displayMetrics.widthPixels
+        val screenHeight = Resources.getSystem().displayMetrics.heightPixels
+        params.setMargins(
+            InAppMessageUtils.getPixelsByPercentage(screenWidth, contentParams.marginLeft),
+            InAppMessageUtils.getPixelsByPercentage(screenHeight, contentParams.marginTop),
+            InAppMessageUtils.getPixelsByPercentage(screenWidth, contentParams.marginRight),
+            InAppMessageUtils.getPixelsByPercentage(screenHeight, contentParams.marginBottom)
+        )
+        params.addRule(RelativeLayout.CENTER_HORIZONTAL)
         when (contentParams.position) {
             ContentPosition.BOTTOM.position -> {
                 params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
@@ -129,26 +91,66 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
             }
         }
         cardInAppMessage.layoutParams = params
+    }
 
-        vInAppMessageContainer.setOnClickListener(this)
-        cardInAppMessage.setOnClickListener(this)
+    @SuppressLint("SetJavaScriptEnabled")
+    private fun setHtmlContent(view: View, contentParams: ContentParams) {
+        val vHtmlContent = view.findViewById<View>(R.id.vHtmlContent)
+        val webView = view.findViewById<WebView>(R.id.webView)
+        val vHtmlWidthContainer = view.findViewById<RelativeLayout>(R.id.vHtmlWidthContainer)
+        val cardInAppMessage = view.findViewById<CardView>(R.id.cardInAppMessage)
+
+        // set height for content type full
+        if (contentParams.position == ContentPosition.FULL.position) {
+            val params = RelativeLayout.LayoutParams(
+                MATCH_PARENT,
+                MATCH_PARENT
+            )
+            webView.layoutParams = params
+        }
+
+        // set radius of card view
+        cardInAppMessage.radius = InAppMessageUtils.pxToDp(contentParams.radius, requireContext())
+
+        // set max width for container
+        contentParams.maxWidth?.let {
+            val params = vHtmlWidthContainer.layoutParams as ConstraintLayout.LayoutParams
+            params.matchConstraintMaxWidth = InAppMessageUtils.pxToDp(it, requireContext()).roundToInt()
+            vHtmlWidthContainer.layoutParams = params
+        }
+
+        vHtmlContent.visibility = View.VISIBLE
+
+        webView.apply {
+            loadDataWithBaseURL(
+                null,
+                contentParams.html, "text/html", "UTF-8", null
+            )
+            settings.loadWithOverviewMode = true
+            settings.useWideViewPort = true
+            settings.displayZoomControls = false
+            settings.builtInZoomControls = true
+            settings.setSupportZoom(true)
+            setBackgroundColor(Color.TRANSPARENT)
+            settings.domStorageEnabled = true
+            settings.javaScriptEnabled = true
+            settings.javaScriptCanOpenWindowsAutomatically = true
+            addJavascriptInterface(JavaScriptInterface(), "Dn")
+        }
     }
 
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.vInAppMessageContainer -> {
-                dismiss()
-                inAppMessageDismissed()
+                if (inAppMessage.data.content.params.dismissOnTouchOutside != false) {
+                    dismiss()
+                    inAppMessageDismissed()
+                }
             }
             R.id.cardInAppMessage -> {
-                dismiss()
-                inAppMessageClicked()
+                // ignore
             }
         }
-    }
-
-    private fun inAppMessageClicked() {
-        inAppMessageCallback?.inAppMessageClicked(inAppMessage)
     }
 
     private fun inAppMessageDismissed() {
@@ -160,13 +162,28 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
         super.onDestroy()
     }
 
+    /**
+    Set in app message callback for handling in app message actions
+     */
     fun setInAppMessageCallback(inAppMessageCallback: InAppMessageCallback) {
         this.inAppMessageCallback = inAppMessageCallback
     }
 
     interface InAppMessageCallback {
-        fun inAppMessageClicked(inAppMessage: InAppMessage)
+        /**
+        Clicked in app message
+         */
+        fun inAppMessageClicked(inAppMessage: InAppMessage, buttonId: String?)
+
+        /**
+        Dismissed in app message
+         */
         fun inAppMessageDismissed(inAppMessage: InAppMessage)
+
+        /**
+        Send tags method for using from webview javascript interface
+         */
+        fun sendTags(tags: List<TagItem>?)
     }
 
     companion object {
@@ -177,6 +194,53 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
             arguments.putSerializable(EXTRA_IN_APP_MESSAGE, inAppMessage)
             inAppMessageDialog.arguments = arguments
             return inAppMessageDialog
+        }
+    }
+
+    private inner class JavaScriptInterface {
+        @JavascriptInterface
+        fun dismiss() {
+            logger.Verbose("In app message: dismiss event")
+            this@InAppMessageDialog.dismiss()
+            inAppMessageDismissed()
+        }
+
+        @JavascriptInterface
+        fun androidUrl(targetUrl: String) {
+            logger.Verbose("In app message: android target url event $targetUrl")
+            NotificationReceiver.launchActivity(
+                context,
+                null,
+                targetUrl
+            )
+        }
+
+        @JavascriptInterface
+        fun sendClick(buttonId: String?) {
+            logger.Verbose("In app message: clicked button $buttonId")
+            inAppMessageCallback?.inAppMessageClicked(inAppMessage, buttonId)
+        }
+
+        @JavascriptInterface
+        fun close() {
+            logger.Verbose("In app message: close event")
+            this@InAppMessageDialog.dismiss()
+        }
+
+        @JavascriptInterface
+        fun setTags() {
+            logger.Verbose("In app message: set tags event")
+//            inAppMessageCallback?.sendTags(tags)
+        }
+
+        @JavascriptInterface
+        fun iosUrl(targetUrl: String) {
+            logger.Verbose("In app message: ios target url event $targetUrl")
+        }
+
+        @JavascriptInterface
+        fun promptPushPermission() {
+            logger.Verbose("In app message: prompt push permission event")
         }
     }
 

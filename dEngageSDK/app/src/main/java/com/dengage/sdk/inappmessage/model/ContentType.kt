@@ -7,5 +7,6 @@ enum class ContentType(val type: String) {
     SMALL("SMALL"),
     SMALL_BUTTON("SMALL_BUTTON"),
     POP_OUT_MODAL("POPOUT_MODAL"),
-    FULL_SCREEN("FULL_SCREEN")
+    FULL_SCREEN("FULL_SCREEN"),
+    HTML("HTML")
 }

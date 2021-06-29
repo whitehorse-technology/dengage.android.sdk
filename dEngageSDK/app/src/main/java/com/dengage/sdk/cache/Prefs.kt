@@ -21,7 +21,7 @@ class Prefs(context: Context) {
         const val IN_APP_MESSAGE_SHOW_TIME = "IN_APP_MESSAGE_SHOW_TIME"
 
         fun getSharedPreferences(context: Context): SharedPreferences =
-                context.getSharedPreferences(Constants.DEN_DEVICE_UNIQUE_ID, Context.MODE_PRIVATE)
+            context.getSharedPreferences(Constants.DEN_DEVICE_UNIQUE_ID, Context.MODE_PRIVATE)
     }
 
     var sdkParameters: SdkParameters?
@@ -87,8 +87,8 @@ fun SharedPreferences.set(key: String, value: Any?, immediately: Boolean = false
 
 @SuppressLint("ApplySharedPref")
 private fun SharedPreferences.edit(
-        immediately: Boolean = false,
-        operation: (SharedPreferences.Editor) -> Unit
+    immediately: Boolean = false,
+    operation: (SharedPreferences.Editor) -> Unit
 ) {
     val editor = this.edit()
     operation(editor)
