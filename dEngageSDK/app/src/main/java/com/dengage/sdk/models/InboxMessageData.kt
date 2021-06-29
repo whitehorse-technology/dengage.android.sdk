@@ -13,5 +13,6 @@ class InboxMessageData(
     @SerializedName("androidMediaUrl") val androidMediaUrl: String?,
     @SerializedName("targetUrl") var targetUrl: String?,
     @SerializedName("androidTargetUrl") val androidTargetUrl: String?,
-    @SerializedName("receiveDate") val receiveDate: String?
+    @SerializedName("receiveDate") val receiveDate: String?,
+    @SerializedName("androidCarouselContent") val carouselItems: List<CarouselItem>?
 ) : Serializable
