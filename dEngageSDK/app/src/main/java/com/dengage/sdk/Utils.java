@@ -135,7 +135,8 @@ public class Utils {
     static boolean hasSubscription(Context context) {
         String appName = context.getPackageName();
         SharedPreferences sp = context.getSharedPreferences(appName, Context.MODE_PRIVATE);
-        return sp.contains(Constants.SUBSCRIPTION_KEY);
+        String subJson = sp.getString(Constants.SUBSCRIPTION_KEY, "");
+        return subJson.isEmpty() == false;
     }
 
     static String getSubscription(Context context) {
