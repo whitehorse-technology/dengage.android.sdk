@@ -48,7 +48,7 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-core:17.0.1'
     implementation 'com.google.firebase:firebase-messaging:19.0.1'
-    implementation 'com.huawei.hms:push:4.0.3.301'
+    implementation 'com.huawei.hms:push:5.3.0.304'
     implementation 'com.huawei.hms:ads-identifier:3.4.28.305'
     implementation 'com.google.code.gson:gson:2.8.7'
 }
