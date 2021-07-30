@@ -3,6 +3,9 @@ package com.dengage.sdk;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
@@ -16,6 +19,7 @@ import com.dengage.sdk.cache.GsonHolder;
 import com.dengage.sdk.cache.Prefs;
 import com.dengage.sdk.callback.DengageCallback;
 import com.dengage.sdk.inappmessage.InAppMessageManager;
+import com.dengage.sdk.models.AppTracking;
 import com.dengage.sdk.models.DengageError;
 import com.dengage.sdk.models.InboxMessage;
 import com.dengage.sdk.models.Message;
@@ -35,23 +39,30 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.huawei.agconnect.config.AGConnectServicesConfig;
 import com.huawei.hms.aaid.HmsInstanceId;
 import com.huawei.hms.api.HuaweiApiAvailability;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
@@ -708,6 +719,9 @@ public class DengageManager {
                             prefs.setSdkParameters(sdkParameters);
                             // after fetching sdk parameters, fetch in app messages
                             getInAppMessages();
+                            // after fetching sdk parameters, start app tracking if app tracking is enabled
+                            if (sdkParameters.getInAppEnabled())
+                                startAppTracking(sdkParameters.getAppTrackingList());
                         }
                     } catch (Exception e) {
                         logger.Error("sdkParameters response error: " + e.getMessage());
@@ -890,6 +904,34 @@ public class DengageManager {
         networkRequest.executeTask();
     }
 
+    public void startAppTracking(List<AppTracking> appTrackings) {
+        // trcking time will be 0 for first tracking
+        if (prefs.getAppTrackingTime() != 0) {
+            // time diff between now and last tracking time
+            Long timeDiff = Calendar.getInstance().getTimeInMillis() - prefs.getAppTrackingTime();
+            Long lastTrackingTime = TimeUnit.MILLISECONDS.toDays(timeDiff);
+            // return if tracking was already done in last 6 days
+            if (lastTrackingTime < 6) return;
+        }
+        final PackageManager pm = _context.getPackageManager();
+        //get a list of installed apps.
+        List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
+
+        List<TagItem> tagItems = new ArrayList<>();
+        for (AppTracking app: appTrackings) {
+            Boolean isInstalled = false;
+            for (ApplicationInfo packageInfo : packages) {
+                if (packageInfo.packageName.equals(app.getPackageName())) {
+                    isInstalled = true;
+                    break;
+                }
+            }
+            tagItems.add(new TagItem("app-"+app.getAlias(), isInstalled ? "true": "false"));
+        }
+        prefs.setAppTrackingTime(Calendar.getInstance().getTimeInMillis());
+        setTags(tagItems);
+    }
+
     public void getInAppMessages() {
         inAppMessageManager.fetchInAppMessages();
     }
@@ -938,6 +980,29 @@ public class DengageManager {
             null);
         networkRequest.executeTask();
     }
+
+    /**
+     * Return whether the given PackageInfo represents a system package or not.
+     * User-installed packages (Market or otherwise) should not be denoted as
+     * system packages.
+     *
+     * @param pkgInfo
+     * @return
+     */
+    private boolean isSystemPackage(PackageInfo pkgInfo) {
+        return ((pkgInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0);
+    }
+
+    /**
+     * Set Notification Channel Name
+     *
+     * @param name will be saved in prefs as channel name
+     */
+
+    public void setNotificationChannelName(String name) {
+        prefs.setNotificationChannelName(name);
+    }
+
 }
 
 

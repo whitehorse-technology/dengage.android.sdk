@@ -18,7 +18,9 @@ class Prefs(context: Context) {
         const val IN_APP_MESSAGES = "IN_APP_MESSAGES"
         const val SDK_PARAMETERS = "SDK_PARAMETERS"
         const val IN_APP_MESSAGE_FETCH_TIME = "IN_APP_MESSAGE_FETCH_TIME"
+        const val APP_TRACKING_TIME = "APP_TRACKING_TIME"
         const val IN_APP_MESSAGE_SHOW_TIME = "IN_APP_MESSAGE_SHOW_TIME"
+        const val NOTIFICATION_CHANNEL_NAME = "NOTIFICATION_CHANNEL_NAME"
 
         fun getSharedPreferences(context: Context): SharedPreferences =
             context.getSharedPreferences(Constants.DEN_DEVICE_UNIQUE_ID, Context.MODE_PRIVATE)
@@ -27,6 +29,10 @@ class Prefs(context: Context) {
     var sdkParameters: SdkParameters?
         get() = preferences.get(SDK_PARAMETERS)
         set(value) = preferences.set(SDK_PARAMETERS, value)
+
+    var appTrackingTime: Long
+        get() = preferences.get(APP_TRACKING_TIME, 0) ?: 0
+        set(value) = preferences.set(APP_TRACKING_TIME, value)
 
     var inAppMessages: MutableList<InAppMessage>?
         get() = preferences.get(IN_APP_MESSAGES)
@@ -39,6 +45,10 @@ class Prefs(context: Context) {
     var inAppMessageShowTime: Long
         get() = preferences.get(IN_APP_MESSAGE_SHOW_TIME, 0) ?: 0
         set(value) = preferences.set(IN_APP_MESSAGE_SHOW_TIME, value)
+
+    var notificationChannelName: String
+        get() = preferences.get(NOTIFICATION_CHANNEL_NAME, Constants.CHANNEL_NAME) ?: Constants.CHANNEL_NAME
+        set(value) = preferences.set(NOTIFICATION_CHANNEL_NAME, value)
 
     fun clear() {
         preferences.edit().clear().apply()

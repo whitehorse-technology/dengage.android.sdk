@@ -24,6 +24,7 @@ import android.text.TextUtils;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
+import com.dengage.sdk.cache.Prefs;
 import com.dengage.sdk.models.ActionButton;
 import com.dengage.sdk.models.CarouselItem;
 import com.dengage.sdk.models.Message;
@@ -159,27 +160,38 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         Uri soundUri = Utils.getSound(context, message.getSound());
         // generate new channel id for different sounds
+        NotificationChannel channel = null;
         String channelId = UUID.randomUUID().toString();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             // delete old notification channels
             List<NotificationChannel> channels = notificationManager.getNotificationChannels();
             if (channels != null && channels.size() > 0) {
-                for (NotificationChannel channel : channels) {
-                    notificationManager.deleteNotificationChannel(channel.getId());
+                Prefs prefs = new Prefs(context);
+                for (NotificationChannel channell : channels) {
+                    if (channell.getName().equals(prefs.getNotificationChannelName())) {
+                        channel = channell;
+                    }
                 }
             }
-            NotificationChannel notificationChannel = new NotificationChannel(
-                    channelId,
-                    Constants.CHANNEL_NAME,
-                    NotificationManager.IMPORTANCE_DEFAULT
-            );
-            AudioAttributes audioAttributes = new AudioAttributes.Builder()
-                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-                    .build();
-            notificationChannel.setSound(soundUri, audioAttributes);
-            notificationManager.createNotificationChannel(notificationChannel);
+
+            if (channel == null) {
+                channel = new NotificationChannel(
+                        channelId,
+                        Constants.CHANNEL_NAME,
+                        NotificationManager.IMPORTANCE_DEFAULT
+                );
+
+                AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                        .build();
+                channel.setSound(soundUri, audioAttributes);
+            } else {
+                channelId = channel.getId();
+            }
+
+            notificationManager.createNotificationChannel(channel);
         }
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, channelId);
