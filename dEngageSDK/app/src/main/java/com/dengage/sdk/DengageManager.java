@@ -720,7 +720,7 @@ public class DengageManager {
                             // after fetching sdk parameters, fetch in app messages
                             getInAppMessages();
                             // after fetching sdk parameters, start app tracking if app tracking is enabled
-                            if (sdkParameters.getInAppEnabled())
+                            if (sdkParameters.getAppTrackingEnabled())
                                 startAppTracking(sdkParameters.getAppTrackingList());
                         }
                     } catch (Exception e) {
@@ -979,18 +979,6 @@ public class DengageManager {
             postData,
             null);
         networkRequest.executeTask();
-    }
-
-    /**
-     * Return whether the given PackageInfo represents a system package or not.
-     * User-installed packages (Market or otherwise) should not be denoted as
-     * system packages.
-     *
-     * @param pkgInfo
-     * @return
-     */
-    private boolean isSystemPackage(PackageInfo pkgInfo) {
-        return ((pkgInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0);
     }
 
     /**

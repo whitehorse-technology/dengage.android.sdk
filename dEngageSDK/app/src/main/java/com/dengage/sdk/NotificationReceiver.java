@@ -161,7 +161,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         Uri soundUri = Utils.getSound(context, message.getSound());
         // generate new channel id for different sounds
         NotificationChannel channel = null;
-        String channelId = UUID.randomUUID().toString();
+        String channelId = Constants.CHANNEL_ID;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             // delete old notification channels
@@ -187,11 +187,11 @@ public class NotificationReceiver extends BroadcastReceiver {
                         .setUsage(AudioAttributes.USAGE_NOTIFICATION)
                         .build();
                 channel.setSound(soundUri, audioAttributes);
+
+                notificationManager.createNotificationChannel(channel);
             } else {
                 channelId = channel.getId();
             }
-
-            notificationManager.createNotificationChannel(channel);
         }
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, channelId);
