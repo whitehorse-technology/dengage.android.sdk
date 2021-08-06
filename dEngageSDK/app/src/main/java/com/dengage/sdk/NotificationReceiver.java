@@ -204,6 +204,13 @@ public class NotificationReceiver extends BroadcastReceiver {
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setSmallIcon(getSmallIconId(context));
 
+        int notificationSmallIconColorId = getSmallIconColorId(context);
+
+        if (notificationSmallIconColorId != -1) {
+            notificationBuilder.setColor(notificationSmallIconColorId);
+        }
+
+
         if (!TextUtils.isEmpty(message.getTitle())) {
             notificationBuilder.setContentTitle(message.getTitle());
         }
@@ -479,6 +486,17 @@ public class NotificationReceiver extends BroadcastReceiver {
         } catch (PackageManager.NameNotFoundException e) {
             logger.Verbose("Application Icon Not Found");
             return -1;
+        }
+    }
+
+    protected int getSmallIconColorId(Context context) {
+        String smallIcon = Utils.getMetaData(context, "den_push_small_icon_color");
+        if (!TextUtils.isEmpty(smallIcon)) {
+            int appIconColorId = getResourceId(context, smallIcon);
+            logger.Verbose("Application icon: " + smallIcon);
+            return appIconColorId;
+        } else {
+            return -1; // in case metadata not provided in AndroidManifest
         }
     }
 
