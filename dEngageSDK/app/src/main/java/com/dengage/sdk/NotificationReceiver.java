@@ -23,6 +23,7 @@ import android.text.TextUtils;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 
 import com.dengage.sdk.cache.Prefs;
 import com.dengage.sdk.models.ActionButton;
@@ -207,7 +208,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         int notificationSmallIconColorId = getSmallIconColorId(context);
 
         if (notificationSmallIconColorId > 0) {
-            notificationBuilder.setColor(notificationSmallIconColorId);
+            notificationBuilder.setColor(ContextCompat.getColor(context, notificationSmallIconColorId));
         }
 
 
