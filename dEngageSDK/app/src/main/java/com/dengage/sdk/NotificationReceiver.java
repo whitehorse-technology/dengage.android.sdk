@@ -206,7 +206,7 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         int notificationSmallIconColorId = getSmallIconColorId(context);
 
-        if (notificationSmallIconColorId != -1) {
+        if (notificationSmallIconColorId > 0) {
             notificationBuilder.setColor(notificationSmallIconColorId);
         }
 
@@ -492,11 +492,29 @@ public class NotificationReceiver extends BroadcastReceiver {
     protected int getSmallIconColorId(Context context) {
         String smallIcon = Utils.getMetaData(context, "den_push_small_icon_color");
         if (!TextUtils.isEmpty(smallIcon)) {
-            int appIconColorId = getResourceId(context, smallIcon);
+            int appIconColorId = getColorResourceId(context, smallIcon);
             logger.Verbose("Application icon: " + smallIcon);
             return appIconColorId;
         } else {
             return -1; // in case metadata not provided in AndroidManifest
+        }
+    }
+
+    public int getColorResourceId(Context context, String resourceName) {
+        if (TextUtils.isEmpty(resourceName)) return 0;
+        if (Utils.isInteger(resourceName)) return 0;
+
+        try {
+            int resourceId = context.getResources().getIdentifier(resourceName, "color", context.getPackageName());
+            return resourceId;
+        } catch (Exception e) {
+            try {
+                int defaultResourceId = android.R.drawable.class.getField(resourceName).getInt(null);
+                return defaultResourceId;
+            } catch (Throwable ignored) {
+            }
+            e.printStackTrace();
+            return 0;
         }
     }
 
