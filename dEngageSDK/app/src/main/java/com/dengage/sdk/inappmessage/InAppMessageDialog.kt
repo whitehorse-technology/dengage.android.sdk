@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.res.Resources
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +16,8 @@ import android.widget.RelativeLayout
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import com.dengage.sdk.Logger
 import com.dengage.sdk.NotificationReceiver
 import com.dengage.sdk.R
@@ -23,6 +26,7 @@ import com.dengage.sdk.inappmessage.model.ContentPosition
 import com.dengage.sdk.inappmessage.model.InAppMessage
 import com.dengage.sdk.inappmessage.utils.InAppMessageUtils
 import com.dengage.sdk.models.TagItem
+import java.lang.IllegalStateException
 import kotlin.math.roundToInt
 
 class InAppMessageDialog : DialogFragment(), View.OnClickListener {
@@ -167,6 +171,17 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
      */
     fun setInAppMessageCallback(inAppMessageCallback: InAppMessageCallback) {
         this.inAppMessageCallback = inAppMessageCallback
+    }
+
+    // https://stackoverflow.com/questions/15729138/on-showing-dialog-i-get-can-not-perform-this-action-after-onsaveinstancestate
+    override fun show(manager: FragmentManager, tag: String?) {
+        try {
+            val fragmentTransaction = manager.beginTransaction()
+            fragmentTransaction.add(this, tag)
+            fragmentTransaction.commitAllowingStateLoss()
+        } catch (e: IllegalStateException) {
+            e.printStackTrace()
+        }
     }
 
     interface InAppMessageCallback {
