@@ -16,6 +16,7 @@ import com.dengage.sdk.service.NetworkRequest
 import com.dengage.sdk.service.NetworkRequestCallback
 import com.dengage.sdk.service.NetworkUrlUtils
 import com.google.gson.reflect.TypeToken
+import java.lang.Exception
 import java.util.*
 
 class InAppMessageManager(
@@ -84,6 +85,9 @@ class InAppMessageManager(
                     val fetchedInAppMessages = try {
                         GsonHolder.gson.fromJson<MutableList<InAppMessage>>(response, listType)
                     } catch (e: Exception) {
+                        logger.Error("in app messages response error: ${e.message}")
+                        null
+                    } catch (e: IncompatibleClassChangeError) {
                         logger.Error("in app messages response error: ${e.message}")
                         null
                     }
