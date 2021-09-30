@@ -39,6 +39,7 @@ class PrefsTest {
         val inAppFetchIntervalInMin = 10
         val inAppMinSecBetweenMessages = 10
         val lastFetchTimeInMillis = 10L
+        val appTrackingEnabled = true
 
         val sdkParameters = SdkParameters(
             accountId = accountId,
@@ -49,7 +50,9 @@ class PrefsTest {
             subscriptionEnabled = subscriptionEnabled,
             inAppFetchIntervalInMin = inAppFetchIntervalInMin,
             inAppMinSecBetweenMessages = inAppMinSecBetweenMessages,
-            lastFetchTimeInMillis = lastFetchTimeInMillis
+            lastFetchTimeInMillis = lastFetchTimeInMillis,
+            appTrackingEnabled = appTrackingEnabled,
+            appTrackingList = listOf()
         )
         prefs.sdkParameters = sdkParameters
 
@@ -62,6 +65,7 @@ class PrefsTest {
         Assert.assertEquals(prefs.sdkParameters?.inAppFetchIntervalInMin, inAppFetchIntervalInMin)
         Assert.assertEquals(prefs.sdkParameters?.inAppMinSecBetweenMessages, inAppMinSecBetweenMessages)
         Assert.assertEquals(prefs.sdkParameters?.lastFetchTimeInMillis, lastFetchTimeInMillis)
+        Assert.assertEquals(prefs.sdkParameters?.appTrackingEnabled, appTrackingEnabled)
     }
 
     @Test
