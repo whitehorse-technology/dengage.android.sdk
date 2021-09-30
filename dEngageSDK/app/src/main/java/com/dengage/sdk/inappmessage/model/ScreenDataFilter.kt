@@ -10,5 +10,5 @@ class ScreenDataFilter(
         @SerializedName("dataName") val dataName: String,
         @SerializedName("type") val type: String,
         @SerializedName("operator") val operator: String,
-        @SerializedName("value") val value: List<String>
+        val value: List<String>
 ) : Serializable
