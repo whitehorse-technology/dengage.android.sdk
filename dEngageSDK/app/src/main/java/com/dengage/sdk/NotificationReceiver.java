@@ -20,6 +20,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.text.TextUtils;
+import android.webkit.URLUtil;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -78,7 +79,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         if (cls == null) return;
 
         Intent activityIntent;
-        if (uri != null && !TextUtils.isEmpty(uri)) {
+        if (uri != null && !TextUtils.isEmpty(uri) && URLUtil.isValidUrl(uri)) {
             activityIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
         } else {
             activityIntent = new Intent(context, cls);

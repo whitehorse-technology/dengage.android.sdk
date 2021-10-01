@@ -11,7 +11,7 @@ import java.util.*
  */
 class TagItem(
         @SerializedName("tag") val tag: String,
-        @SerializedName("value") val value: String
+        val value: String
 ) : Serializable {
 
     @SerializedName("changeTime")
