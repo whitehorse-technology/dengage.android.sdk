@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -39,23 +38,17 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.huawei.agconnect.config.AGConnectServicesConfig;
 import com.huawei.hms.aaid.HmsInstanceId;
 import com.huawei.hms.api.HuaweiApiAvailability;
 
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -566,7 +559,7 @@ public class DengageManager {
         void executeTask() {
             try {
                 FirebaseInstanceId firebaseInstanceId = firebaseApp == null ? FirebaseInstanceId.getInstance()
-                    : FirebaseInstanceId.getInstance(firebaseApp);
+                    :FirebaseInstanceId.getInstance(firebaseApp);
                 firebaseInstanceId.getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
                     @Override
                     public void onComplete(@NonNull Task<InstanceIdResult> task) {
@@ -768,7 +761,7 @@ public class DengageManager {
      */
     public @Nullable
     Boolean getUserPermission() {
-        return _subscription == null ? null : _subscription.getUserPermission();
+        return _subscription == null ? null:_subscription.getUserPermission();
     }
 
     /**
@@ -796,7 +789,7 @@ public class DengageManager {
      */
     public @Nullable
     String getToken() {
-        return _subscription == null ? null : _subscription.getToken();
+        return _subscription == null ? null:_subscription.getToken();
     }
 
     /**
@@ -918,7 +911,7 @@ public class DengageManager {
         List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
 
         List<TagItem> tagItems = new ArrayList<>();
-        for (AppTracking app: appTrackings) {
+        for (AppTracking app : appTrackings) {
             Boolean isInstalled = false;
             for (ApplicationInfo packageInfo : packages) {
                 if (packageInfo.packageName.equals(app.getPackageName())) {
@@ -926,14 +919,16 @@ public class DengageManager {
                     break;
                 }
             }
-            tagItems.add(new TagItem("app-"+app.getAlias(), isInstalled ? "true": "false"));
+            tagItems.add(new TagItem("app-" + app.getAlias(), isInstalled ? "true":"false"));
         }
         prefs.setAppTrackingTime(Calendar.getInstance().getTimeInMillis());
         setTags(tagItems);
     }
 
     public void getInAppMessages() {
-        inAppMessageManager.fetchInAppMessages();
+        if (inAppMessageManager != null) {
+            inAppMessageManager.fetchInAppMessages();
+        }
     }
 
     /**
@@ -952,7 +947,9 @@ public class DengageManager {
      * @param screenName for showing screen specific in app message
      */
     public void setNavigation(@NonNull AppCompatActivity activity, @Nullable String screenName) {
-        inAppMessageManager.setNavigation(activity, screenName);
+        if (inAppMessageManager != null) {
+            inAppMessageManager.setNavigation(activity, screenName);
+        }
     }
 
     /**
