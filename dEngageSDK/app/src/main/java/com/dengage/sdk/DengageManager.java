@@ -1,6 +1,7 @@
 package com.dengage.sdk;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -936,7 +937,7 @@ public class DengageManager {
      *
      * @param activity for showing dialog fragment as in app message
      */
-    public void setNavigation(@NonNull AppCompatActivity activity) {
+    public void setNavigation(@NonNull Activity activity) {
         setNavigation(activity, null);
     }
 
@@ -946,7 +947,7 @@ public class DengageManager {
      * @param activity   for showing dialog fragment as in app message
      * @param screenName for showing screen specific in app message
      */
-    public void setNavigation(@NonNull AppCompatActivity activity, @Nullable String screenName) {
+    public void setNavigation(@NonNull Activity activity, @Nullable String screenName) {
         if (inAppMessageManager != null) {
             inAppMessageManager.setNavigation(activity, screenName);
         }
