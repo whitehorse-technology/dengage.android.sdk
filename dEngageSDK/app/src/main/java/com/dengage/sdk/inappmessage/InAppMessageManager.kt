@@ -1,7 +1,7 @@
 package com.dengage.sdk.inappmessage
 
+import android.app.Activity
 import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
 import com.dengage.sdk.DengageManager
 import com.dengage.sdk.Logger
 import com.dengage.sdk.Utils
@@ -16,7 +16,6 @@ import com.dengage.sdk.service.NetworkRequest
 import com.dengage.sdk.service.NetworkRequestCallback
 import com.dengage.sdk.service.NetworkUrlUtils
 import com.google.gson.reflect.TypeToken
-import java.lang.Exception
 import java.util.*
 
 class InAppMessageManager(
@@ -24,7 +23,7 @@ class InAppMessageManager(
     private val context: Context,
     private var subscription: Subscription,
     private val logger: Logger
-) : InAppMessageDialog.InAppMessageCallback {
+) : InAppMessageActivity.InAppMessageCallback {
 
     private val prefs: Prefs = Prefs(context)
 
@@ -38,7 +37,7 @@ class InAppMessageManager(
     /**
      * Call this method for the pages that you should show in app message if available
      */
-    fun setNavigation(activity: AppCompatActivity, screenName: String? = null) {
+    fun setNavigation(activity: Activity, screenName: String? = null) {
         // control next in app message show time
         if (prefs.inAppMessageShowTime != 0L && System.currentTimeMillis() < prefs.inAppMessageShowTime) return
 
@@ -181,7 +180,7 @@ class InAppMessageManager(
     /**
      * Show in app message dialog on activity screen
      */
-    private fun showInAppMessage(activity: AppCompatActivity, inAppMessage: InAppMessage) {
+    private fun showInAppMessage(activity: Activity, inAppMessage: InAppMessage) {
         setInAppMessageAsDisplayed(
             inAppMessageDetails = inAppMessage.data.messageDetails
         )
@@ -205,12 +204,11 @@ class InAppMessageManager(
         Timer().schedule(object : TimerTask() {
             override fun run() {
                 activity.runOnUiThread {
-                    val inAppMessageDialog = InAppMessageDialog.newInstance(inAppMessage)
-                    inAppMessageDialog.setInAppMessageCallback(this@InAppMessageManager)
-                    inAppMessageDialog.show(
-                        activity.supportFragmentManager,
-                        InAppMessageDialog::class.java.simpleName
-                    )
+                    activity.startActivity(InAppMessageActivity.newIntent(activity, inAppMessage))
+                    if (!inAppMessage.data.content.params.shouldAnimate) {
+                        activity.overridePendingTransition(0, 0)
+                    }
+                    InAppMessageActivity.inAppMessageCallback = this@InAppMessageManager
                 }
             }
         }, delay)

@@ -1,13 +1,12 @@
 package com.dengage.sdk.inappmessage
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.webkit.JavascriptInterface
@@ -15,9 +14,6 @@ import android.webkit.WebView
 import android.widget.RelativeLayout
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction
 import com.dengage.sdk.Logger
 import com.dengage.sdk.NotificationReceiver
 import com.dengage.sdk.R
@@ -26,50 +22,31 @@ import com.dengage.sdk.inappmessage.model.ContentPosition
 import com.dengage.sdk.inappmessage.model.InAppMessage
 import com.dengage.sdk.inappmessage.utils.InAppMessageUtils
 import com.dengage.sdk.models.TagItem
-import java.lang.IllegalStateException
 import kotlin.math.roundToInt
 
-class InAppMessageDialog : DialogFragment(), View.OnClickListener {
+class InAppMessageActivity : Activity(), View.OnClickListener {
 
     private lateinit var inAppMessage: InAppMessage
-    private var inAppMessageCallback: InAppMessageCallback? = null
     private val logger = Logger.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setStyle(STYLE_NO_FRAME, R.style.Theme_FullViewDialogFragment)
-    }
+        setContentView(R.layout.activity_in_app_message)
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        return inflater.inflate(R.layout.dialog_in_app_message, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        inAppMessage = requireArguments().getSerializable(EXTRA_IN_APP_MESSAGE) as InAppMessage
+        inAppMessage = intent.getSerializableExtra(EXTRA_IN_APP_MESSAGE) as InAppMessage
         val contentParams = inAppMessage.data.content.params
 
-        dialog?.setCanceledOnTouchOutside(
-            inAppMessage.data.content.params.dismissOnTouchOutside ?: true
-        )
-        dialog?.setOnCancelListener {
-            inAppMessageDismissed()
-        }
+        setContentPosition(contentParams)
+        setHtmlContent(contentParams)
 
-        setContentPosition(view, contentParams)
-        setHtmlContent(view, contentParams)
-
-        view.findViewById<View>(R.id.vInAppMessageContainer).setOnClickListener(this)
-        view.findViewById<View>(R.id.cardInAppMessage).setOnClickListener(this)
+        findViewById<View>(R.id.vInAppMessageContainer).setOnClickListener(this)
+        findViewById<View>(R.id.cardInAppMessage).setOnClickListener(this)
     }
 
     private fun setContentPosition(
-        view: View, contentParams: ContentParams
+        contentParams: ContentParams
     ) {
-        val cardInAppMessage = view.findViewById<CardView>(R.id.cardInAppMessage)
+        val cardInAppMessage = findViewById<CardView>(R.id.cardInAppMessage)
         val params = RelativeLayout.LayoutParams(
             WRAP_CONTENT,
             WRAP_CONTENT
@@ -98,11 +75,11 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
     }
 
     @SuppressLint("SetJavaScriptEnabled")
-    private fun setHtmlContent(view: View, contentParams: ContentParams) {
-        val vHtmlContent = view.findViewById<View>(R.id.vHtmlContent)
-        val webView = view.findViewById<WebView>(R.id.webView)
-        val vHtmlWidthContainer = view.findViewById<RelativeLayout>(R.id.vHtmlWidthContainer)
-        val cardInAppMessage = view.findViewById<CardView>(R.id.cardInAppMessage)
+    private fun setHtmlContent(contentParams: ContentParams) {
+        val vHtmlContent = findViewById<View>(R.id.vHtmlContent)
+        val webView = findViewById<WebView>(R.id.webView)
+        val vHtmlWidthContainer = findViewById<RelativeLayout>(R.id.vHtmlWidthContainer)
+        val cardInAppMessage = findViewById<CardView>(R.id.cardInAppMessage)
 
         // set height for content type full
         if (contentParams.position == ContentPosition.FULL.position) {
@@ -114,12 +91,12 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
         }
 
         // set radius of card view
-        cardInAppMessage.radius = InAppMessageUtils.pxToDp(contentParams.radius, requireContext())
+        cardInAppMessage.radius = InAppMessageUtils.pxToDp(contentParams.radius, this)
 
         // set max width for container
         contentParams.maxWidth?.let {
             val params = vHtmlWidthContainer.layoutParams as ConstraintLayout.LayoutParams
-            params.matchConstraintMaxWidth = InAppMessageUtils.pxToDp(it, requireContext()).roundToInt()
+            params.matchConstraintMaxWidth = InAppMessageUtils.pxToDp(it, this).roundToInt()
             vHtmlWidthContainer.layoutParams = params
         }
 
@@ -147,8 +124,7 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
         when (v?.id) {
             R.id.vInAppMessageContainer -> {
                 if (inAppMessage.data.content.params.dismissOnTouchOutside != false) {
-                    dismiss()
-                    inAppMessageDismissed()
+                    finish()
                 }
             }
             R.id.cardInAppMessage -> {
@@ -162,25 +138,15 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
     }
 
     override fun onDestroy() {
+        inAppMessageDismissed()
         inAppMessageCallback = null
         super.onDestroy()
     }
 
-    /**
-    Set in app message callback for handling in app message actions
-     */
-    fun setInAppMessageCallback(inAppMessageCallback: InAppMessageCallback) {
-        this.inAppMessageCallback = inAppMessageCallback
-    }
-
-    // https://stackoverflow.com/questions/15729138/on-showing-dialog-i-get-can-not-perform-this-action-after-onsaveinstancestate
-    override fun show(manager: FragmentManager, tag: String?) {
-        try {
-            val fragmentTransaction = manager.beginTransaction()
-            fragmentTransaction.add(this, tag)
-            fragmentTransaction.commitAllowingStateLoss()
-        } catch (e: IllegalStateException) {
-            e.printStackTrace()
+    override fun onPause() {
+        super.onPause()
+        if (!inAppMessage.data.content.params.shouldAnimate) {
+            overridePendingTransition(0, 0)
         }
     }
 
@@ -202,13 +168,18 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
     }
 
     companion object {
+        /**
+        Set in app message callback for handling in app message actions
+         */
+        var inAppMessageCallback: InAppMessageCallback? = null
+
         const val EXTRA_IN_APP_MESSAGE = "EXTRA_IN_APP_MESSAGE"
-        fun newInstance(inAppMessage: InAppMessage): InAppMessageDialog {
-            val inAppMessageDialog = InAppMessageDialog()
-            val arguments = Bundle()
-            arguments.putSerializable(EXTRA_IN_APP_MESSAGE, inAppMessage)
-            inAppMessageDialog.arguments = arguments
-            return inAppMessageDialog
+
+        fun newIntent(activity: Activity, inAppMessage: InAppMessage): Intent {
+            val intent = Intent(activity, InAppMessageActivity::class.java).apply {
+                putExtra(EXTRA_IN_APP_MESSAGE, inAppMessage)
+            }
+            return intent
         }
     }
 
@@ -216,15 +187,14 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
         @JavascriptInterface
         fun dismiss() {
             logger.Verbose("In app message: dismiss event")
-            this@InAppMessageDialog.dismiss()
-            inAppMessageDismissed()
+            this@InAppMessageActivity.finish()
         }
 
         @JavascriptInterface
         fun androidUrl(targetUrl: String) {
             logger.Verbose("In app message: android target url event $targetUrl")
             NotificationReceiver.launchActivity(
-                context,
+                this@InAppMessageActivity,
                 null,
                 targetUrl
             )
@@ -239,7 +209,7 @@ class InAppMessageDialog : DialogFragment(), View.OnClickListener {
         @JavascriptInterface
         fun close() {
             logger.Verbose("In app message: close event")
-            this@InAppMessageDialog.dismiss()
+            this@InAppMessageActivity.finish()
         }
 
         @JavascriptInterface
