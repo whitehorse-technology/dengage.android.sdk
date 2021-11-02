@@ -189,7 +189,9 @@ public class Utils {
     }
 
     public static String getUserAgent(Context context) {
-        return Utils.getAppLabel(context, "An Android App") + "/" + Utils.appVersion(context) + " " + Build.MANUFACTURER + "/" + Build.MODEL + " " + System.getProperty("http.agent") + " Mobile/" + Build.ID + "";
+        String appLabel = Utils.getAppLabel(context, "An Android App") + "/" + Utils.appVersion(context) + " " + Build.MANUFACTURER + "/" + Build.MODEL + " " + System.getProperty("http.agent") + " Mobile/" + Build.ID + "";
+        String resultString = appLabel.replaceAll("[^\\x00-\\x7F]", "");
+        return resultString;
     }
 
     static String deviceType() {
