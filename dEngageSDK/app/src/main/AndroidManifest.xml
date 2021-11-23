@@ -7,6 +7,7 @@
 
     <application>
         <activity
+            android:exported="true"
             android:name=".inappmessage.InAppMessageActivity"
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
     </application>
