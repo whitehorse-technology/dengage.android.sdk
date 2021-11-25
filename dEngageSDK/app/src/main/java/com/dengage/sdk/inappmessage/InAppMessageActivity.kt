@@ -201,9 +201,15 @@ class InAppMessageActivity : Activity(), View.OnClickListener {
         }
 
         @JavascriptInterface
-        fun sendClick(buttonId: String?) {
+        fun sendClick(buttonId: String) {
             logger.Verbose("In app message: clicked button $buttonId")
             inAppMessageCallback?.inAppMessageClicked(inAppMessage, buttonId)
+        }
+
+        @JavascriptInterface
+        fun sendClick() {
+            logger.Verbose("In app message: clicked body/button with no Id")
+            inAppMessageCallback?.inAppMessageClicked(inAppMessage, null)
         }
 
         @JavascriptInterface
