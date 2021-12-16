@@ -22,6 +22,7 @@ public class FcmMessagingService extends FirebaseMessagingService {
         super.onMessageReceived(remoteMessage);
 
         Map<String, String> data = remoteMessage.getData();
-        DengageManager.getInstance(getApplicationContext()).onMessageReceived(data);
+        if (Utils.showDengageNotification(data))
+            DengageManager.getInstance(getApplicationContext()).onMessageReceived(data);
     }
 }

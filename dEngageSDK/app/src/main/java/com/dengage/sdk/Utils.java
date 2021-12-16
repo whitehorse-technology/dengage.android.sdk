@@ -23,10 +23,12 @@ import android.view.WindowManager;
 import android.widget.RemoteViews;
 
 import androidx.annotation.Nullable;
+import androidx.core.os.BuildCompat;
 
 import com.dengage.sdk.callback.DengageCallback;
 import com.dengage.sdk.models.CarouselItem;
 import com.dengage.sdk.models.DengageError;
+import com.dengage.sdk.models.Message;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,6 +37,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
 
@@ -78,8 +81,8 @@ public class Utils {
         return tz.getRawOffset();
     }
 
-    public static String getSdkVersion() {
-        return com.dengage.sdk.BuildConfig.VERSION_NAME;
+    public static String getSdkVersion(Context context) {
+        return "4.2.1";
     }
 
     public static String getOsVersion() {
@@ -408,5 +411,13 @@ public class Utils {
             bitmaps[position] = cachedFileBitmap;
             loadCarouselContent(carouselItems, position + 1, bitmaps, dengageCallback);
         }
+    }
+
+    public static boolean showDengageNotification(Map<String, String> data) {
+        Message message = new Message(data);
+        if (message.getMessageSource().equalsIgnoreCase(Constants.MESSAGE_SOURCE)) {
+            return true;
+        }
+        return false;
     }
 }

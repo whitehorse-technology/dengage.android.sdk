@@ -15,8 +15,8 @@ public class HmsMessagingService extends HmsMessageService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
-
         Map<String, String> data = remoteMessage.getDataOfMap();
-        DengageManager.getInstance(getApplicationContext()).onMessageReceived(data);
+        if (Utils.showDengageNotification(data))
+            DengageManager.getInstance(getApplicationContext()).onMessageReceived(data);
     }
 }

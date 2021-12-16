@@ -103,10 +103,13 @@ class InAppMessageActivity : Activity(), View.OnClickListener {
         vHtmlContent.visibility = View.VISIBLE
 
         webView.apply {
-            loadDataWithBaseURL(
-                null,
-                contentParams.html, "text/html", "UTF-8", null
-            )
+
+            contentParams.html?.let {
+                loadDataWithBaseURL(
+                    null,
+                    it, "text/html", "UTF-8", null
+                )
+            }
             settings.loadWithOverviewMode = true
             settings.useWideViewPort = true
             settings.displayZoomControls = false
