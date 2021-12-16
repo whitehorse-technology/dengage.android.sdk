@@ -36,8 +36,8 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.installations.FirebaseInstallations;
+import com.google.firebase.installations.InstallationTokenResult;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.huawei.agconnect.config.AGConnectServicesConfig;
@@ -351,7 +351,7 @@ public class DengageManager {
                 _subscription.setDeviceId(Utils.getDeviceId(_context));
             _subscription.setCarrierId(Utils.carrier(_context));
             _subscription.setAppVersion(Utils.appVersion(_context));
-            _subscription.setSdkVersion(Utils.getSdkVersion());
+            _subscription.setSdkVersion(Utils.getSdkVersion(_context));
             _subscription.setUserAgent(Utils.getUserAgent(_context));
             _subscription.setLanguage(Locale.getDefault().getLanguage());
             Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"), Locale.getDefault());
@@ -559,11 +559,10 @@ public class DengageManager {
 
         void executeTask() {
             try {
-                FirebaseInstanceId firebaseInstanceId = firebaseApp == null ? FirebaseInstanceId.getInstance()
-                    :FirebaseInstanceId.getInstance(firebaseApp);
-                firebaseInstanceId.getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                FirebaseInstallations firebaseInstallations = firebaseApp == null ? FirebaseInstallations.getInstance() : FirebaseInstallations.getInstance(firebaseApp);
+                firebaseInstallations.getToken(false).addOnCompleteListener(new OnCompleteListener<InstallationTokenResult>() {
                     @Override
-                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                    public void onComplete(@NonNull Task<InstallationTokenResult> task) {
                         if (!task.isSuccessful()) {
                             logger.Error("Firebase InstanceId Failed: " + task.getException().getMessage());
                             return;
