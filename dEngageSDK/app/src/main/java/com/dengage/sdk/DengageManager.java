@@ -371,31 +371,33 @@ public class DengageManager {
     }
 
     private void sendSubscription() {
-        logger.Verbose("sendSubscription method is called");
-        if (isSubscriptionSending) return;
-        try {
-            isSubscriptionSending = true;
-            Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        String baseApiUri = Utils.getMetaData(_context, "den_push_api_url");
-                        if (TextUtils.isEmpty(baseApiUri))
-                            baseApiUri = Constants.DEN_PUSH_API_URI;
-                        baseApiUri += Constants.SUBSCRIPTION_API_ENDPOINT;
-                        RequestAsync req = new RequestAsync(baseApiUri, _subscription);
-                        req.executeTask();
-                        isSubscriptionSending = false;
-                    } catch (Exception e) {
-                        isSubscriptionSending = false;
-                        logger.Error("sendSubscriptionDelay: " + e.getMessage());
+        if(!_subscription.getToken().isEmpty()) {
+            logger.Verbose("sendSubscription method is called");
+            if (isSubscriptionSending) return;
+            try {
+                isSubscriptionSending = true;
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            String baseApiUri = Utils.getMetaData(_context, "den_push_api_url");
+                            if (TextUtils.isEmpty(baseApiUri))
+                                baseApiUri = Constants.DEN_PUSH_API_URI;
+                            baseApiUri += Constants.SUBSCRIPTION_API_ENDPOINT;
+                            RequestAsync req = new RequestAsync(baseApiUri, _subscription);
+                            req.executeTask();
+                            isSubscriptionSending = false;
+                        } catch (Exception e) {
+                            isSubscriptionSending = false;
+                            logger.Error("sendSubscriptionDelay: " + e.getMessage());
+                        }
                     }
-                }
-            }, 1500);
-        } catch (Exception e) {
-            isSubscriptionSending = false;
-            logger.Error("sendSubscription: " + e.getMessage());
+                }, 1500);
+            } catch (Exception e) {
+                isSubscriptionSending = false;
+                logger.Error("sendSubscription: " + e.getMessage());
+            }
         }
     }
 
@@ -558,7 +560,9 @@ public class DengageManager {
         }
 
         void executeTask() {
-            try {
+
+
+          /*  try {
                 FirebaseInstallations firebaseInstallations = firebaseApp == null ? FirebaseInstallations.getInstance() : FirebaseInstallations.getInstance(firebaseApp);
                 firebaseInstallations.getToken(false).addOnCompleteListener(new OnCompleteListener<InstallationTokenResult>() {
                     @Override
@@ -578,7 +582,7 @@ public class DengageManager {
                 });
             } catch (Exception e) {
                 logger.Error("GmsTokenWorker Exception: " + e.getMessage());
-            }
+            }*/
         }
     }
 
@@ -667,6 +671,7 @@ public class DengageManager {
             String json = pushMessage.toJson();
             logger.Verbose("Message Json: " + json);
             String source = pushMessage.getMessageSource();
+
             if (Constants.MESSAGE_SOURCE.equals(source)) {
                 logger.Debug("There is a message that received from dEngage");
                 sendBroadcast(_context, json, data);
@@ -791,6 +796,7 @@ public class DengageManager {
     String getToken() {
         return _subscription == null ? null:_subscription.getToken();
     }
+
 
     /**
      * Get saved inbox messages
