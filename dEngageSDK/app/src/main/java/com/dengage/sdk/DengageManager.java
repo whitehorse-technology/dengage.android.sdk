@@ -376,8 +376,8 @@ public class DengageManager {
             if (isSubscriptionSending) return;
             try {
                 isSubscriptionSending = true;
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
+               Handler handler = new Handler(Looper.getMainLooper());
+                  handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         try {
