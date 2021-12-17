@@ -14,7 +14,7 @@ public class FcmMessagingService extends FirebaseMessagingService {
 
     @Override
     public void onNewToken(String token) {
-        DengageManager.getInstance(getApplicationContext()).onNewToken(token);
+       // DengageManager.getInstance(getApplicationContext()).onNewToken(token);
     }
 
     @Override
