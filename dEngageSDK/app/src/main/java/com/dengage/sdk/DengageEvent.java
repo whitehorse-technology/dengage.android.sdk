@@ -229,7 +229,7 @@ public class DengageEvent {
             baseApiUri += Constants.EVENT_API_ENDPOINT;
 
             Subscription subscription = DengageManager.getInstance(_context).getSubscription();
-            String sessionId = Session.getSession().getSessionId();
+            String sessionId = Session.getSession(_context).getSessionId();
 
             data.put("session_id", sessionId);
             Event event = new Event(subscription.getIntegrationKey(), tableName, key, data);
