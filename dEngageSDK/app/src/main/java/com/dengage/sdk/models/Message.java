@@ -56,7 +56,7 @@ public class Message {
     private int campaignId = 0;
 
     @SerializedName("dengageCampName")
-    private String campName = null;
+    private String campName = "";
 
     @SerializedName("dengageSendId")
     private int sendId = 0;
@@ -271,7 +271,4 @@ public class Message {
         return campName;
     }
 
-    public void setCampName(String campName) {
-        this.campName = campName;
-    }
 }
