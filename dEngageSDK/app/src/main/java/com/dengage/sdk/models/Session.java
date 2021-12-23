@@ -1,6 +1,9 @@
 package com.dengage.sdk.models;
 
-import android.util.Log;
+import android.content.Context;
+
+import com.dengage.sdk.Utils;
+import com.dengage.sdk.cache.Prefs;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -9,27 +12,30 @@ import java.util.UUID;
 public class Session {
 
     private static Session instance = null;
+    private static Prefs prefs;
 
     public static Session createSession() {
         return instance = new Session();
     }
 
-    public static Session getSession() {
+    public static Session getSession(Context ctx) {
+        prefs = new Prefs(ctx);
         if (instance == null) return createSession();
         return instance;
     }
 
-    private String sessionId = UUID.randomUUID().toString().toLowerCase();
+
     private Date expiresIn = getNextExpiredTime();
 
     public Date getNextExpiredTime() {
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.MINUTE, 30);
-        return cal.getTime();
+        return new Date(prefs.getAppSessionTime());
     }
 
     public void extend() {
-        this.expiresIn = getNextExpiredTime();
+        this.expiresIn = Utils.getCurrentDateObject();
+        prefs.setAppSessionTime(expiresIn.getTime());
+
+
     }
 
     public boolean isExpired() {
@@ -38,7 +44,15 @@ public class Session {
     }
 
     public String getSessionId() {
-        if(isExpired()) extend();
-        return this.sessionId;
+        String sessionId = "";
+        if (isExpired()) {
+            sessionId = UUID.randomUUID().toString().toLowerCase();
+            prefs.setAppSessionId(sessionId);
+            extend();
+        } else {
+            sessionId = prefs.getAppSessionId();
+            prefs.setAppSessionId(sessionId);
+        }
+        return sessionId;
     }
 }
