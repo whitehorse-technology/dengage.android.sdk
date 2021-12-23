@@ -59,7 +59,7 @@ class Prefs(context: Context) {
         set(value) = preferences.set(APP_SESSION_TIME, value)
 
     var appSessionId: String
-        get() = preferences.get(APP_SESSION_ID, UUID.randomUUID().toString().toLowerCase()) ?: ""
+        get() = preferences.get(APP_SESSION_ID, Utils.generateSessionId()) ?: ""
         set(value) = preferences.set(APP_SESSION_ID, value)
 
 
