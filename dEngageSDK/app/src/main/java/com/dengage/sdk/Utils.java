@@ -432,4 +432,9 @@ public class Utils {
         cal.add(Calendar.MINUTE, 3);
         return cal.getTime();
     }
+
+    public static String generateSessionId()
+    {
+        return UUID.randomUUID().toString().toLowerCase();
+    }
 }
