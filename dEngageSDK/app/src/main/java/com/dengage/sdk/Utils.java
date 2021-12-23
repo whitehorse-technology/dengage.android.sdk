@@ -23,7 +23,6 @@ import android.view.WindowManager;
 import android.widget.RemoteViews;
 
 import androidx.annotation.Nullable;
-import androidx.core.os.BuildCompat;
 
 import com.dengage.sdk.callback.DengageCallback;
 import com.dengage.sdk.models.CarouselItem;
@@ -36,6 +35,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
@@ -208,12 +208,12 @@ public class Utils {
             lApplicationInfo = lPackageManager.getApplicationInfo(pContext.getApplicationInfo().packageName, 0);
         } catch (PackageManager.NameNotFoundException ignored) {
         }
-        return (String) (lApplicationInfo != null ? lPackageManager.getApplicationLabel(lApplicationInfo):defaultText);
+        return (String) (lApplicationInfo != null ? lPackageManager.getApplicationLabel(lApplicationInfo) : defaultText);
     }
 
     public static Uri getSound(Context context, @Nullable String sound) {
         int id = TextUtils.isEmpty(sound) ? 0
-                :context.getResources().getIdentifier(sound, "raw", context.getPackageName());
+                : context.getResources().getIdentifier(sound, "raw", context.getPackageName());
         if (id != 0) {
             return Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + "/" + id);
         } else {
@@ -260,7 +260,7 @@ public class Utils {
     public static String getApplicationName(Context context) {
         ApplicationInfo applicationInfo = context.getApplicationInfo();
         int stringId = applicationInfo.labelRes;
-        return stringId == 0 ? applicationInfo.nonLocalizedLabel.toString():context.getString(stringId);
+        return stringId == 0 ? applicationInfo.nonLocalizedLabel.toString() : context.getString(stringId);
     }
 
     public static String saveBitmapToInternalStorage(Context context, Bitmap bitmapImage, String fileName) {
@@ -419,5 +419,17 @@ public class Utils {
             return true;
         }
         return false;
+    }
+
+    public static long getCurrentDateLong() {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MINUTE, 3);
+        return cal.getTime().getTime();
+    }
+
+    public static Date getCurrentDateObject() {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MINUTE, 3);
+        return cal.getTime();
     }
 }
