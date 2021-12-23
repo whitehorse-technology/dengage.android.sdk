@@ -1,15 +1,15 @@
 package com.dengage.sdk.models;
 
-import com.google.gson.Gson;
-import com.google.gson.annotations.SerializedName;
-
 import android.os.Bundle;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Message {
 
@@ -55,8 +55,12 @@ public class Message {
     @SerializedName("dengageCampId")
     private int campaignId = 0;
 
+    @SerializedName("dengageCampName")
+    private String campName = null;
+
     @SerializedName("dengageSendId")
     private int sendId = 0;
+
 
     @SerializedName("notificationType")
     private NotificationType notificationType = NotificationType.RICH;
@@ -107,6 +111,9 @@ public class Message {
 
         if (bundle.get("dengageCampId") != null && !bundle.get("dengageCampId").isEmpty())
             campaignId = Integer.parseInt(bundle.get("dengageCampId"));
+
+        if (bundle.get("dengageCampName") != null && !bundle.get("dengageCampName").isEmpty())
+            campName = bundle.get("dengageCampName");
 
         if (bundle.get("dengageSendId") != null && !bundle.get("dengageSendId").isEmpty())
             sendId = Integer.parseInt(bundle.get("dengageSendId"));
@@ -258,5 +265,13 @@ public class Message {
 
     public static Message fromJson(String json) {
         return new Gson().fromJson(json, Message.class);
+    }
+
+    public String getCampName() {
+        return campName;
+    }
+
+    public void setCampName(String campName) {
+        this.campName = campName;
     }
 }
