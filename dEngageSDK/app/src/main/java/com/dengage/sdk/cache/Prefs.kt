@@ -4,8 +4,10 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import com.dengage.sdk.Constants
+import com.dengage.sdk.Utils
 import com.dengage.sdk.inappmessage.model.InAppMessage
 import com.dengage.sdk.models.SdkParameters
+import java.util.*
 
 /**
  * Created by Batuhan Coskun on 30 November 2020
@@ -21,6 +23,8 @@ class Prefs(context: Context) {
         const val APP_TRACKING_TIME = "APP_TRACKING_TIME"
         const val IN_APP_MESSAGE_SHOW_TIME = "IN_APP_MESSAGE_SHOW_TIME"
         const val NOTIFICATION_CHANNEL_NAME = "NOTIFICATION_CHANNEL_NAME"
+        const val APP_SESSION_TIME = "APP_SESSION_TIME"
+        const val APP_SESSION_ID = "APP_SESSION_ID"
 
         fun getSharedPreferences(context: Context): SharedPreferences =
             context.getSharedPreferences(Constants.DEN_DEVICE_UNIQUE_ID, Context.MODE_PRIVATE)
@@ -49,6 +53,15 @@ class Prefs(context: Context) {
     var notificationChannelName: String
         get() = preferences.get(NOTIFICATION_CHANNEL_NAME, Constants.CHANNEL_NAME) ?: Constants.CHANNEL_NAME
         set(value) = preferences.set(NOTIFICATION_CHANNEL_NAME, value)
+
+    var appSessionTime: Long
+        get() = preferences.get(APP_SESSION_TIME, 0) ?: 0
+        set(value) = preferences.set(APP_SESSION_TIME, value)
+
+    var appSessionId: String
+        get() = preferences.get(APP_SESSION_ID, UUID.randomUUID().toString().toLowerCase()) ?: ""
+        set(value) = preferences.set(APP_SESSION_ID, value)
+
 
     fun clear() {
         preferences.edit().clear().apply()
