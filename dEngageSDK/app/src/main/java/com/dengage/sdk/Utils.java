@@ -423,13 +423,13 @@ public class Utils {
 
     public static long getCurrentDateLong() {
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.MINUTE, 3);
+        cal.add(Calendar.MINUTE, 30);
         return cal.getTime().getTime();
     }
 
     public static Date getCurrentDateObject() {
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.MINUTE, 3);
+        cal.add(Calendar.MINUTE, 30);
         return cal.getTime();
     }
 
