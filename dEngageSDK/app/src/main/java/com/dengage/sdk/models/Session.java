@@ -7,7 +7,6 @@ import com.dengage.sdk.cache.Prefs;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.UUID;
 
 public class Session {
 
@@ -46,7 +45,7 @@ public class Session {
     public String getSessionId() {
         String sessionId = "";
         if (isExpired()) {
-            sessionId = UUID.randomUUID().toString().toLowerCase();
+            sessionId = Utils.generateSessionId();
             prefs.setAppSessionId(sessionId);
             extend();
         } else {
