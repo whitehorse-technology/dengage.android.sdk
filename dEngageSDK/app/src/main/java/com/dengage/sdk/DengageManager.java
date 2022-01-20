@@ -14,7 +14,7 @@ import android.os.Looper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
+import com.huawei.agconnect.AGConnectOptionsBuilder;
 import com.dengage.sdk.cache.GsonHolder;
 import com.dengage.sdk.cache.Prefs;
 import com.dengage.sdk.callback.DengageCallback;
@@ -626,9 +626,11 @@ public class DengageManager {
             logger.Debug("Getting Hms Token");
             String token = "";
             try {
-                String appId = AGConnectServicesConfig.fromContext(_context).getString("client/app_id");
+             String appId =   new AGConnectOptionsBuilder().build(_context).getString("client/app_id");
                 token = HmsInstanceId.getInstance(_context).getToken(appId, com.huawei.hms.push.HmsMessaging.DEFAULT_TOKEN_SCOPE);
-            } catch (Exception e) {
+                      logger.Debug("hms id & token "+appId+" "+token+" ");
+       
+                } catch (Exception e) {
                 logger.Error("HmsTokenWorker Exception: " + e.getMessage());
             }
             return token;
