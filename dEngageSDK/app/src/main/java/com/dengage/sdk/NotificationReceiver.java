@@ -34,7 +34,6 @@ import com.dengage.sdk.models.NotificationType;
 import java.net.URL;
 import java.util.List;
 import java.util.Random;
-import java.util.UUID;
 
 public class NotificationReceiver extends BroadcastReceiver {
 
@@ -542,10 +541,35 @@ public class NotificationReceiver extends BroadcastReceiver {
     }
 
     private PendingIntent getPendingIntent(Context context, int requestCode, Intent intent) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            return PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+            Bundle extras = intent.getExtras();
+            String uri = null;
+            if (extras != null) {
+                String rawJson = extras.getString("RAW_DATA");
+                uri = extras.getString("targetUrl");
+            } else {
+                logger.Debug("No extra data for action.");
+            }
+            if (uri != null && !TextUtils.isEmpty(uri)) {
+                intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+            } else {
+                final String packageName = context.getPackageName();
+
+                intent = new Intent(context, getActivity(context));
+                intent.setAction(Constants.PUSH_OPEN_EVENT);
+                intent.putExtras(extras);
+                intent.setPackage(packageName);
+            }
+            if (intent != null && intent.getExtras() != null) {
+                intent.putExtras(intent.getExtras());
+            }
+            stackBuilder.addNextIntentWithParentStack(intent);
+            PendingIntent resultPendingIntent =
+                    stackBuilder.getPendingIntent(requestCode, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+            return resultPendingIntent;
         } else {
-            return PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            return PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
         }
     }
 
