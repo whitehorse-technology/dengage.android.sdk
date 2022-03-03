@@ -54,7 +54,7 @@ dependencies {
     implementation 'com.huawei.hms:ads-identifier:3.4.30.307'
     implementation 'com.huawei.agconnect:agconnect-core:1.5.2.300'
     
-    implementation 'com.google.code.gson:gson:2.8.9'
+    implementation 'com.google.code.gson:gson:2.9.0'
 }
 
 repositories {
