@@ -5,12 +5,12 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'com.huawei.agconnect'
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 32
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 31
+        targetSdkVersion 32
         versionCode 1
-        versionName "4.3.0"
+        versionName "4.3.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         //applicationId "com.dengage.sdk"
     }
@@ -50,7 +50,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:20.0.0'
     implementation 'com.google.firebase:firebase-messaging:23.0.0'
     // huawei
-    implementation 'com.huawei.hms:push:5.0.1.300'
+     implementation 'com.huawei.hms:push:6.1.0.300'
     implementation 'com.huawei.hms:ads-identifier:3.4.30.307'
     implementation 'com.huawei.agconnect:agconnect-core:1.5.2.300'
     
