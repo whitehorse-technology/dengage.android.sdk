@@ -193,13 +193,13 @@ class InAppMessageActivity : Activity(), View.OnClickListener {
             this@InAppMessageActivity.finish()
         }
 
-        @JavascriptInterface
+         @JavascriptInterface
         fun androidUrl(targetUrl: String) {
             logger.Verbose("In app message: android target url event $targetUrl")
-            NotificationReceiver.launchActivity(
+            NotificationReceiver.launchActivityForInApp(
                 this@InAppMessageActivity,
                 null,
-                targetUrl
+              targetUrl
             )
         }
 
