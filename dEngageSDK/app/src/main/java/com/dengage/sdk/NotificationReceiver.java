@@ -99,6 +99,29 @@ public class NotificationReceiver extends BroadcastReceiver {
             context.startActivity(activityIntent);
         }
     }
+    
+     public static void launchActivityForInApp(Context context, @Nullable Intent intent, String uri) {
+        Class<? extends Activity> cls = getActivity(context);
+        if (cls == null) return;
+
+        Intent activityIntent;
+        if (uri != null && !TextUtils.isEmpty(uri)) {
+            activityIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+        } else {
+            activityIntent = new Intent(context, cls);
+        }
+
+        if (intent != null && intent.getExtras() != null) {
+            activityIntent.putExtras(intent.getExtras());
+        }
+
+
+            activityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            activityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            context.startActivity(activityIntent);
+
+    }
+
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public static void startActivities(Context context, Class<? extends Activity> cls, Intent activityIntent) {
