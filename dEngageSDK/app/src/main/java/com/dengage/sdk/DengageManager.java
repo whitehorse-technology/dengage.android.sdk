@@ -666,6 +666,7 @@ public class DengageManager {
     }
 
     public void onMessageReceived(Map<String, String> data) {
+        try{
         logger.Verbose("onMessageReceived method is called.");
         logger.Verbose("Raw Message: " + new JSONObject(data).toString());
         if ((data != null && data.size() > 0)) {
@@ -679,6 +680,9 @@ public class DengageManager {
                 sendBroadcast(_context, json, data);
             }
         }
+        }
+        catch(Exception e)
+        {}
     }
 
     private void sendBroadcast(Context context, String json, Map<String, String> data) {
