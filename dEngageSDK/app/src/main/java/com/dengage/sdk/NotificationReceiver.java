@@ -191,16 +191,6 @@ public class NotificationReceiver extends BroadcastReceiver {
         String channelId = Constants.CHANNEL_ID;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-            // delete old notification channels
-            List<NotificationChannel> channels = notificationManager.getNotificationChannels();
-            if (channels != null && channels.size() > 0) {
-                Prefs prefs = new Prefs(context);
-                for (NotificationChannel channell : channels) {
-                    if (channell.getName().equals(prefs.getNotificationChannelName())) {
-                        channel = channell;
-                    }
-                }
-            }
 
             if (channel == null) {
                 channel = new NotificationChannel(
