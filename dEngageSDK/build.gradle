@@ -11,7 +11,7 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         //classpath 'com.google.gms:google-services:4.2.0'
       classpath 'com.huawei.agconnect:agcp:1.5.2.300'
-       classpath 'com.huawei.hms:push:6.1.0.300'
+       classpath 'com.huawei.hms:push:6.3.0.304'
     }
 }
 
