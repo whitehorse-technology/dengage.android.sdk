@@ -50,7 +50,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:20.0.0'
     implementation 'com.google.firebase:firebase-messaging:23.0.0'
     // huawei
-     implementation 'com.huawei.hms:push:6.1.0.300'
+     implementation 'com.huawei.hms:push:6.3.0.304'
     implementation 'com.huawei.hms:ads-identifier:3.4.30.307'
     implementation 'com.huawei.agconnect:agconnect-core:1.5.2.300'
     
