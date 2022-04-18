@@ -9,12 +9,12 @@ import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
-import android.text.TextUtils;
 import android.os.Looper;
+import android.text.TextUtils;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import com.huawei.agconnect.AGConnectOptionsBuilder;
+
 import com.dengage.sdk.cache.GsonHolder;
 import com.dengage.sdk.cache.Prefs;
 import com.dengage.sdk.callback.DengageCallback;
@@ -29,18 +29,18 @@ import com.dengage.sdk.models.Subscription;
 import com.dengage.sdk.models.TagItem;
 import com.dengage.sdk.models.TagsRequest;
 import com.dengage.sdk.models.TransactionalOpen;
+import com.dengage.sdk.rfm.RFMManager;
+import com.dengage.sdk.rfm.model.RFMGender;
+import com.dengage.sdk.rfm.model.RFMItem;
+import com.dengage.sdk.rfm.model.RFMScore;
 import com.dengage.sdk.service.NetworkRequest;
 import com.dengage.sdk.service.NetworkRequestCallback;
 import com.dengage.sdk.service.NetworkUrlUtils;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.installations.FirebaseInstallations;
-import com.google.firebase.installations.InstallationTokenResult;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.huawei.agconnect.config.AGConnectServicesConfig;
+import com.huawei.agconnect.AGConnectOptionsBuilder;
 import com.huawei.hms.aaid.HmsInstanceId;
 import com.huawei.hms.api.HuaweiApiAvailability;
 
@@ -371,13 +371,13 @@ public class DengageManager {
     }
 
     private void sendSubscription() {
-        if(!_subscription.getToken().isEmpty()) {
+        if (!_subscription.getToken().isEmpty()) {
             logger.Verbose("sendSubscription method is called");
             if (isSubscriptionSending) return;
             try {
                 isSubscriptionSending = true;
-               Handler handler = new Handler(Looper.getMainLooper());
-                  handler.postDelayed(new Runnable() {
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         try {
@@ -626,11 +626,11 @@ public class DengageManager {
             logger.Debug("Getting Hms Token");
             String token = "";
             try {
-             String appId =   new AGConnectOptionsBuilder().build(_context).getString("client/app_id");
+                String appId = new AGConnectOptionsBuilder().build(_context).getString("client/app_id");
                 token = HmsInstanceId.getInstance(_context).getToken(appId, com.huawei.hms.push.HmsMessaging.DEFAULT_TOKEN_SCOPE);
-                      logger.Debug("hms id & token "+appId+" "+token+" ");
-       
-                } catch (Exception e) {
+                logger.Debug("hms id & token " + appId + " " + token + " ");
+
+            } catch (Exception e) {
                 logger.Error("HmsTokenWorker Exception: " + e.getMessage());
             }
             return token;
@@ -666,23 +666,22 @@ public class DengageManager {
     }
 
     public void onMessageReceived(Map<String, String> data) {
-        try{
-        logger.Verbose("onMessageReceived method is called.");
-        logger.Verbose("Raw Message: " + new JSONObject(data).toString());
-        if ((data != null && data.size() > 0)) {
-            Message pushMessage = new Message(data);
-            String json = pushMessage.toJson();
-            logger.Verbose("Message Json: " + json);
-            String source = pushMessage.getMessageSource();
+        try {
+            logger.Verbose("onMessageReceived method is called.");
+            logger.Verbose("Raw Message: " + new JSONObject(data).toString());
+            if ((data != null && data.size() > 0)) {
+                Message pushMessage = new Message(data);
+                String json = pushMessage.toJson();
+                logger.Verbose("Message Json: " + json);
+                String source = pushMessage.getMessageSource();
 
-            if (Constants.MESSAGE_SOURCE.equals(source)) {
-                logger.Debug("There is a message that received from dEngage");
-                sendBroadcast(_context, json, data);
+                if (Constants.MESSAGE_SOURCE.equals(source)) {
+                    logger.Debug("There is a message that received from dEngage");
+                    sendBroadcast(_context, json, data);
+                }
             }
+        } catch (Exception e) {
         }
-        }
-        catch(Exception e)
-        {}
     }
 
     private void sendBroadcast(Context context, String json, Map<String, String> data) {
@@ -995,9 +994,29 @@ public class DengageManager {
      *
      * @param name will be saved in prefs as channel name
      */
-
     public void setNotificationChannelName(String name) {
         prefs.setNotificationChannelName(name);
+    }
+
+    /**
+     * Use for saving rfm scores to local storage if you will use rfm item sorting
+     */
+    public void saveRFMScores(@Nullable List<RFMScore> scores) {
+        new RFMManager(prefs).saveRFMScores(scores);
+    }
+
+    /**
+     * Use for updating score of category
+     */
+    public void categoryView(@NonNull String categoryId) {
+        new RFMManager(prefs).categoryView(categoryId);
+    }
+
+    /**
+     * Use for sorting rfm items with respect to rfm scores saved to local storage
+     */
+    public <T> List<T> sortRFMItems(RFMGender rfmGender, List<RFMItem> rfmItems) {
+        return new RFMManager(prefs).sortRFMItems(rfmGender, rfmItems);
     }
 
 }
