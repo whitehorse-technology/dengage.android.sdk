@@ -2,9 +2,12 @@ package com.dengage.sdk.inappmessage
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
@@ -14,8 +17,10 @@ import android.webkit.WebView
 import android.widget.RelativeLayout
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.app.NotificationManagerCompat
 import com.dengage.sdk.Logger
 import com.dengage.sdk.NotificationReceiver
+import com.dengage.sdk.NotificationUtils
 import com.dengage.sdk.R
 import com.dengage.sdk.inappmessage.model.ContentParams
 import com.dengage.sdk.inappmessage.model.ContentPosition
@@ -193,14 +198,22 @@ class InAppMessageActivity : Activity(), View.OnClickListener {
             this@InAppMessageActivity.finish()
         }
 
-         @JavascriptInterface
+        @JavascriptInterface
         fun androidUrl(targetUrl: String) {
             logger.Verbose("In app message: android target url event $targetUrl")
-            NotificationReceiver.launchActivityForInApp(
-                this@InAppMessageActivity,
-                null,
-              targetUrl
-            )
+
+            if (targetUrl == "Dn.promptPushPermission()") {
+                var notificationUtils = NotificationUtils()
+                if (!notificationUtils.areNotificationsEnabled(context = this@InAppMessageActivity)) {
+                    notificationUtils.showAlert(context = this@InAppMessageActivity)
+                }
+            } else {
+                NotificationReceiver.launchActivityForInApp(
+                    this@InAppMessageActivity,
+                    null,
+                    targetUrl
+                )
+            }
         }
 
         @JavascriptInterface
@@ -238,4 +251,23 @@ class InAppMessageActivity : Activity(), View.OnClickListener {
         }
     }
 
+    fun areNotificationsEnabled(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val manager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            if (!manager.areNotificationsEnabled()) {
+                return false
+            }
+            val channels = manager.notificationChannels
+            for (channel in channels) {
+                if (channel.importance == NotificationManager.IMPORTANCE_NONE) {
+                    return false
+                }
+            }
+            true
+        } else {
+            NotificationManagerCompat.from(this).areNotificationsEnabled()
+        }
+    }
 }
+
