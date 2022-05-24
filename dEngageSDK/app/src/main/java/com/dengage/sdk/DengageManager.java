@@ -1019,6 +1019,48 @@ public class DengageManager {
         return new RFMManager(prefs).sortRFMItems(rfmGender, rfmItems);
     }
 
+    /**
+     * Send tags for ecomm2
+     *
+     * @param tags will be send to api
+     */
+    public void setTags(@NonNull List<TagItem> tags,String keyType) {
+        String key="";
+        SdkParameters sdkParameters = prefs.getSdkParameters();
+        if (sdkParameters == null || sdkParameters.getAccountName() == null) {
+            return;
+        }
+        if(keyType.equalsIgnoreCase("contact"))
+        {
+            key=_subscription.getContactKey();
+            if(key.isEmpty()) return;
+        }
+        else if(keyType.equalsIgnoreCase("device"))
+        {
+            key=_subscription.getDeviceId();
+        }
+        else if(keyType.equalsIgnoreCase("ContactOrDevice"))
+        {
+            key=_subscription.getContactKey();
+            if(key.isEmpty()){key=_subscription.getDeviceId();}
+        }
+        // convert tags request to json string
+        TagsRequest tagsRequest = new TagsRequest(
+                sdkParameters.getAccountName(),
+                key,
+                tags
+        );
+        String postData = GsonHolder.INSTANCE.getGson().toJson(tagsRequest, TagsRequest.class);
+        // call http request
+        NetworkRequest networkRequest = new NetworkRequest(
+                NetworkUrlUtils.INSTANCE.setTagsRequestUrl(_context),
+                Utils.getUserAgent(_context),
+                postData,
+                null);
+        networkRequest.executeTask();
+    }
+
+
 }
 
 

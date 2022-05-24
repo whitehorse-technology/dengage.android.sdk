@@ -4,10 +4,15 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
+
 import com.dengage.sdk.models.Event;
 import com.dengage.sdk.models.Session;
 import com.dengage.sdk.models.Subscription;
+import com.dengage.sdk.models.TagItem;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -25,7 +30,7 @@ public class DengageEvent {
 
     public static DengageEvent getInstance(Context context, String referer) {
 
-        if(_instance == null) _instance = new DengageEvent(context);
+        if (_instance == null) _instance = new DengageEvent(context);
 
         _instance.sessionStart(referer);
 
@@ -42,7 +47,7 @@ public class DengageEvent {
     }
 
     public void sessionStart(String referer) {
-        if(sessionStarted) return;
+        if (sessionStarted) return;
         try {
 
             HashMap<String, Object> data = new HashMap<>();
@@ -69,11 +74,13 @@ public class DengageEvent {
                 if (uri.getQueryParameter("dn_camp_id") != null)
                     data.put("camp_id", uri.getQueryParameter("dn_camp_id"));
 
-            } catch (Exception ignored) { }
+            } catch (Exception ignored) {
+            }
 
             sendDeviceEvent("session_info", data);
             sessionStarted = true;
-        } catch (Exception ignored) {  }
+        } catch (Exception ignored) {
+        }
     }
 
     public void pageView(Map<String, Object> data) {
@@ -82,7 +89,9 @@ public class DengageEvent {
                 throw new Exception("data must have a valid page_type parameter.");
 
             sendDeviceEvent("page_view_events", data);
-        } catch (Exception ex) { logger.Error(ex.getMessage()); }
+        } catch (Exception ex) {
+            logger.Error(ex.getMessage());
+        }
     }
 
     public void sendCartEvents(Map<String, Object> data, String eventType) {
@@ -101,7 +110,7 @@ public class DengageEvent {
 
             sendDeviceEvent("shopping_cart_events", copyData);
 
-            if(data.containsKey("cartItems")) {
+            /*if(data.containsKey("cartItems")) {
                 Object[] items = (Object[])data.get("cartItems");
                 for (Object obj : items) {
                     if(obj instanceof HashMap) {
@@ -110,42 +119,101 @@ public class DengageEvent {
                         sendDeviceEvent("shopping_cart_events_detail", product);
                     }
                 }
-            }
+            }*/
 
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             logger.Error(ex.getMessage());
         }
     }
 
-    public void addToCart(Map<String, Object> data) { sendCartEvents(data, "add_to_cart"); }
+    public void addToCart(Map<String, Object> data) {
+        sendCartEvents(data, "add_to_cart");
+        List<TagItem> tagItems = new ArrayList<>();
+        tagItems.add(new TagItem("cart_update_date", Utils.getCurrentDateTimeForTagEvents()));
+        StringBuilder productIdString = new StringBuilder();
+        if (data.containsKey("cartItems")) {
+            Object[] items = (Object[]) data.get("cartItems");
+            for (Object obj : items) {
+                if (obj instanceof HashMap) {
+                    HashMap<String, Object> product = (HashMap<String, Object>) obj;
+                    if (product.containsKey("product_id")) {
+                        productIdString.append(product.get("product_id")).append(",");
+                    }
+                }
+            }
+        }
+        tagItems.add(new TagItem("cart_product_list", productIdString.toString()));
+        DengageManager.getInstance(_context).setTags(tagItems,"contact");
+    }
 
-    public void removeFromCart(Map<String, Object> data) { sendCartEvents(data, "remove_from_cart"); }
+    public void deleteCart(Map<String, Object> data) {
+        sendCartEvents(data, "delete_cart");
+        List<TagItem> tagItems = new ArrayList<>();
+        tagItems.add(new TagItem("cart_update_date", ""));
+        tagItems.add(new TagItem("cart_product_list", ""));
+        DengageManager.getInstance(_context).setTags(tagItems,"contact");
+    }
 
-    public void viewCart(Map<String, Object> data) { sendCartEvents(data, "view_cart"); }
 
-    public void beginCheckout(Map<String, Object> data) { sendCartEvents(data, "begin_checkout"); }
+    public void removeFromCart(Map<String, Object> data) {
+        sendCartEvents(data, "remove_from_cart");
+        List<TagItem> tagItems = new ArrayList<>();
+        StringBuilder productIdString = new StringBuilder();
+        if (data.containsKey("cartItems")) {
+            Object[] items = (Object[]) data.get("cartItems");
+            assert items != null;
+            tagItems.add(new TagItem("cart_update_date", items.length > 0 ? Utils.getCurrentDateTimeForTagEvents() : ""));
+
+            for (Object obj : items) {
+                if (obj instanceof HashMap) {
+                    HashMap<String, Object> product = (HashMap<String, Object>) obj;
+                    if (product.containsKey("product_id")) {
+                        productIdString.append(product.get("product_id")).append(",");
+                    }
+                }
+            }
+        }
+        tagItems.add(new TagItem("cart_product_list", productIdString.toString()));
+        DengageManager.getInstance(_context).setTags(tagItems,"contact");
+    }
+
+    public void viewCart(Map<String, Object> data) {
+        //    sendCartEvents(data, "view_cart");
+    }
+
+    public void beginCheckout(Map<String, Object> data) {
+        sendCartEvents(data, "begin_checkout");
+        List<TagItem> tagItems = new ArrayList<>();
+        tagItems.add(new TagItem("last_begin_checkout_date",  Utils.getCurrentDateTimeForTagEvents()));
+        DengageManager.getInstance(_context).setTags(tagItems,"contact");
+
+    }
 
     public void cancelOrder(Map<String, Object> data) {
         Map<String, Object> copyData = new HashMap<>(data);
         copyData.remove("cartItems");
 
-        if(copyData.containsKey("event_type"))
+        if (copyData.containsKey("event_type"))
             copyData.remove("event_type");
 
-        copyData.put("event_type",  "cancel");
+        copyData.put("event_type", "cancel");
 
-        if(copyData.containsKey("total_amount"))
-            copyData.put("total_amount",  0);
+        if (copyData.containsKey("total_amount"))
+            copyData.put("total_amount", 0);
 
         sendDeviceEvent("order_events", copyData);
 
-        if(data.containsKey("cartItems")) {
-            Object[] items = (Object[])data.get("cartItems");
+        if (data.containsKey("cartItems")) {
+            Object[] items = (Object[]) data.get("cartItems");
             for (Object obj : items) {
-                if(obj instanceof HashMap) {
+                if (obj instanceof HashMap) {
                     HashMap<String, Object> product = (HashMap<String, Object>) obj;
-                    if(copyData.containsKey("order_id"))
+                    if (copyData.containsKey("order_id"))
                         product.put("order_id", copyData.get("order_id").toString());
+                    if (copyData.containsKey("payment_method"))
+                        product.put("payment_method", copyData.get("payment_method").toString());
+                    if (copyData.containsKey("event_type"))
+                        product.put("event_type", copyData.get("event_type").toString());
                     sendDeviceEvent("order_events_detail", product);
                 }
             }
@@ -156,32 +224,45 @@ public class DengageEvent {
         Map<String, Object> copyData = new HashMap<>(data);
         copyData.remove("cartItems");
 
-        if(!copyData.containsKey("event_type"))
+        if (!copyData.containsKey("event_type"))
             copyData.remove("event_type");
-        copyData.put("event_type",  "order");
+        copyData.put("event_type", "order");
 
         sendDeviceEvent("order_events", copyData);
 
         String eventId = UUID.randomUUID().toString();
         HashMap<String, Object> cartEventParams = new HashMap<>();
-        cartEventParams.put("event_type",  "order");
-        cartEventParams.put("event_id",  eventId);
+        cartEventParams.put("event_type", "order");
+        cartEventParams.put("event_id", eventId);
         sendDeviceEvent("shopping_cart_events", cartEventParams);
 
-        if(data.containsKey("cartItems")) {
-            Object[] items = (Object[])data.get("cartItems");
+        List<TagItem> tagItems = new ArrayList<>();
+        tagItems.add(new TagItem("cart_update_date", ""));
+        tagItems.add(new TagItem("cart_product_list", ""));
+        tagItems.add(new TagItem("last_order_date", Utils.getCurrentDateTimeForTagEvents()));
+        DengageManager.getInstance(_context).setTags(tagItems,"contact");
+
+
+        if (data.containsKey("cartItems")) {
+            Object[] items = (Object[]) data.get("cartItems");
             for (Object obj : items) {
-                if(obj instanceof HashMap) {
+                if (obj instanceof HashMap) {
                     HashMap<String, Object> product = (HashMap<String, Object>) obj;
-                    if(copyData.containsKey("order_id"))
+                    if (copyData.containsKey("order_id"))
                         product.put("order_id", copyData.get("order_id").toString());
+                    if (copyData.containsKey("payment_method"))
+                        product.put("payment_method", copyData.get("payment_method").toString());
+                    if (copyData.containsKey("event_type"))
+                        product.put("event_type", copyData.get("event_type").toString());
                     sendDeviceEvent("order_events_detail", product);
                 }
             }
         }
     }
 
-    public void search(Map<String, Object> data) { sendDeviceEvent("search_events", data); }
+    public void search(Map<String, Object> data) {
+        sendDeviceEvent("search_events", data);
+    }
 
     public void sendWishListEvents(Map<String, Object> data, String eventType) {
         try {
@@ -199,8 +280,8 @@ public class DengageEvent {
 
             sendDeviceEvent("wishlist_events", copyData);
 
-            if (data.containsKey("items")) {
-                Object[] items = (Object[])data.get("items");
+          /*  if (data.containsKey("items")) {
+                Object[] items = (Object[]) data.get("items");
                 for (Object obj : items) {
                     if (obj instanceof HashMap) {
                         HashMap<String, Object> item = (HashMap<String, Object>) obj;
@@ -208,15 +289,19 @@ public class DengageEvent {
                         sendDeviceEvent("wishlist_events_detail", item);
                     }
                 }
-            }
+            }*/
         } catch (Exception ex) {
             logger.Error(ex.getMessage());
         }
     }
 
-    public void addToWishList(Map<String, Object> data) { sendWishListEvents(data, "add"); }
+    public void addToWishList(Map<String, Object> data) {
+        sendWishListEvents(data, "add");
+    }
 
-    public void removeFromWishList(Map<String, Object> data) { sendWishListEvents(data, "remove"); }
+    public void removeFromWishList(Map<String, Object> data) {
+        sendWishListEvents(data, "remove");
+    }
 
     public void sendCustomEvent(String tableName, String key, Map<String, Object> data) {
         logger.Verbose("sendCustomEvent method is called");
@@ -237,7 +322,7 @@ public class DengageEvent {
             RequestAsync req = new RequestAsync(baseApiUri, event);
             req.executeTask();
         } catch (Exception e) {
-            logger.Error("sendCustomEvent: "+ e.getMessage());
+            logger.Error("sendCustomEvent: " + e.getMessage());
         }
     }
 
@@ -248,8 +333,11 @@ public class DengageEvent {
             String deviceId = subscription.getDeviceId();
             sendCustomEvent(tableName, deviceId, data);
         } catch (Exception e) {
-            logger.Error("sendDeviceEvent: "+ e.getMessage());
+            logger.Error("sendDeviceEvent: " + e.getMessage());
         }
     }
+
+
+
 }
 

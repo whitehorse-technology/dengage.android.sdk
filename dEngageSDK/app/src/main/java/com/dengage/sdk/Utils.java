@@ -34,6 +34,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -82,7 +85,7 @@ public class Utils {
     }
 
     public static String getSdkVersion(Context context) {
-        return "4.3.6";
+        return "4.3.7";
     }
 
     public static String getOsVersion() {
@@ -431,6 +434,14 @@ public class Utils {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MINUTE, 30);
         return cal.getTime();
+    }
+
+    public static String getCurrentDateTimeForTagEvents()
+    {
+        SimpleDateFormat formatter = new SimpleDateFormat(Constants.DATE_FORMAT, Locale.getDefault());
+        Date date=new Date();
+        return formatter.format(date);
+
     }
 
     public static String generateSessionId()
