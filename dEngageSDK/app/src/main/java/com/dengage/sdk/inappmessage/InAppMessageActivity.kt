@@ -15,6 +15,7 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.widget.RelativeLayout
+import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.NotificationManagerCompat
@@ -205,7 +206,12 @@ class InAppMessageActivity : Activity(), View.OnClickListener {
             if (targetUrl == "Dn.promptPushPermission()") {
                 var notificationUtils = NotificationUtils()
                 if (!notificationUtils.areNotificationsEnabled(context = this@InAppMessageActivity)) {
-                    notificationUtils.showAlert(context = this@InAppMessageActivity)
+                    Toast.makeText(
+                        this@InAppMessageActivity,
+                        "You need to enable push permission",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    notificationUtils.launchSettingsActivity(context = this@InAppMessageActivity)
                 }
             } else {
                 NotificationReceiver.launchActivityForInApp(
@@ -270,4 +276,5 @@ class InAppMessageActivity : Activity(), View.OnClickListener {
         }
     }
 }
+
 
