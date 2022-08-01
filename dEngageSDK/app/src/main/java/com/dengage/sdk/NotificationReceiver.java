@@ -99,8 +99,8 @@ public class NotificationReceiver extends BroadcastReceiver {
             context.startActivity(activityIntent);
         }
     }
-    
-     public static void launchActivityForInApp(Context context, @Nullable Intent intent, String uri) {
+
+    public static void launchActivityForInApp(Context context, @Nullable Intent intent, String uri) {
         Class<? extends Activity> cls = getActivity(context);
         if (cls == null) return;
 
@@ -116,9 +116,9 @@ public class NotificationReceiver extends BroadcastReceiver {
         }
 
 
-            activityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            activityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            context.startActivity(activityIntent);
+        activityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        activityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        context.startActivity(activityIntent);
 
     }
 
@@ -183,7 +183,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         Intent deleteIntent = getDeleteIntent(extras, packageName);
 
         PendingIntent pContentIntent = getPendingIntent(context, contentIntentRequestCode, contentIntent);
-        PendingIntent pDeleteIntent = getPendingIntent(context, deleteIntentRequestCode, deleteIntent);
+        PendingIntent pDeleteIntent = getDeletePendingIntent(context, deleteIntentRequestCode, deleteIntent);
 
         Uri soundUri = Utils.getSound(context, message.getSound());
         // generate new channel id for different sounds
@@ -586,15 +586,36 @@ public class NotificationReceiver extends BroadcastReceiver {
         }
     }
 
-    public static Bitmap getBitmapFromUrl(String imageUrl) {
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-        try {
-            return BitmapFactory.decodeStream(new URL(imageUrl).openConnection().getInputStream());
-        } catch (Exception e) {
-            e.printStackTrace();
-            logger.Debug("getBitmapFromUrl: " + e.getMessage());
-            return null;
+    private PendingIntent getDeletePendingIntent(Context context, int requestCode, Intent intent) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+            Bundle extras = intent.getExtras();
+            String uri = null;
+            if (extras != null) {
+                String rawJson = extras.getString("RAW_DATA");
+                uri = extras.getString("targetUrl");
+            } else {
+                logger.Debug("No extra data for action.");
+            }
+            if (uri != null && !TextUtils.isEmpty(uri)) {
+                intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+            } else {
+                final String packageName = context.getPackageName();
+
+                intent = new Intent(context, getActivity(context));
+                intent.setAction(Constants.PUSH_DELETE_EVENT);
+                intent.putExtras(extras);
+                intent.setPackage(packageName);
+            }
+            if (intent != null && intent.getExtras() != null) {
+                intent.putExtras(intent.getExtras());
+            }
+            stackBuilder.addNextIntentWithParentStack(intent);
+            PendingIntent resultPendingIntent =
+                    stackBuilder.getPendingIntent(requestCode, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+            return resultPendingIntent;
+        } else {
+            return PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
         }
     }
 }
