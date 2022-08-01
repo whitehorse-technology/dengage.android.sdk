@@ -586,37 +586,10 @@ public class NotificationReceiver extends BroadcastReceiver {
         }
     }
 
-    private PendingIntent getDeletePendingIntent(Context context, int requestCode, Intent intent) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-            Bundle extras = intent.getExtras();
-            String uri = null;
-            if (extras != null) {
-                String rawJson = extras.getString("RAW_DATA");
-                uri = extras.getString("targetUrl");
-            } else {
-                logger.Debug("No extra data for action.");
-            }
-            if (uri != null && !TextUtils.isEmpty(uri)) {
-                intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-            } else {
-                final String packageName = context.getPackageName();
+     private PendingIntent getDeletePendingIntent(Context context, int requestCode, Intent intent) {
 
-                intent = new Intent(context, getActivity(context));
-                intent.setAction(Constants.PUSH_DELETE_EVENT);
-                intent.putExtras(extras);
-                intent.setPackage(packageName);
-            }
-            if (intent != null && intent.getExtras() != null) {
-                intent.putExtras(intent.getExtras());
-            }
-            stackBuilder.addNextIntentWithParentStack(intent);
-            PendingIntent resultPendingIntent =
-                    stackBuilder.getPendingIntent(requestCode, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
-            return resultPendingIntent;
-        } else {
             return PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
-        }
+
     }
 
  public static Bitmap getBitmapFromUrl(String imageUrl) {
