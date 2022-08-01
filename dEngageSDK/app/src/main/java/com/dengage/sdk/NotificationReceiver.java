@@ -618,4 +618,16 @@ public class NotificationReceiver extends BroadcastReceiver {
             return PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
         }
     }
+
+ public static Bitmap getBitmapFromUrl(String imageUrl) {
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+        try {
+            return BitmapFactory.decodeStream(new URL(imageUrl).openConnection().getInputStream());
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.Debug("getBitmapFromUrl: " + e.getMessage());
+            return null;
+        }
+    }
 }
