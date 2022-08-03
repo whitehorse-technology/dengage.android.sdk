@@ -277,7 +277,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         Notification notification = notificationBuilder.build();
         if (manager != null) {
-            manager.notify(message.getMessageSource(), message.getMessageId(), notification);
+            manager.notify(message.getMessageSource(), message.hashCode(), notification);
         }
     }
 
@@ -285,7 +285,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         Notification notification = notificationBuilder.build();
         if (manager != null) {
-            manager.notify(message.getMessageSource(), message.getMessageId(), notification);
+            manager.notify(message.getMessageSource(), message.hashCode(), notification);
         }
     }
 
@@ -483,7 +483,7 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         if (manager != null) {
-            manager.cancel(message.getMessageSource(), message.getMessageId());
+            manager.cancel(message.getMessageSource(), message.hashCode());
         }
     }
 
@@ -586,13 +586,13 @@ public class NotificationReceiver extends BroadcastReceiver {
         }
     }
 
-     private PendingIntent getDeletePendingIntent(Context context, int requestCode, Intent intent) {
+    private PendingIntent getDeletePendingIntent(Context context, int requestCode, Intent intent) {
 
-            return PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+        return PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
     }
 
- public static Bitmap getBitmapFromUrl(String imageUrl) {
+    public static Bitmap getBitmapFromUrl(String imageUrl) {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         try {
