@@ -483,7 +483,11 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         if (manager != null) {
-            manager.cancel(message.getMessageSource(), message.hashCode());
+            if (message.getNotificationType() == NotificationType.CAROUSEL) {
+                manager.cancel(message.getMessageSource(), message.getMessageId());
+            } else {
+                manager.cancel(message.getMessageSource(), message.hashCode());
+            }
         }
     }
 
