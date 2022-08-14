@@ -66,12 +66,13 @@ public class Request {
 
     public String sendRequest(String url, String userAgent,
                               @Nullable String postData, int connectionTimeOut) throws Exception {
-        logger.Verbose("requestUrl: " + url);
+        logger.Verbose("requestUrl: " + url +" agent "+userAgent);
         return sendHttpRequest(url, postData == null ? "GET" : "POST", userAgent, postData, connectionTimeOut);
     }
 
     void sendRequestSafe(String url, String userAgent, String data) {
         try {
+            logger.Verbose("requestUrl: " + url +" agent2 "+userAgent);
             sendHttpRequest(url, "POST", userAgent, data, 15000);
         } catch (Exception e) {
             logger.Error("sendRequest: The remote server returned an error with the status code: " + e.getMessage());

@@ -74,15 +74,16 @@ class InAppMessageManager(
             NetworkUrlUtils.getInAppMessagesRequestUrl(
                 context,
                 sdkParameters.accountName,
-                subscription
+                subscription,
+                sdkParameters
             ),
             Utils.getUserAgent(context), object : NetworkRequestCallback {
                 override fun responseFetched(response: String?) {
-                    logger.Error("in app messages response fetched: $response")
+                    logger.Error("in app messages response fetched: ${response?.replace("sendClickEvent();","")}")
 
                     val listType = object : TypeToken<MutableList<InAppMessage>>() {}.type
                     val fetchedInAppMessages = try {
-                        GsonHolder.gson.fromJson<MutableList<InAppMessage>>(response, listType)
+                        GsonHolder.gson.fromJson<MutableList<InAppMessage>>(response/*?.replace("sendClickEvent();","")*/, listType)
                     } catch (e: Exception) {
                         logger.Error("in app messages response error: ${e.message}")
                         null
@@ -211,7 +212,7 @@ class InAppMessageManager(
                     InAppMessageActivity.inAppMessageCallback = this@InAppMessageManager
                 }
             }
-        }, delay)
+        }, 0)
     }
 
     private fun updateInAppMessageOnCache(inAppMessage: InAppMessage) {

@@ -76,7 +76,7 @@ object InAppMessageUtils {
                         )
                     } != null && isDisplayTimeAvailable(inAppMessage)
             }
-            inAppMessageWithScreenName ?: inAppMessageWithoutScreenName
+                inAppMessageWithScreenName ?: inAppMessageWithoutScreenName
         }
     }
 

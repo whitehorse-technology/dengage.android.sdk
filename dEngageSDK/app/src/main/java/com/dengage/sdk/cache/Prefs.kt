@@ -64,7 +64,7 @@ class Prefs(context: Context) {
         get() = preferences.get(APP_SESSION_ID, Utils.generateSessionId()) ?: ""
         set(value) = preferences.set(APP_SESSION_ID, value)
 
-    internal var rfmScores: MutableList<RFMScore>?
+     var rfmScores: MutableList<RFMScore>?
         get() = preferences.get(RFM_SCORES)
         set(value) = preferences.set(RFM_SCORES, value)
 
