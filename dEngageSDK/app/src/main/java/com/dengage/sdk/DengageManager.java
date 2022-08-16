@@ -143,7 +143,7 @@ public class DengageManager {
     }
 
 
-    public DengageManager isGeofenceEnabled(boolean isEnabled) {
+    public DengageManager setGeofenceStatus(boolean isEnabled) {
         logger.Verbose("Geofence method is called");
         try {
             com.dengage.sdk.data.cache.Prefs.INSTANCE.setGeofenceEnabled(isEnabled);
@@ -1111,11 +1111,11 @@ public class DengageManager {
     }
 
     public void startGeofence() {
-           geofenceManager.startTracking();
+        geofenceManager.startTracking();
     }
 
     public void handleLocation(Context context, Location location, GeofenceLocationSource source, String geofenceRequestId) {
-           geofenceManager.handleLocation(location, source, geofenceRequestId);
+        geofenceManager.handleLocation(location, source, geofenceRequestId);
     }
 
     public void handleBootCompleted(Context context) {
