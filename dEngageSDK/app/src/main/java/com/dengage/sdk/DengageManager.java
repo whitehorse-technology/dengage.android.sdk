@@ -593,8 +593,8 @@ public class DengageManager {
             String advertisingId = "";
             try {
                 com.huawei.hms.ads.identifier.AdvertisingIdClient.Info adInfo
-                    = com.huawei.hms.ads.identifier.AdvertisingIdClient.
-                    getAdvertisingIdInfo(_context);
+                        = com.huawei.hms.ads.identifier.AdvertisingIdClient.
+                        getAdvertisingIdInfo(_context);
                 if (!adInfo.isLimitAdTrackingEnabled())
                     advertisingId = adInfo.getId();
             } catch (Exception e) {
@@ -704,14 +704,14 @@ public class DengageManager {
         if (TextUtils.isEmpty(_subscription.integrationKey)) return;
         // if 24 hours passed after getting sdk params, you should get again
         if (prefs.getSdkParameters() != null &&
-            System.currentTimeMillis() < prefs.getSdkParameters().getLastFetchTimeInMillis() + 24 * 60 * 60 * 1000) {
+                System.currentTimeMillis() < prefs.getSdkParameters().getLastFetchTimeInMillis() + 24 * 60 * 60 * 1000) {
             // fetch in app messages
             getInAppMessages();
             return;
         }
         NetworkRequest networkRequest = new NetworkRequest(
-            NetworkUrlUtils.INSTANCE.getSdkParametersRequestUrl(_context, _subscription.integrationKey),
-            Utils.getUserAgent(_context), new NetworkRequestCallback() {
+                NetworkUrlUtils.INSTANCE.getSdkParametersRequestUrl(_context, _subscription.integrationKey),
+                Utils.getUserAgent(_context), new NetworkRequestCallback() {
             @Override
             public void responseFetched(@Nullable String response) {
                 if (response != null) {
@@ -771,7 +771,7 @@ public class DengageManager {
      */
     public @Nullable
     Boolean getUserPermission() {
-        return _subscription == null ? null:_subscription.getUserPermission();
+        return _subscription == null ? null : _subscription.getUserPermission();
     }
 
     /**
@@ -799,7 +799,7 @@ public class DengageManager {
      */
     public @Nullable
     String getToken() {
-        return _subscription == null ? null:_subscription.getToken();
+        return _subscription == null ? null : _subscription.getToken();
     }
 
 
@@ -811,18 +811,18 @@ public class DengageManager {
         // control inbox message enabled
         SdkParameters sdkParameters = prefs.getSdkParameters();
         if (sdkParameters == null || sdkParameters.getAccountName() == null ||
-            sdkParameters.getInboxEnabled() == null || !sdkParameters.getInboxEnabled()) {
+                sdkParameters.getInboxEnabled() == null || !sdkParameters.getInboxEnabled()) {
             dengageCallback.onResult(new ArrayList<InboxMessage>());
             return;
         }
         if (inboxMessages != null && !inboxMessages.isEmpty() && offset == 0 &&
-            System.currentTimeMillis() < inboxMessageFetchMillis + 600000) {
+                System.currentTimeMillis() < inboxMessageFetchMillis + 600000) {
             dengageCallback.onResult(inboxMessages);
         } else {
             NetworkRequest networkRequest = new NetworkRequest(
-                NetworkUrlUtils.INSTANCE.getInboxMessagesRequestUrl(_context,
-                    sdkParameters.getAccountName(), _subscription, limit, offset),
-                Utils.getUserAgent(_context), new NetworkRequestCallback() {
+                    NetworkUrlUtils.INSTANCE.getInboxMessagesRequestUrl(_context,
+                            sdkParameters.getAccountName(), _subscription, limit, offset),
+                    Utils.getUserAgent(_context), new NetworkRequestCallback() {
                 @Override
                 public void responseFetched(@Nullable String response) {
                     inboxMessageFetchMillis = System.currentTimeMillis();
@@ -858,7 +858,7 @@ public class DengageManager {
         // control inbox message enabled
         SdkParameters sdkParameters = prefs.getSdkParameters();
         if (sdkParameters == null || sdkParameters.getAccountName() == null ||
-            sdkParameters.getInboxEnabled() == null || !sdkParameters.getInboxEnabled()) {
+                sdkParameters.getInboxEnabled() == null || !sdkParameters.getInboxEnabled()) {
             return;
         }
         // remove cached inbox message with id
@@ -871,9 +871,9 @@ public class DengageManager {
         });
         // call http request
         NetworkRequest networkRequest = new NetworkRequest(
-            NetworkUrlUtils.INSTANCE.setInboxMessageAsDeletedRequestUrl(_context, id,
-                sdkParameters.getAccountName(), _subscription),
-            Utils.getUserAgent(_context), null);
+                NetworkUrlUtils.INSTANCE.setInboxMessageAsDeletedRequestUrl(_context, id,
+                        sdkParameters.getAccountName(), _subscription),
+                Utils.getUserAgent(_context), null);
         networkRequest.executeTask();
     }
 
@@ -886,7 +886,7 @@ public class DengageManager {
         // control inbox message enabled
         SdkParameters sdkParameters = prefs.getSdkParameters();
         if (sdkParameters == null || sdkParameters.getAccountName() == null ||
-            sdkParameters.getInboxEnabled() == null || !sdkParameters.getInboxEnabled()) {
+                sdkParameters.getInboxEnabled() == null || !sdkParameters.getInboxEnabled()) {
             return;
         }
         // find cached inbox message with id and set clicked
@@ -902,9 +902,9 @@ public class DengageManager {
         }
         // call http request
         NetworkRequest networkRequest = new NetworkRequest(
-            NetworkUrlUtils.INSTANCE.setInboxMessageAsClickedRequestUrl(_context, id,
-                sdkParameters.getAccountName(), _subscription),
-            Utils.getUserAgent(_context), null);
+                NetworkUrlUtils.INSTANCE.setInboxMessageAsClickedRequestUrl(_context, id,
+                        sdkParameters.getAccountName(), _subscription),
+                Utils.getUserAgent(_context), null);
         networkRequest.executeTask();
     }
 
@@ -930,7 +930,7 @@ public class DengageManager {
                     break;
                 }
             }
-            tagItems.add(new TagItem("app-" + app.getAlias(), isInstalled ? "true":"false"));
+            tagItems.add(new TagItem("app-" + app.getAlias(), isInstalled ? "true" : "false"));
         }
         prefs.setAppTrackingTime(Calendar.getInstance().getTimeInMillis());
         setTags(tagItems);
@@ -975,17 +975,17 @@ public class DengageManager {
         }
         // convert tags request to json string
         TagsRequest tagsRequest = new TagsRequest(
-            sdkParameters.getAccountName(),
-            _subscription.getDeviceId(),
-            tags
+                sdkParameters.getAccountName(),
+                _subscription.getDeviceId(),
+                tags
         );
         String postData = GsonHolder.INSTANCE.getGson().toJson(tagsRequest, TagsRequest.class);
         // call http request
         NetworkRequest networkRequest = new NetworkRequest(
-            NetworkUrlUtils.INSTANCE.setTagsRequestUrl(_context),
-            Utils.getUserAgent(_context),
-            postData,
-            null);
+                NetworkUrlUtils.INSTANCE.setTagsRequestUrl(_context),
+                Utils.getUserAgent(_context),
+                postData,
+                null);
         networkRequest.executeTask();
     }
 
@@ -1024,25 +1024,22 @@ public class DengageManager {
      *
      * @param tags will be send to api
      */
-    public void setTags(@NonNull List<TagItem> tags,String keyType) {
-        String key="";
+    public void setTags(@NonNull List<TagItem> tags, String keyType) {
+        String key = "";
         SdkParameters sdkParameters = prefs.getSdkParameters();
         if (sdkParameters == null || sdkParameters.getAccountName() == null) {
             return;
         }
-        if(keyType.equalsIgnoreCase("contact"))
-        {
-            key=_subscription.getContactKey();
-            if(key.isEmpty()) return;
-        }
-        else if(keyType.equalsIgnoreCase("device"))
-        {
-            key=_subscription.getDeviceId();
-        }
-        else if(keyType.equalsIgnoreCase("ContactOrDevice"))
-        {
-            key=_subscription.getContactKey();
-            if(key.isEmpty()){key=_subscription.getDeviceId();}
+        if (keyType.equalsIgnoreCase("contact")) {
+            key = _subscription.getContactKey();
+            if (key.isEmpty()) return;
+        } else if (keyType.equalsIgnoreCase("device")) {
+            key = _subscription.getDeviceId();
+        } else if (keyType.equalsIgnoreCase("ContactOrDevice")) {
+            key = _subscription.getContactKey();
+            if (key.isEmpty()) {
+                key = _subscription.getDeviceId();
+            }
         }
         // convert tags request to json string
         TagsRequest tagsRequest = new TagsRequest(
@@ -1058,6 +1055,22 @@ public class DengageManager {
                 postData,
                 null);
         networkRequest.executeTask();
+    }
+
+    public void handleIncomingIntent(Intent intent) {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                if (intent != null && intent.getExtras() != null && intent.getAction() != null) {
+                    if (intent.getAction().equals(Constants.PUSH_OPEN_EVENT)) {
+                        sendOpenEvent("", "", new Message(intent.getExtras()));
+                    }
+
+                }
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
