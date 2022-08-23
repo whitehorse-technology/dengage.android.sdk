@@ -17,5 +17,6 @@ class SdkParameters(
         @SerializedName("inAppMinSecBetweenMessages") val inAppMinSecBetweenMessages: Int?,
         @SerializedName("lastFetchTimeInMillis") var lastFetchTimeInMillis: Long = 0,
         @SerializedName("appTrackingEnabled") var appTrackingEnabled: Boolean = false,
-        @SerializedName("appTrackingList") var appTrackingList: List<AppTracking>?
+        @SerializedName("appTrackingList") var appTrackingList: List<AppTracking>?,
+        @SerializedName("appId") var appId:String?
 ) : Serializable

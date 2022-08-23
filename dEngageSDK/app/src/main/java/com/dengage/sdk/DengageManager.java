@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
@@ -18,7 +19,10 @@ import androidx.annotation.Nullable;
 import com.dengage.sdk.cache.GsonHolder;
 import com.dengage.sdk.cache.Prefs;
 import com.dengage.sdk.callback.DengageCallback;
+import com.dengage.sdk.domain.geofence.model.GeofenceLocationSource;
 import com.dengage.sdk.inappmessage.InAppMessageManager;
+import com.dengage.sdk.manager.geofence.GeofenceLocationManager;
+import com.dengage.sdk.manager.geofence.GeofencePermissionsHelper;
 import com.dengage.sdk.models.AppTracking;
 import com.dengage.sdk.models.DengageError;
 import com.dengage.sdk.models.InboxMessage;
@@ -36,6 +40,7 @@ import com.dengage.sdk.rfm.model.RFMScore;
 import com.dengage.sdk.service.NetworkRequest;
 import com.dengage.sdk.service.NetworkRequestCallback;
 import com.dengage.sdk.service.NetworkUrlUtils;
+import com.dengage.sdk.util.ContextHolder;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.firebase.FirebaseApp;
 import com.google.gson.Gson;
@@ -76,9 +81,15 @@ public class DengageManager {
 
     private InAppMessageManager inAppMessageManager;
 
+    public boolean initalized = false;
+
+    private GeofenceLocationManager geofenceManager;
+
     private DengageManager(Context context) {
         _context = context;
         prefs = new Prefs(context);
+        ContextHolder.INSTANCE.setContext(context);
+
     }
 
     /**
@@ -131,6 +142,22 @@ public class DengageManager {
         return _instance;
     }
 
+
+    public DengageManager setGeofenceStatus(boolean isEnabled) {
+        logger.Verbose("Geofence method is called");
+        try {
+            com.dengage.sdk.data.cache.Prefs.INSTANCE.setGeofenceEnabled(isEnabled);
+
+            if (isEnabled) {
+                startGeofence();
+            }
+
+        } catch (Exception e) {
+            logger.Error("Geofence: " + e.getMessage());
+        }
+        return _instance;
+    }
+
     /**
      * FirebaseApp Initiator method
      * <p>
@@ -141,6 +168,9 @@ public class DengageManager {
      */
     public DengageManager init() {
         try {
+            initalizeGeofenceObject();
+            saveBaseUrls();
+            initalized = true;
             // create in app message manager and start new session
             inAppMessageManager = new InAppMessageManager(this, _context, _subscription, logger);
             if (isGooglePlayServicesAvailable() && isHuaweiMobileServicesAvailable()) {
@@ -364,6 +394,7 @@ public class DengageManager {
         } catch (Exception e) {
             logger.Error("saveSubscription: " + e.getMessage());
         }
+        com.dengage.sdk.data.cache.Prefs.INSTANCE.setSubscription(_subscription);
         // update subscription if in app message manager available
         if (inAppMessageManager != null) {
             inAppMessageManager.updateSubscription(_subscription);
@@ -375,6 +406,8 @@ public class DengageManager {
             logger.Verbose("sendSubscription method is called");
             if (isSubscriptionSending) return;
             try {
+                com.dengage.sdk.data.cache.Prefs.INSTANCE.setSubscription(_subscription);
+
                 isSubscriptionSending = true;
                 Handler handler = new Handler(Looper.getMainLooper());
                 handler.postDelayed(new Runnable() {
@@ -1057,6 +1090,7 @@ public class DengageManager {
         networkRequest.executeTask();
     }
 
+
     public void handleIncomingIntent(Intent intent) {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -1072,6 +1106,7 @@ public class DengageManager {
             e.printStackTrace();
         }
     }
+
 
 
 }

@@ -277,4 +277,3 @@ class InAppMessageActivity : Activity(), View.OnClickListener {
     }
 }
 
-

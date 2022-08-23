@@ -5,6 +5,7 @@ import android.net.Uri
 import android.text.TextUtils
 import com.dengage.sdk.Constants
 import com.dengage.sdk.Utils
+import com.dengage.sdk.models.SdkParameters
 import com.dengage.sdk.models.Subscription
 
 /**
@@ -21,6 +22,7 @@ object NetworkUrlUtils {
     const val MESSAGE_ID = "msgId"
     const val MESSAGE_DETAILS = "message_details"
     const val BUTTON_ID = "button_id"
+    const val APPID = "appid"
 
     fun getSdkParametersRequestUrl(context: Context, integrationKey: String): String {
         var baseApiUri = Utils.getMetaData(context, "den_push_api_url")
@@ -108,7 +110,8 @@ object NetworkUrlUtils {
 
     fun getInAppMessagesRequestUrl(
         context: Context, accountName: String,
-        subscription: Subscription
+        subscription: Subscription,
+        sdkParameters: SdkParameters
     ): String {
         var baseApiUri = Utils.getMetaData(context, "den_push_api_url")
         if (TextUtils.isEmpty(baseApiUri)) {
@@ -124,6 +127,8 @@ object NetworkUrlUtils {
             )
             .appendQueryParameter(DEVICE_ID, subscription.deviceId)
             .appendQueryParameter(TYPE, if (TextUtils.isEmpty(subscription.contactKey)) "d" else "c")
+            .appendQueryParameter(APPID, sdkParameters.appId)
+
             .build()
         return uriWithQueryParams.toString()
     }
