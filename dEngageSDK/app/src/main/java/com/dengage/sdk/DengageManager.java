@@ -45,9 +45,6 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.firebase.FirebaseApp;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.huawei.agconnect.AGConnectOptionsBuilder;
-import com.huawei.hms.aaid.HmsInstanceId;
-import com.huawei.hms.api.HuaweiApiAvailability;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
@@ -173,13 +170,7 @@ public class DengageManager {
             initalized = true;
             // create in app message manager and start new session
             inAppMessageManager = new InAppMessageManager(this, _context, _subscription, logger);
-            if (isGooglePlayServicesAvailable() && isHuaweiMobileServicesAvailable()) {
-                logger.Verbose("Google Play Services and Huawei Mobile Service are available. Firebase services will be used.");
-                initFirebase();
-            } else if (isHuaweiMobileServicesAvailable()) {
-                logger.Verbose("Huawei Mobile Services is available.");
-                initHuawei();
-            } else if (isGooglePlayServicesAvailable()) {
+            if (isGooglePlayServicesAvailable() ) {
                 initFirebase();
             }
             sendSubscription();
@@ -202,13 +193,8 @@ public class DengageManager {
         try {
             // create in app message manager and start new session
             inAppMessageManager = new InAppMessageManager(this, _context, _subscription, logger);
-            if (isGooglePlayServicesAvailable() && isHuaweiMobileServicesAvailable()) {
+            if (isGooglePlayServicesAvailable()) {
                 logger.Verbose("Google Play Services and Huawei Mobile Service are available. Firebase services will be used.");
-                initFirebaseWithInstance(firebaseApp);
-            } else if (isHuaweiMobileServicesAvailable()) {
-                logger.Verbose("Huawei Mobile Services is available.");
-                initHuawei();
-            } else if (isGooglePlayServicesAvailable()) {
                 initFirebaseWithInstance(firebaseApp);
             }
             sendSubscription();
@@ -228,24 +214,9 @@ public class DengageManager {
         }
     }
 
-    public boolean isHuaweiMobileServicesAvailable() {
-        try {
-            Class.forName("com.huawei.hms.api.HuaweiApiAvailability");
-            return HuaweiApiAvailability.getInstance().isHuaweiMobileServicesAvailable(_context) == com.huawei.hms.api.ConnectionResult.SUCCESS;
-        } catch (Exception ignored) {
-            return false;
-        }
-    }
 
-    private void initHuawei() {
-        _subscription.setTokenType(Constants.HUAWEI_TOKEN_TYPE);
-        _subscription.setIntegrationKey(_subscription.getHuaweiIntegrationKey());
-        saveSubscription();
-        HmsTokenWorker hmsTokenWorker = new HmsTokenWorker();
-        hmsTokenWorker.executeTask();
-        HmsAdIdWorker hmsAdIdWorker = new HmsAdIdWorker();
-        hmsAdIdWorker.executeTask();
-    }
+
+
 
     private void initFirebase() {
         _subscription.setTokenType(Constants.FIREBASE_TOKEN_TYPE);
@@ -319,19 +290,7 @@ public class DengageManager {
         return _instance;
     }
 
-    public DengageManager setHuaweiIntegrationKey(String key) {
-        logger.Verbose("setHuaweiIntegrationKey method is called");
-        if (key == null || TextUtils.isEmpty(key)) {
-            throw new IllegalArgumentException("Argument null: key");
-        }
-        try {
-            logger.Debug("setHuaweiIntegrationKey: " + key);
-            _subscription.setHuaweiIntegrationKey(key);
-        } catch (Exception e) {
-            logger.Error("setHuaweiIntegrationKey: " + e.getMessage());
-        }
-        return _instance;
-    }
+
 
     /**
      * Subscribe User
@@ -619,72 +578,6 @@ public class DengageManager {
         }
     }
 
-    private class HmsAdIdWorker extends AsyncTask<Void, String, String> {
-        @Override
-        protected String doInBackground(Void... params) {
-            logger.Debug("Getting HMS advertising ID");
-            String advertisingId = "";
-            try {
-                com.huawei.hms.ads.identifier.AdvertisingIdClient.Info adInfo
-                        = com.huawei.hms.ads.identifier.AdvertisingIdClient.
-                        getAdvertisingIdInfo(_context);
-                if (!adInfo.isLimitAdTrackingEnabled())
-                    advertisingId = adInfo.getId();
-            } catch (Exception e) {
-                logger.Error("HmsAdIdWorker Exception: " + e.getMessage());
-            }
-            return advertisingId;
-        }
-
-        @Override
-        protected void onPostExecute(String adId) {
-            if (adId != null && !TextUtils.isEmpty(adId)) {
-                _subscription.setAdvertisingId(adId);
-                saveSubscription();
-                sendSubscription();
-            }
-        }
-
-        public void executeTask() {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-                this.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            else
-                this.execute();
-        }
-    }
-
-    private class HmsTokenWorker extends AsyncTask<Void, String, String> {
-        @Override
-        protected String doInBackground(Void... params) {
-            logger.Debug("Getting Hms Token");
-            String token = "";
-            try {
-                String appId = new AGConnectOptionsBuilder().build(_context).getString("client/app_id");
-                token = HmsInstanceId.getInstance(_context).getToken(appId, com.huawei.hms.push.HmsMessaging.DEFAULT_TOKEN_SCOPE);
-                logger.Debug("hms id & token " + appId + " " + token + " ");
-
-            } catch (Exception e) {
-                logger.Error("HmsTokenWorker Exception: " + e.getMessage());
-            }
-            return token;
-        }
-
-        @Override
-        protected void onPostExecute(String token) {
-            if (token != null && !TextUtils.isEmpty(token)) {
-                _subscription.setToken(token);
-                saveSubscription();
-                sendSubscription();
-            }
-        }
-
-        public void executeTask() {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-                this.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            else
-                this.execute();
-        }
-    }
 
     public void onNewToken(String token) {
         try {
@@ -1133,6 +1026,23 @@ public class DengageManager {
 
     void initalizeGeofenceObject() {
         geofenceManager = new GeofenceLocationManager();
+    }
+
+
+    public void handleIncomingIntent(Intent intent) {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                if (intent != null && intent.getExtras() != null && intent.getAction() != null) {
+                    if (intent.getAction().equals(Constants.PUSH_OPEN_EVENT)) {
+                        sendOpenEvent("", "", new Message(intent.getExtras()));
+                    }
+
+                }
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

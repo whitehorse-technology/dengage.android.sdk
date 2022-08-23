@@ -2,7 +2,6 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'com.huawei.agconnect'
 
 android {
     compileSdkVersion 32
@@ -10,7 +9,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 32
         versionCode 1
-        versionName "4.3.9"
+        versionName "4.4.1.5"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         //applicationId "com.dengage.sdk"
     }
@@ -70,9 +69,6 @@ dependencies {
     api 'com.google.firebase:firebase-core:20.1.2'
     api 'com.google.firebase:firebase-messaging:23.0.2'
 
-    // huawei
-    api 'com.huawei.hms:push:6.3.0.304'
-    api 'com.huawei.hms:ads-identifier:3.4.39.302'
 
     // geofence
     implementation "com.google.android.gms:play-services-location:19.0.1"
