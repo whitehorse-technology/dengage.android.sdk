@@ -85,7 +85,7 @@ public class Utils {
     }
 
     public static String getSdkVersion(Context context) {
-        return "4.4.0.1";
+        return "4.4.1.3";
     }
 
     public static String getOsVersion() {

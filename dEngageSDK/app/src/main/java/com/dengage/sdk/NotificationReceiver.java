@@ -553,7 +553,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         }
     }
 
-    private PendingIntent getPendingIntent(Context context, int requestCode, Intent intent) {
+    public PendingIntent getPendingIntent(Context context, int requestCode, Intent intent) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
             Bundle extras = intent.getExtras();
