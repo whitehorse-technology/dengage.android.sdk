@@ -277,7 +277,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         Notification notification = notificationBuilder.build();
         if (manager != null) {
-            manager.notify(message.getMessageSource(), message.hashCode(), notification);
+            manager.notify(message.getMessageSource(), message.getMessageId(), notification);
         }
     }
 
@@ -285,7 +285,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         Notification notification = notificationBuilder.build();
         if (manager != null) {
-            manager.notify(message.getMessageSource(), message.hashCode(), notification);
+            manager.notify(message.getMessageSource(), message.getMessageId(), notification);
         }
     }
 
@@ -483,11 +483,7 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         if (manager != null) {
-            if (message.getNotificationType() == NotificationType.CAROUSEL) {
-                manager.cancel(message.getMessageSource(), message.getMessageId());
-            } else {
-                manager.cancel(message.getMessageSource(), message.hashCode());
-            }
+            manager.cancel(message.getMessageSource(), message.getMessageId());
         }
     }
 
@@ -557,7 +553,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         }
     }
 
-    private PendingIntent getPendingIntent(Context context, int requestCode, Intent intent) {
+    public PendingIntent getPendingIntent(Context context, int requestCode, Intent intent) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
             Bundle extras = intent.getExtras();

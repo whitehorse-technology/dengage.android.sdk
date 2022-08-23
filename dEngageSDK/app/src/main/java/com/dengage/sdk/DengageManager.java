@@ -1135,6 +1135,23 @@ public class DengageManager {
         geofenceManager = new GeofenceLocationManager();
     }
 
+
+    public void handleIncomingIntent(Intent intent) {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                if (intent != null && intent.getExtras() != null && intent.getAction() != null) {
+                    if (intent.getAction().equals(Constants.PUSH_OPEN_EVENT)) {
+                        sendOpenEvent("", "", new Message(intent.getExtras()));
+                    }
+
+                }
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }
 
 
