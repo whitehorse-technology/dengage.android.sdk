@@ -74,7 +74,8 @@ class InAppMessageManager(
             NetworkUrlUtils.getInAppMessagesRequestUrl(
                 context,
                 sdkParameters.accountName,
-                subscription
+                subscription,
+                sdkParameters
             ),
             Utils.getUserAgent(context), object : NetworkRequestCallback {
                 override fun responseFetched(response: String?) {

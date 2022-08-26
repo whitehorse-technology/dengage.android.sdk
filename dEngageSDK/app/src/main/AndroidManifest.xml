@@ -10,6 +10,11 @@
             android:exported="true"
             android:name=".inappmessage.InAppMessageActivity"
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
+
+        <activity
+            android:name=".push.NotificationNavigationDeciderActivity"
+            android:theme="@style/Theme.AppCompat.Translucent"
+            android:exported="false" />
     </application>
 
 </manifest>
