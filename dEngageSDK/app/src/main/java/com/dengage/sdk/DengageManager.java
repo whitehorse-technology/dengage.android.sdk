@@ -164,7 +164,7 @@ public class DengageManager {
             // create in app message manager and start new session
             inAppMessageManager = new InAppMessageManager(this, _context, _subscription, logger);
             if (isGooglePlayServicesAvailable() ) {
-                logger.Verbose("Google Play Services and Huawei Mobile Service are available. Firebase services will be used.");
+                logger.Verbose("Google Play Services are available. Firebase services will be used.");
                 initFirebaseWithInstance(firebaseApp);
             }
             sendSubscription();
@@ -259,19 +259,7 @@ public class DengageManager {
         return _instance;
     }
 
-    public DengageManager setHuaweiIntegrationKey(String key) {
-        logger.Verbose("setHuaweiIntegrationKey method is called");
-        if (key == null || TextUtils.isEmpty(key)) {
-            throw new IllegalArgumentException("Argument null: key");
-        }
-        try {
-            logger.Debug("setHuaweiIntegrationKey: " + key);
-            _subscription.setHuaweiIntegrationKey(key);
-        } catch (Exception e) {
-            logger.Error("setHuaweiIntegrationKey: " + e.getMessage());
-        }
-        return _instance;
-    }
+
 
     /**
      * Subscribe User
@@ -961,21 +949,6 @@ public class DengageManager {
         networkRequest.executeTask();
     }
 
-    public void handleIncomingIntent(Intent intent) {
-        try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                if (intent != null && intent.getExtras() != null && intent.getAction() != null) {
-                    if (intent.getAction().equals(Constants.PUSH_OPEN_EVENT)) {
-                        sendOpenEvent("", "", new Message(intent.getExtras()));
-                    }
-
-                }
-
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
 
 }

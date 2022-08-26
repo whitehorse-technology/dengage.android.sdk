@@ -25,14 +25,13 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
-import com.dengage.sdk.cache.Prefs;
 import com.dengage.sdk.models.ActionButton;
 import com.dengage.sdk.models.CarouselItem;
 import com.dengage.sdk.models.Message;
 import com.dengage.sdk.models.NotificationType;
+import com.dengage.sdk.push.NotificationNavigationDeciderActivity;
 
 import java.net.URL;
-import java.util.List;
 import java.util.Random;
 
 public class NotificationReceiver extends BroadcastReceiver {
@@ -417,7 +416,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         }
     }
 
-    private static Class<? extends Activity> getActivity(Context context) {
+    public static Class<? extends Activity> getActivity(Context context) {
         String packageName = context.getPackageName();
         Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(packageName);
         if (launchIntent == null) {
@@ -471,7 +470,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         return itemIntent;
     }
 
-    protected void clearNotification(Context context, Message message) {
+    public static void clearNotification(Context context, Message message) {
         logger.Verbose("Clearing notification ID: " + message.getMessageId());
         logger.Verbose("Clearing notification TAG: " + message.getMessageSource());
 
@@ -557,42 +556,27 @@ public class NotificationReceiver extends BroadcastReceiver {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
             Bundle extras = intent.getExtras();
-            String uri = null;
-            if (extras != null) {
-                String rawJson = extras.getString("RAW_DATA");
-                uri = extras.getString("targetUrl");
-            } else {
-                logger.Debug("No extra data for action.");
-            }
-            if (uri != null && !TextUtils.isEmpty(uri)) {
-                intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-            } else {
-                final String packageName = context.getPackageName();
-
-                intent = new Intent(context, getActivity(context));
-                intent.setAction(Constants.PUSH_OPEN_EVENT);
-                intent.putExtras(extras);
-                intent.setPackage(packageName);
-            }
-            if (intent != null && intent.getExtras() != null) {
+            final String packageName = context.getPackageName();
+            intent = new Intent(context, NotificationNavigationDeciderActivity.class);
+            intent.putExtras(extras);
+            intent.setPackage(packageName);
+            if (intent.getExtras() != null) {
                 intent.putExtras(intent.getExtras());
             }
             stackBuilder.addNextIntentWithParentStack(intent);
-            PendingIntent resultPendingIntent =
-                    stackBuilder.getPendingIntent(requestCode, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
-            return resultPendingIntent;
+            return stackBuilder.getPendingIntent(requestCode, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
         } else {
             return PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
         }
     }
 
-     private PendingIntent getDeletePendingIntent(Context context, int requestCode, Intent intent) {
+    private PendingIntent getDeletePendingIntent(Context context, int requestCode, Intent intent) {
 
-            return PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+        return PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
     }
 
- public static Bitmap getBitmapFromUrl(String imageUrl) {
+    public static Bitmap getBitmapFromUrl(String imageUrl) {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         try {

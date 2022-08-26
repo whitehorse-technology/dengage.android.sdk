@@ -35,8 +35,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -85,7 +83,7 @@ public class Utils {
     }
 
     public static String getSdkVersion(Context context) {
-        return "4.4.1.3";
+        return "4.5.1.2";
     }
 
     public static String getOsVersion() {
@@ -447,5 +445,10 @@ public class Utils {
     public static String generateSessionId()
     {
         return UUID.randomUUID().toString().toLowerCase();
+    }
+
+
+    public static String getPackageName(Context context) {
+        return context.getPackageName();
     }
 }
