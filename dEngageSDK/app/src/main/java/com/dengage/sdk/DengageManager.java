@@ -194,7 +194,7 @@ public class DengageManager {
             // create in app message manager and start new session
             inAppMessageManager = new InAppMessageManager(this, _context, _subscription, logger);
             if (isGooglePlayServicesAvailable()) {
-                logger.Verbose("Google Play Services and Huawei Mobile Service are available. Firebase services will be used.");
+                logger.Verbose("Google Play Services are available. Firebase services will be used.");
                 initFirebaseWithInstance(firebaseApp);
             }
             sendSubscription();
@@ -1029,21 +1029,6 @@ public class DengageManager {
     }
 
 
-    public void handleIncomingIntent(Intent intent) {
-        try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                if (intent != null && intent.getExtras() != null && intent.getAction() != null) {
-                    if (intent.getAction().equals(Constants.PUSH_OPEN_EVENT)) {
-                        sendOpenEvent("", "", new Message(intent.getExtras()));
-                    }
-
-                }
-
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
 }
 

@@ -257,23 +257,5 @@ class InAppMessageActivity : Activity(), View.OnClickListener {
         }
     }
 
-    fun areNotificationsEnabled(): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val manager =
-                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            if (!manager.areNotificationsEnabled()) {
-                return false
-            }
-            val channels = manager.notificationChannels
-            for (channel in channels) {
-                if (channel.importance == NotificationManager.IMPORTANCE_NONE) {
-                    return false
-                }
-            }
-            true
-        } else {
-            NotificationManagerCompat.from(this).areNotificationsEnabled()
-        }
-    }
 }
 
