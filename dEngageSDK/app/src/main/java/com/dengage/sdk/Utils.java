@@ -85,7 +85,7 @@ public class Utils {
     }
 
     public static String getSdkVersion(Context context) {
-        return "4.4.1.4";
+        return "4.5.1.4";
     }
 
     public static String getOsVersion() {
@@ -447,5 +447,9 @@ public class Utils {
     public static String generateSessionId()
     {
         return UUID.randomUUID().toString().toLowerCase();
+    }
+
+    public static String getPackageName(Context context) {
+        return context.getPackageName();
     }
 }
