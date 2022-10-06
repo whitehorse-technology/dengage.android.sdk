@@ -329,15 +329,16 @@ public class DengageManager {
     }
 
     private void sendSubscription() {
-        if (!_subscription.getToken().isEmpty()) {
-            logger.Verbose("sendSubscription method is called");
-            if (isSubscriptionSending) return;
-            try {
-                isSubscriptionSending = true;
-                Handler handler = new Handler(Looper.getMainLooper());
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (!_subscription.getToken().isEmpty()) {
+                    if (isSubscriptionSending) return;
+                    try {
+                       saveSubscription();
+                        isSubscriptionSending = true;
+
                         try {
                             String baseApiUri = Utils.getMetaData(_context, "den_push_api_url");
                             if (TextUtils.isEmpty(baseApiUri))
@@ -345,18 +346,21 @@ public class DengageManager {
                             baseApiUri += Constants.SUBSCRIPTION_API_ENDPOINT;
                             RequestAsync req = new RequestAsync(baseApiUri, _subscription);
                             req.executeTask();
+                            logger.Verbose("sendSubscription method is called");
+
                             isSubscriptionSending = false;
                         } catch (Exception e) {
                             isSubscriptionSending = false;
                             logger.Error("sendSubscriptionDelay: " + e.getMessage());
                         }
+
+                    } catch (Exception e) {
+                        isSubscriptionSending = false;
+                        logger.Error("sendSubscription: " + e.getMessage());
                     }
-                }, 1500);
-            } catch (Exception e) {
-                isSubscriptionSending = false;
-                logger.Error("sendSubscription: " + e.getMessage());
+                }
             }
-        }
+        }, 2000);
     }
 
     /**
@@ -377,6 +381,9 @@ public class DengageManager {
      * @param message The dEngage message object.
      */
     public void sendOpenEvent(String buttonId, String itemId, Message message) {
+        isSubscriptionSending=false;
+        sendSubscription();
+
         logger.Verbose("sendOpenEvent method is called");
         logger.Verbose(buttonId);
         logger.Verbose(itemId);
@@ -496,7 +503,8 @@ public class DengageManager {
             if (adId != null && !TextUtils.isEmpty(adId)) {
                 _subscription.setAdvertisingId(adId);
                 saveSubscription();
-                sendSubscription();
+                if(!isSubscriptionSending){
+                    sendSubscription();}
             }
         }
 
@@ -559,6 +567,8 @@ public class DengageManager {
 
     public void onMessageReceived(Map<String, String> data) {
         try {
+            isSubscriptionSending=true;
+
             logger.Verbose("onMessageReceived method is called.");
             logger.Verbose("Raw Message: " + new JSONObject(data).toString());
             if ((data != null && data.size() > 0)) {
