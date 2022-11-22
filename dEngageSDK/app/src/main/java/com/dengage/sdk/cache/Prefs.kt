@@ -26,7 +26,7 @@ class Prefs(context: Context) {
         const val APP_SESSION_TIME = "APP_SESSION_TIME"
         const val APP_SESSION_ID = "APP_SESSION_ID"
         const val RFM_SCORES = "RFM_SCORES"
-
+        const val SUBSCRIPTION_CALL_TIME ="SUBSCRIPTION_CALL_TIME"
         fun getSharedPreferences(context: Context): SharedPreferences =
             context.getSharedPreferences(Constants.DEN_DEVICE_UNIQUE_ID, Context.MODE_PRIVATE)
     }
@@ -67,6 +67,11 @@ class Prefs(context: Context) {
     internal var rfmScores: MutableList<RFMScore>?
         get() = preferences.get(RFM_SCORES)
         set(value) = preferences.set(RFM_SCORES, value)
+
+
+    var subscriptionCallTime: Long
+        get() = preferences.get(SUBSCRIPTION_CALL_TIME, 0) ?: 0
+        set(value) = preferences.set(SUBSCRIPTION_CALL_TIME, value)
 
     fun clear() {
         preferences.edit().clear().apply()
