@@ -64,6 +64,7 @@ class InAppMessageManager(
         ) {
             return
         }
+           if(!Utils.foregrounded()) return
 
         // control next in app message fetch time
         if (System.currentTimeMillis() < prefs.inAppMessageFetchTime) return
