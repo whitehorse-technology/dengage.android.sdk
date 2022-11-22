@@ -1,5 +1,9 @@
 package com.dengage.sdk;
 
+import static android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND;
+import static android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_VISIBLE;
+
+import android.app.ActivityManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -85,7 +89,7 @@ public class Utils {
     }
 
     public static String getSdkVersion(Context context) {
-        return "4.6.1.4";
+        return "4.6.2.4";
     }
 
     public static String getOsVersion() {
@@ -449,7 +453,14 @@ public class Utils {
         return UUID.randomUUID().toString().toLowerCase();
     }
 
+
     public static String getPackageName(Context context) {
         return context.getPackageName();
+    }
+
+    public static  boolean foregrounded() {
+        ActivityManager.RunningAppProcessInfo appProcessInfo = new ActivityManager.RunningAppProcessInfo();
+        ActivityManager.getMyMemoryState(appProcessInfo);
+        return (appProcessInfo.importance == IMPORTANCE_FOREGROUND || appProcessInfo.importance == IMPORTANCE_VISIBLE);
     }
 }

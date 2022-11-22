@@ -64,7 +64,7 @@ class InAppMessageManager(
         ) {
             return
         }
-
+        if (!Utils.foregrounded()) return
         // control next in app message fetch time
         if (System.currentTimeMillis() < prefs.inAppMessageFetchTime) return
 
@@ -79,11 +79,21 @@ class InAppMessageManager(
             ),
             Utils.getUserAgent(context), object : NetworkRequestCallback {
                 override fun responseFetched(response: String?) {
-                    logger.Error("in app messages response fetched: ${response?.replace("sendClickEvent();","")}")
+                    logger.Error(
+                        "in app messages response fetched: ${
+                            response?.replace(
+                                "sendClickEvent();",
+                                ""
+                            )
+                        }"
+                    )
 
                     val listType = object : TypeToken<MutableList<InAppMessage>>() {}.type
                     val fetchedInAppMessages = try {
-                        GsonHolder.gson.fromJson<MutableList<InAppMessage>>(response/*?.replace("sendClickEvent();","")*/, listType)
+                        GsonHolder.gson.fromJson<MutableList<InAppMessage>>(
+                            response/*?.replace("sendClickEvent();","")*/,
+                            listType
+                        )
                     } catch (e: Exception) {
                         logger.Error("in app messages response error: ${e.message}")
                         null
@@ -190,7 +200,7 @@ class InAppMessageManager(
             inAppMessage.data.displayTiming.showEveryXMinutes != 0
         ) {
             inAppMessage.data.nextDisplayTime = System.currentTimeMillis() +
-                inAppMessage.data.displayTiming.showEveryXMinutes * 60000L
+                    inAppMessage.data.displayTiming.showEveryXMinutes * 60000L
             updateInAppMessageOnCache(inAppMessage)
         } else {
             removeInAppMessageFromCache(inAppMessageId = inAppMessage.id)
@@ -198,7 +208,7 @@ class InAppMessageManager(
 
         // update next in app message show time
         prefs.inAppMessageShowTime = System.currentTimeMillis() +
-            ((prefs.sdkParameters?.inAppMinSecBetweenMessages ?: 0) * 1000)
+                ((prefs.sdkParameters?.inAppMinSecBetweenMessages ?: 0) * 1000)
 
         // set delay for showing in app message
         val delay = (inAppMessage.data.displayTiming.delay ?: 0) * 1000L

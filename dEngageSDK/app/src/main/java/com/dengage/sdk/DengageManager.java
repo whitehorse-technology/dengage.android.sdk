@@ -71,7 +71,7 @@ public class DengageManager {
     private final Context _context;
     private final Prefs prefs;
     private Subscription _subscription;
-    private boolean isSubscriptionSending = false;
+
 
     private List<InboxMessage> inboxMessages = new ArrayList<>();
     private Long inboxMessageFetchMillis = 0L;
@@ -366,11 +366,10 @@ public class DengageManager {
             @Override
             public void run() {
                 if (!_subscription.getToken().isEmpty()) {
-                    if (isSubscriptionSending) return;
+                    if (!Utils.foregrounded()) return;
                     try {
                         com.dengage.sdk.data.cache.Prefs.INSTANCE.setSubscription(_subscription);
 
-                        isSubscriptionSending = true;
 
                         try {
                             String baseApiUri = Utils.getMetaData(_context, "den_push_api_url");
@@ -381,14 +380,14 @@ public class DengageManager {
                             req.executeTask();
                             logger.Verbose("sendSubscription method is called");
 
-                            isSubscriptionSending = false;
+
                         } catch (Exception e) {
-                            isSubscriptionSending = false;
+
                             logger.Error("sendSubscriptionDelay: " + e.getMessage());
                         }
 
                     } catch (Exception e) {
-                        isSubscriptionSending = false;
+
                         logger.Error("sendSubscription: " + e.getMessage());
                     }
                 }
@@ -415,7 +414,7 @@ public class DengageManager {
      * @param message The dEngage message object.
      */
     public void sendOpenEvent(String buttonId, String itemId, Message message) {
-        isSubscriptionSending=false;
+
         sendSubscription();
 
         logger.Verbose("sendOpenEvent method is called");
@@ -537,7 +536,7 @@ public class DengageManager {
             if (adId != null && !TextUtils.isEmpty(adId)) {
                 _subscription.setAdvertisingId(adId);
                 saveSubscription();
-                if(!isSubscriptionSending){
+                if(Utils.foregrounded()){
                     sendSubscription();}
             }
         }
@@ -601,7 +600,7 @@ public class DengageManager {
 
     public void onMessageReceived(Map<String, String> data) {
         try {
-            isSubscriptionSending=true;
+
 
             logger.Verbose("onMessageReceived method is called.");
             logger.Verbose("Raw Message: " + new JSONObject(data).toString());
@@ -747,7 +746,7 @@ public class DengageManager {
         // control inbox message enabled
         SdkParameters sdkParameters = prefs.getSdkParameters();
         if (sdkParameters == null || sdkParameters.getAccountName() == null ||
-                sdkParameters.getInboxEnabled() == null || !sdkParameters.getInboxEnabled()) {
+                sdkParameters.getInboxEnabled() == null || !sdkParameters.getInboxEnabled() || !Utils.foregrounded()) {
             dengageCallback.onResult(new ArrayList<InboxMessage>());
             return;
         }
