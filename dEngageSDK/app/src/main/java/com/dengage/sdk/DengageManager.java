@@ -370,32 +370,37 @@ public class DengageManager {
     }
 
     private void sendSubscription() {
-        if (!_subscription.getToken().isEmpty()) {
-            if (!Utils.foregrounded()) return;
-            try {
-                saveSubscription();
-                try {
-                    String baseApiUri = Utils.getMetaData(_context, "den_push_api_url");
-                    if (TextUtils.isEmpty(baseApiUri))
-                        baseApiUri = Constants.DEN_PUSH_API_URI;
-                    baseApiUri += Constants.SUBSCRIPTION_API_ENDPOINT;
-                    RequestAsync req = new RequestAsync(baseApiUri, _subscription);
-                    req.executeTask();
-                    logger.Verbose("sendSubscription method is called");
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (!_subscription.getToken().isEmpty()) {
+                    if (!Utils.foregrounded()) return;
+                    try {
+                        saveSubscription();
+
+                        try {
+                            String baseApiUri = Utils.getMetaData(_context, "den_push_api_url");
+                            if (TextUtils.isEmpty(baseApiUri))
+                                baseApiUri = Constants.DEN_PUSH_API_URI;
+                            baseApiUri += Constants.SUBSCRIPTION_API_ENDPOINT;
+                            RequestAsync req = new RequestAsync(baseApiUri, _subscription);
+                            req.executeTask();
+                            logger.Verbose("sendSubscription method is called");
 
 
-                } catch (Exception e) {
+                        } catch (Exception e) {
 
-                    logger.Error("sendSubscriptionDelay: " + e.getMessage());
+                            logger.Error("sendSubscriptionDelay: " + e.getMessage());
+                        }
+
+                    } catch (Exception e) {
+
+                        logger.Error("sendSubscription: " + e.getMessage());
+                    }
                 }
-
-            } catch (Exception e) {
-
-                logger.Error("sendSubscription: " + e.getMessage());
             }
-
-        }
-
+        }, 2000);
     }
 
     /**
