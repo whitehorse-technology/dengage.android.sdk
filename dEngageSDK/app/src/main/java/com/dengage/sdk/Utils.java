@@ -89,7 +89,7 @@ public class Utils {
     }
 
     public static String getSdkVersion(Context context) {
-        return "4.6.2.3";
+        return "4.6.3.3";
     }
 
     public static String getOsVersion() {
@@ -155,6 +155,19 @@ public class Utils {
         return sp.getString(Constants.SUBSCRIPTION_KEY, "");
     }
 
+    static void savePrevSubscription(Context context, String value) {
+        String appName = context.getPackageName();
+        SharedPreferences sp = context.getSharedPreferences(appName, Context.MODE_PRIVATE);
+        SharedPreferences.Editor spEditor = sp.edit();
+        spEditor.putString(Constants.PREV_SUBSCRIPTION_KEY, value);
+        spEditor.apply();
+    }
+
+    static String getPreviousSubscription(Context context) {
+        String appName = context.getPackageName();
+        SharedPreferences sp = context.getSharedPreferences(appName, Context.MODE_PRIVATE);
+        return sp.getString(Constants.PREV_SUBSCRIPTION_KEY, "");
+    }
     static String appVersion(Context context) {
         try {
             PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
