@@ -335,23 +335,46 @@ public class DengageManager {
                 if (!_subscription.getToken().isEmpty()) {
                     if (!Utils.foregrounded()) return;
                     try {
-                        saveSubscription();
+                        if (!Utils.getSubscription(_context).equals(Utils.getPreviousSubscription(_context))) {
 
-                        try {
-                            String baseApiUri = Utils.getMetaData(_context, "den_push_api_url");
-                            if (TextUtils.isEmpty(baseApiUri))
-                                baseApiUri = Constants.DEN_PUSH_API_URI;
-                            baseApiUri += Constants.SUBSCRIPTION_API_ENDPOINT;
-                            RequestAsync req = new RequestAsync(baseApiUri, _subscription);
-                            req.executeTask();
-                            logger.Verbose("sendSubscription method is called");
+                            saveSubscription();
+
+                            try {
+                                String baseApiUri = Utils.getMetaData(_context, "den_push_api_url");
+                                if (TextUtils.isEmpty(baseApiUri))
+                                    baseApiUri = Constants.DEN_PUSH_API_URI;
+                                baseApiUri += Constants.SUBSCRIPTION_API_ENDPOINT;
+                                RequestAsync req = new RequestAsync(baseApiUri, _subscription);
+                                req.executeTask();
+                                logger.Verbose("sendSubscription method is called");
+                                Utils.savePrevSubscription(_context, _subscription.toJson());
+                                prefs.setSubscriptionCallTime(System.currentTimeMillis() + (20 * 60 * 1000));
 
 
-                        } catch (Exception e) {
+                            } catch (Exception e) {
 
-                            logger.Error("sendSubscriptionDelay: " + e.getMessage());
+                                logger.Error("sendSubscriptionDelay: " + e.getMessage());
+                            }
+                        } else if (System.currentTimeMillis() > prefs.getSubscriptionCallTime()) {
+                            saveSubscription();
+
+                            try {
+                                String baseApiUri = Utils.getMetaData(_context, "den_push_api_url");
+                                if (TextUtils.isEmpty(baseApiUri))
+                                    baseApiUri = Constants.DEN_PUSH_API_URI;
+                                baseApiUri += Constants.SUBSCRIPTION_API_ENDPOINT;
+                                RequestAsync req = new RequestAsync(baseApiUri, _subscription);
+                                req.executeTask();
+                                logger.Verbose("sendSubscription method is called");
+                                Utils.savePrevSubscription(_context, _subscription.toJson());
+                                prefs.setSubscriptionCallTime(System.currentTimeMillis() + (20 * 60 * 1000));
+
+
+                            } catch (Exception e) {
+
+                                logger.Error("sendSubscriptionDelay: " + e.getMessage());
+                            }
                         }
-
                     } catch (Exception e) {
 
                         logger.Error("sendSubscription: " + e.getMessage());
