@@ -324,7 +324,7 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         clearNotification(context, message);
 
-        launchActivity(context, intent, uri);
+        //launchActivity(context, intent, uri);
     }
 
     protected void onPushDismiss(Context context, Intent intent) {
@@ -368,7 +368,7 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         clearNotification(context, message);
 
-        launchActivity(context, intent, uri);
+      //  launchActivity(context, intent, uri);
     }
 
     protected void onItemClick(Context context, Intent intent) {
@@ -409,7 +409,7 @@ public class NotificationReceiver extends BroadcastReceiver {
             manager.sendOpenEvent("", id, new Message(extras));
 
             clearNotification(context, message);
-            launchActivity(context, intent, uri);
+          //  launchActivity(context, intent, uri);
 
         } else if (navigation.equals("left")) {
             onCarouselReRender(context, intent, message);
@@ -554,22 +554,20 @@ public class NotificationReceiver extends BroadcastReceiver {
         }
     }
 
-    public PendingIntent getPendingIntent(Context context, int requestCode, Intent intent) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-            Bundle extras = intent.getExtras();
+    public PendingIntent getPendingIntent(Context context, int requestCode, Intent intentP) {
+            Intent intent = intentP;
+
+            Bundle extras = intentP.getExtras();
             final String packageName = context.getPackageName();
+            final String action =intentP.getAction();
             intent = new Intent(context, NotificationNavigationDeciderActivity.class);
             intent.putExtras(extras);
             intent.setPackage(packageName);
+            intent.setAction(action);
             if (intent.getExtras() != null) {
                 intent.putExtras(intent.getExtras());
             }
-            stackBuilder.addNextIntentWithParentStack(intent);
-            return stackBuilder.getPendingIntent(requestCode, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
-        } else {
-            return PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
-        }
+            return PendingIntent.getActivity(context,requestCode, intent,PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     private PendingIntent getDeletePendingIntent(Context context, int requestCode, Intent intent) {

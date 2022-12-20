@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.IntentFilter
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
@@ -65,5 +66,40 @@ class NotificationUtils {
         }
 
         context.startActivity(intent)
+    }
+
+    fun registerBroadcast(context: Context) {
+        try {
+            val filter = IntentFilter(Constants.PUSH_RECEIVE_EVENT)
+            filter.addAction(Constants.PUSH_OPEN_EVENT)
+            filter.addAction(Constants.PUSH_DELETE_EVENT)
+            filter.addAction(Constants.PUSH_ACTION_CLICK_EVENT)
+            filter.addAction(Constants.PUSH_ITEM_CLICK_EVENT)
+            filter.addAction("com.dengage.push.intent.CAROUSEL_ITEM_CLICK")
+            context.applicationContext.registerReceiver(
+                NotificationReceiver(),
+                filter
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    fun unregisterBroadcast(context: Context) {
+        try {
+            context.unregisterReceiver(NotificationReceiver())
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    fun sendBroadCast(intent: Intent, context: Context) {
+        try {
+            val broadCastIntent = Intent(intent.action)
+            broadCastIntent.putExtras(intent.extras!!)
+            context.sendBroadcast(broadCastIntent)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 }

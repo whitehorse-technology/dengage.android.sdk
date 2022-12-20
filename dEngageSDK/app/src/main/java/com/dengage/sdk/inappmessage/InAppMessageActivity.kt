@@ -204,7 +204,7 @@ class InAppMessageActivity : Activity(), View.OnClickListener {
             logger.Verbose("In app message: android target url event $targetUrl")
 
             if (targetUrl == "Dn.promptPushPermission()") {
-                var notificationUtils = NotificationUtils()
+                val notificationUtils = NotificationUtils()
                 if (!notificationUtils.areNotificationsEnabled(context = this@InAppMessageActivity)) {
                     Toast.makeText(
                         this@InAppMessageActivity,
