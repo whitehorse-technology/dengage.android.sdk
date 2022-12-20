@@ -89,7 +89,7 @@ public class Utils {
     }
 
     public static String getSdkVersion(Context context) {
-        return "4.6.3.3";
+        return "4.6.4.3";
     }
 
     public static String getOsVersion() {
@@ -135,18 +135,30 @@ public class Utils {
     }
 
     static void saveSubscription(Context context, String value) {
-        String appName = context.getPackageName();
-        SharedPreferences sp = context.getSharedPreferences(appName, Context.MODE_PRIVATE);
-        SharedPreferences.Editor spEditor = sp.edit();
-        spEditor.putString(Constants.SUBSCRIPTION_KEY, value);
-        spEditor.apply();
+        try {
+            String appName = context.getPackageName();
+            SharedPreferences sp = context.getSharedPreferences(appName, Context.MODE_PRIVATE);
+            SharedPreferences.Editor spEditor = sp.edit();
+            spEditor.putString(Constants.SUBSCRIPTION_KEY, value);
+            spEditor.apply();
+        }
+        catch (Exception e)
+        {
+
+        }
     }
 
     static boolean hasSubscription(Context context) {
-        String appName = context.getPackageName();
-        SharedPreferences sp = context.getSharedPreferences(appName, Context.MODE_PRIVATE);
-        String subJson = sp.getString(Constants.SUBSCRIPTION_KEY, "");
-        return subJson.isEmpty() == false;
+        try {
+            String appName = context.getPackageName();
+            SharedPreferences sp = context.getSharedPreferences(appName, Context.MODE_PRIVATE);
+            String subJson = sp.getString(Constants.SUBSCRIPTION_KEY, "");
+            return subJson.isEmpty() == false;
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
     }
 
     static String getSubscription(Context context) {
@@ -472,8 +484,15 @@ public class Utils {
     }
 
     public static  boolean foregrounded() {
-        ActivityManager.RunningAppProcessInfo appProcessInfo = new ActivityManager.RunningAppProcessInfo();
-        ActivityManager.getMyMemoryState(appProcessInfo);
-        return (appProcessInfo.importance == IMPORTANCE_FOREGROUND || appProcessInfo.importance == IMPORTANCE_VISIBLE);
+
+        try {
+            ActivityManager.RunningAppProcessInfo appProcessInfo = new ActivityManager.RunningAppProcessInfo();
+            ActivityManager.getMyMemoryState(appProcessInfo);
+            return (appProcessInfo.importance == IMPORTANCE_FOREGROUND || appProcessInfo.importance == IMPORTANCE_VISIBLE);
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
     }
 }
