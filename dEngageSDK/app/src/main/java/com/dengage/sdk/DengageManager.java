@@ -589,7 +589,8 @@ public class DengageManager {
     public void onMessageReceived(Map<String, String> data) {
         try {
 
-
+            NotificationUtils notificationUtils = new NotificationUtils();
+            notificationUtils.registerBroadcast(_context);
             logger.Verbose("onMessageReceived method is called.");
             logger.Verbose("Raw Message: " + new JSONObject(data).toString());
             if ((data != null && data.size() > 0)) {
